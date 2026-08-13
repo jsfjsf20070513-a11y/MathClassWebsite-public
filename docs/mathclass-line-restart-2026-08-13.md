@@ -78,12 +78,17 @@ album_photos 0 / resources 0),全部 RLS on。
 
 ## 四、roadmap 草案
 
-- **阶段 1 · 修断裂(部分已完成)**
+- **阶段 1 · 修断裂(✅ 全部完成,2026-08-13)**
   - [x] 立线 + CI 门禁 + react-router high 清除(`cbd2c4e`、`17206a5`)。
-  - [ ] `mathclass/main` 推远端(对外动作,待授权)。
-  - [ ] PII 列级 REVOKE 落地(改线上 DB,**待作者原文授权**;执行体 = 班级线
-    `harden_rls.sql` 的列授权段,幂等)。
-  - 验收:audit 无 high;anon 列授权不含 `user_email`;三连绿。
+  - [x] `mathclass/main` 已推 origin(作者授权「12」)。
+  - [x] PII 列级授权落地:Supabase migration
+    `pii_column_grants_comments_harden_rls_s7`(= harden_rls.sql §7 原文)。
+    验证:以线上 anon key 实测 `select=user_email` → 42501 permission denied,
+    许可列正常返回。
+  - 验收:audit 无 high ✓;anon 列授权不含 `user_email` ✓;三连绿 ✓。
+- **补记(2026-08-13,减法拍板)**:产品身份定为班级手册 Carnet de classe,
+  核心 = 读(每日定理与哲思)+ 练(背词)。导航收敛 4→2,Atelier 下线,
+  寄语墙隐藏,AI 退到背词答错后的上下文动作(`6afb1dc`)。
 - **阶段 2 · 诚实性刷新(9 月前)**
   - index.html 元信息重写(去黑客松/first-year);sitemap/robots 重写为现役路由;
     witness 文案如实化(或拍板迁移方案);死码清理(~1500 行 + 4 孤儿数据模块)。
