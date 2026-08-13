@@ -1,6 +1,4 @@
 import DailyMeditation from '../components/DailyMeditation'
-import TitlePageNarration from '../components/TitlePageNarration'
-import { classProfile } from '../data/siteContent'
 import { dailyTheoremNotes } from '../data/dailyTheoremNotes.generated'
 import { explanationsCredit, theoremExplanations } from '../data/theoremExplanations.generated'
 
@@ -41,8 +39,9 @@ function getEditionDateLabel() {
   }).format(new Date())
 }
 
-// 扉页 Home — design contract: 封面题署 → 每日定理(KaTeX + 折叠证明)→ 一句冥想 → 细页脚。
-// 课表 / 图版 / 阅读线 / 黑客松入口都已按设计移除;每日定理与冥想接真实轮换数据。
+// 扉页 Home — 2026-08 减法后的契约:封面三行(题名/法语副题/日期)→
+// 每日定理(KaTeX + 折叠证明)→ 每日哲思 → 细页脚。每屏一件事,不再有
+// 学院名 kicker 与朗读器。
 export default function Home() {
   const dailyTheorem = dailyTheoremNotes[getRotatingTheoremIndex(dailyTheoremNotes.length)]
   const editionDateLabel = getEditionDateLabel()
@@ -51,15 +50,13 @@ export default function Home() {
   return (
     <article className="page-column home-page">
       <header className="home-cover">
-        <p className="home-cover-kicker">{classProfile.campus}</p>
         <h1 className="home-cover-title">2025 级数学班</h1>
         <p className="home-cover-subtitle" lang="fr">Trente mathématiciens, une classe.</p>
         <p className="home-cover-edition">{`Édition du ${editionDateLabel}`}</p>
-        <TitlePageNarration />
       </header>
 
       <section className="home-theorem" aria-label="每日定理">
-        <p className="home-theorem-kicker">Rappel mathématique · 每日定理</p>
+        <p className="home-theorem-kicker">每日定理</p>
         <h2 className="home-theorem-title">{dailyTheorem.title}</h2>
         <p className="home-theorem-prelude">{dailyTheorem.prelude}</p>
         <div
