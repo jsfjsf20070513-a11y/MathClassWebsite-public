@@ -97,6 +97,15 @@
   padding: 24px 24px 72px;
   text-align: center;
 }
+/* 页脚以一小段居中发丝线起头(替代旧的"─────"字符行)。 */
+.site-footer::before {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 1px;
+  margin: 0 auto 20px;
+  background: var(--rule);
+}
 
 .site-footer p {
   margin: 0;
@@ -108,10 +117,6 @@
  
 }
 
-.site-footer-rule {
-  margin-bottom: 16px !important;
-  letter-spacing: 0.16em;
-}
 
 .site-footer-link {
   margin-top: 12px !important;
@@ -137,7 +142,7 @@
 .notfound-page { max-width: 680px; }   /* 404 */
 
 .home-page {
-  padding-top: 72px;
+  padding-top: 64px;
 }
 
 .title-page {
@@ -3104,18 +3109,20 @@
   font-weight: 400;
   letter-spacing: 0.04em;
   line-height: 1.18;
+  /* 齐线数字:让 2025 与汉字同高同基线(全局默认是 oldstyle,会下沉)。 */
+  font-variant-numeric: lining-nums;
 }
-.home-cover-subtitle { margin: 14px 0 0; color: var(--muted); font-size: 20px; }
+.home-cover-subtitle { margin: 12px 0 0; color: var(--muted); font-size: 20px; }
 /* 刊头日期行:汉字纪年 + 法语刊期,与封面同一衬线声部,不再用等宽体。 */
 .home-cover-edition {
-  margin: 18px 0 0;
+  margin: 16px 0 0;
   color: var(--muted);
   font-size: 14px;
   letter-spacing: 0.05em;
 }
 
 .home-theorem {
-  margin-top: var(--section-gap);
+  margin-top: 64px;
   padding-top: 18px;
   border-top: 1px solid var(--rule);
   text-align: center;
@@ -3154,7 +3161,7 @@
 
 /* 证明思路 = 注文:比正文小一号、行距放宽;中文步骤以汉字序数朱笔标目,
    法文步骤以 Garamond 斜体旧式数字——同一份推理,两种书页传统。 */
-.home-proof-body { margin: 24px 0 0; display: grid; gap: 32px; text-align: left; }
+.home-proof-body { margin: 24px 0 0; display: grid; gap: 32px; text-align: center; }
 .home-proof-body .theorem-explanation-block { max-width: 34rem; width: 100%; margin: 0 auto; }
 .home-proof-body .theorem-explanation-lang {
   margin: 0 0 14px;
@@ -3170,30 +3177,23 @@
   margin: 0;
   padding: 0;
   counter-reset: proof-step;
-  text-align: left;
+  text-align: center;
   font-size: 16px;
 }
 .home-proof-steps > li {
   counter-increment: proof-step;
-  position: relative;
-  margin: 0 0 14px;
-  padding-left: 2.6rem;
+  margin: 0 0 12px;
   line-height: 1.85;
 }
 .home-proof-steps > li:last-child { margin-bottom: 0; }
 .home-proof-steps > li::before {
   content: counter(proof-step, cjk-decimal) "、";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 2.2rem;
   color: var(--accent);
   font-size: 15px;
 }
 .home-proof-steps[lang="fr"] > li::before {
-  content: counter(proof-step) ".";
+  content: counter(proof-step) ".\00a0";
   font-family: "EB Garamond", serif;
- 
 }
 /* 行内公式与注文同高,不再跳出行距。 */
 .home-proof-steps .katex { font-size: 1.04em; }

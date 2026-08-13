@@ -56,7 +56,6 @@ export default function Layout() {
       </main>
 
       <footer className="site-footer">
-        <p className="site-footer-rule" aria-hidden="true">─────</p>
         <p className="site-footer-secondary">Pour la classe.</p>
         <p className="site-footer-link">
           <Link to="/resources"><span className="site-nav-fr" lang="fr">Bibliothèque</span> · 资源与书目</Link>

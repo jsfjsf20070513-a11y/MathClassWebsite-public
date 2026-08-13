@@ -575,7 +575,7 @@ export const dailyFrenchPhrases = [
   {
     title: 'Meditation du jour',
     text: 'Toute mémoire commune commence par quelques notations que personne ne croit décisives.',
-    note: '所有共同记忆，往往都始于一些当时没人觉得重要的小小记载。',
+    note: '一切共同的记忆，都始于几行当时无人以为要紧的笔记。',
   },
   {
     title: 'Meditation du jour',

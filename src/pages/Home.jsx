@@ -33,22 +33,20 @@ function getRotatingTheoremIndex(length) {
 function getEditionDateLabel() {
   return new Intl.DateTimeFormat('fr-FR', {
     timeZone: 'Asia/Shanghai',
-    year: 'numeric',
     month: 'long',
     day: 'numeric',
   }).format(new Date())
 }
 
-// 汉字纪年日期(二〇二六年八月十三日)——刊头的中文声部。
+// 汉字日期(八月十三日)——刊头的中文声部,不带年份。
 const CN_NUM = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
 function getChineseDateLabel(reference = new Date()) {
   const parts = Object.fromEntries(
-    new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: 'numeric', day: 'numeric' })
+    new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', month: 'numeric', day: 'numeric' })
       .formatToParts(reference)
       .filter(({ type }) => type !== 'literal')
       .map(({ type, value }) => [type, Number(value)]),
   )
-  const year = String(parts.year).split('').map((c) => CN_NUM[Number(c)]).join('')
   const month = parts.month <= 10 ? (parts.month === 10 ? '十' : CN_NUM[parts.month]) : `十${CN_NUM[parts.month % 10]}`
   const d = parts.day
   const day = d <= 10
@@ -56,7 +54,7 @@ function getChineseDateLabel(reference = new Date()) {
     : d < 20
       ? `十${CN_NUM[d % 10]}`
       : `${CN_NUM[Math.floor(d / 10)]}十${d % 10 ? CN_NUM[d % 10] : ''}`
-  return `${year}年${month}月${day}日`
+  return `${month}月${day}日`
 }
 
 // 扉页 Home — 2026-08 减法后的契约:封面三行(题名/法语副题/日期)→
@@ -114,7 +112,7 @@ export default function Home() {
                   ))}
                 </ol>
               </div>
-              <p className="home-proof-credit">Bilingual reasoning by {explanationsCredit.generator}</p>
+              <p className="home-proof-credit" lang="fr">{`Raisonnement bilingue · ${explanationsCredit.generator}`}</p>
             </div>
           </details>
         ) : null}
