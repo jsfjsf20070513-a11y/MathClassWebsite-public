@@ -52,7 +52,7 @@ export default function ResourceCurate() {
   return (
     <article className="page-column curate-page">
       <header className="login-masthead">
-        <Link to="/atelier" className="login-back">返回协作 · Atelier</Link>
+        <Link to="/resources" className="login-back">返回资源 · Bibliothèque</Link>
         <p className="login-eyebrow">Curation de ressources</p>
         <h1 className="login-title">推荐一条资源</h1>
         <p className="login-summary">推荐一条书目或课程链接,审阅后并入「资源」页的公开书架。</p>
@@ -64,7 +64,7 @@ export default function ResourceCurate() {
           <p>谢谢你的推荐 ——「{done.title}」已进入待审队列,通过后会并入资源页的书架。</p>
           <div className="login-dest">
             <button type="button" className="vocab-verify" onClick={again}>再推荐一条</button>
-            <Link to="/atelier" className="vocab-verify">回到协作 →</Link>
+            <Link to="/resources" className="vocab-verify">回到资源 →</Link>
           </div>
         </div>
       ) : !user ? (
@@ -95,7 +95,7 @@ export default function ResourceCurate() {
             </label>
             <div className="editorial-actions curate-actions">
               <button type="submit" className="vocab-verify" disabled={submitting}>{submitting ? '提交中…' : '提交待审 · Proposer'}</button>
-              <Link to="/atelier">取消</Link>
+              <Link to="/resources">取消</Link>
             </div>
             <p className="curate-note">提交后由管理员审阅;通过后会出现在资源页对应书架。</p>
             {error ? <p className="status-line is-error">{error}</p> : null}

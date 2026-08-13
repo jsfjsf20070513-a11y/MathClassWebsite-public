@@ -648,6 +648,15 @@ export default function Vocabulary() {
           <button type="button" className="vocab-next" onClick={next}>
             {i + 1 >= steps.length ? 'Terminer · 结束' : 'Continuer · 继续'} <span className="vocab-next-key">↵</span>
           </button>
+          {/* AI 退到具体对象之后:只在答错的这一刻,给一个带上下文的解释入口。 */}
+          {!ok && current.word ? (
+            <Link
+              className="vocab-explain"
+              to={`/assistant?term=${encodeURIComponent(current.word.french)}&answer=${encodeURIComponent(picked || input || '')}`}
+            >
+              Expliquer · 请助手解释这个词
+            </Link>
+          ) : null}
         </div>
       </div>
     )

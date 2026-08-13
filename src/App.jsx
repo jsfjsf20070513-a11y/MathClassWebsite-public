@@ -18,7 +18,6 @@ import './App.css'
 
 const Resources = lazy(() => import('./pages/Resources'))
 const ResourceCurate = lazy(() => import('./pages/ResourceCurate'))
-const ManageHub = lazy(() => import('./pages/ManageHub'))
 const Login = lazy(() => import('./pages/Login'))
 const ResetPassword = lazy(() => import('./pages/ResetPassword'))
 const NotFound = lazy(() => import('./pages/NotFound'))
@@ -143,13 +142,11 @@ function AppRoutes() {
         <Route path="resources/curate" element={<DeferredPage><ResourceCurate /></DeferredPage>} />
         {/* 资源详情页已下线(资源直接外链);旧 /resources/:id 链接回资源目录。 */}
         <Route path="resources/:id" element={<Navigate to="/resources" replace />} />
-        {/* 协作收敛为「寄语墙 + 资源增补」;材料桌 / 审核中心已下线,旧 /atelier/* 与 /manage/* 链接回协作页。 */}
-        <Route path="atelier" element={<DeferredPage><ManageHub /></DeferredPage>} />
-        <Route path="atelier/materials" element={<Navigate to="/atelier" replace />} />
-        <Route path="atelier/review" element={<Navigate to="/atelier" replace />} />
-        <Route path="manage" element={<Navigate to="/atelier" replace />} />
-        <Route path="manage/materials" element={<Navigate to="/atelier" replace />} />
-        <Route path="manage/review" element={<Navigate to="/atelier" replace />} />
+        {/* 协作页(Atelier)已随 2026-08 减法整页下线;旧链接回扉页。 */}
+        <Route path="atelier" element={<Navigate to="/" replace />} />
+        <Route path="atelier/*" element={<Navigate to="/" replace />} />
+        <Route path="manage" element={<Navigate to="/" replace />} />
+        <Route path="manage/*" element={<Navigate to="/" replace />} />
         <Route path="login" element={<DeferredPage><Login /></DeferredPage>} />
         <Route path="reset-password" element={<DeferredPage><ResetPassword /></DeferredPage>} />
         <Route path="404" element={<DeferredPage><NotFound /></DeferredPage>} />

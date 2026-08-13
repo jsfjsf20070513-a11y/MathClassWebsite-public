@@ -88,6 +88,15 @@ export default function Assistant() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, loading])
 
+  // 背词答错跳转带来的上下文(?term=&answer=):预填一条解释请求,不自动发送。
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const term = params.get('term')
+    if (!term) return
+    const answer = params.get('answer')
+    setInput(`请解释法语词 « ${term} »${answer ? `,并分析我刚才的答案「${answer}」为什么不对` : ''}。`)
+  }, [])
+
   // 登录后从云端加载已保存的对话(跨设备)。表未建(compat)时返回空,静默降级为
   // 仅本次会话内存。
   useEffect(() => {

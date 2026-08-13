@@ -3495,6 +3495,9 @@
 .vocab-fb-answer span[lang="fr"] { color: var(--accent); font-weight: 500; }
 .vocab-fb-gloss { color: var(--muted); font-family: "Noto Serif SC", serif; font-size: 16px; }
 .vocab-fb-actions { margin-top: 22px; }
+.vocab-explain,
+.vocab-explain:visited { display: inline-block; margin-left: 18px; border-bottom: 1px solid var(--rule); color: var(--muted); font-size: 14px; }
+.vocab-explain:hover { color: var(--accent); border-bottom-color: var(--accent); }
 .vocab-next {
   padding: 9px 26px;
   border: 1px solid transparent;
@@ -3921,62 +3924,6 @@
 
 .biblio-coda { margin-top: 80px; }
 
-/* ── Atelier · 协作 (masthead → doorways → AI teaser) ───────────────── */
-.atelier-masthead { text-align: center; }
-.atelier-kicker {
-  margin: 0 0 10px;
-  color: var(--accent);
-  font-size: 14px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.atelier-title {
-  margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
-  font-size: 36px;
-  font-weight: 500;
-  line-height: 1.2;
-}
-.atelier-subtitle { margin: 16px auto 0; max-width: 34rem; color: var(--muted); font-size: 17px; font-style: italic; }
-.atelier-subtitle-zh { margin: 6px auto 0; max-width: 30rem; color: var(--muted); font-size: 15px; }
-
-.atelier-doorways { margin-top: 56px; }
-.atelier-doorway,
-.atelier-doorway:visited {
-  display: block;
-  padding: 22px 0;
-  border-top: 1px solid var(--rule);
-  border-bottom: none;
-  color: var(--ink);
-  text-decoration: none;
-  text-align: center;
-}
-.atelier-doorways .atelier-doorway:last-child { border-bottom: 1px solid var(--rule); }
-.atelier-doorway:hover { color: var(--accent); }
-.atelier-doorway-num { display: block; margin-bottom: 8px; font-family: "JetBrains Mono", monospace; font-size: 13px; color: var(--accent); }
-.atelier-doorway-title { font-size: 20px; }
-.atelier-doorway-sub { color: var(--muted); }
-.atelier-doorway-desc { display: block; margin-top: 6px; color: var(--muted); font-size: 15px; line-height: 1.65; }
-.atelier-doorway-arrow { display: none; }
-
-.atelier-teaser { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--rule); text-align: center; }
-.atelier-teaser-kicker { margin: 0 0 4px; color: var(--accent); font-size: 14px; font-style: italic; }
-.atelier-teaser-head { display: flex; align-items: baseline; justify-content: center; gap: 14px; }
-.atelier-teaser-title {
-  margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
-  font-size: 22px;
-  font-weight: 500;
-}
-.atelier-teaser-flag {
-  flex: none;
-  font-family: "JetBrains Mono", monospace;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.atelier-teaser-desc { margin: 8px 0 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
 
 /* ── Login · 登录 (centered masthead + underline form) ──────────────── */
 .login-masthead { text-align: center; }

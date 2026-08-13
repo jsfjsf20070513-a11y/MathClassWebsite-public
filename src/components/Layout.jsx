@@ -1,11 +1,11 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/useAuth'
 
+// 2026-08 减法:站的核心是「读(每日定理与哲思)+ 练(背词)」,导航只留这两件。
+// 资源降为页脚安静链接;寄语墙/助手路由保留但不再有可见入口。
 const navItems = [
   { to: '/', label: 'Accueil · 扉页' },
-  { to: '/resources', label: 'Ressources · 资源' },
   { to: '/vocabulary', label: 'Vocabulaire · 背词' },
-  { to: '/atelier', label: 'Atelier · 协作' },
 ]
 
 export default function Layout() {
@@ -14,31 +14,11 @@ export default function Layout() {
   const displayName = user?.user_metadata?.nickname || user?.user_metadata?.real_name || user?.email || ''
 
   const resolvePrimaryNav = (pathname) => {
-    if (pathname === '/' || pathname === '/404') {
-      return navItems[0]
-    }
-
-    if (pathname.startsWith('/resources')) {
+    if (pathname.startsWith('/vocabulary') || pathname.startsWith('/assistant')) {
       return navItems[1]
     }
 
-    if (pathname.startsWith('/vocabulary')) {
-      return navItems[2]
-    }
-
-    // 班级寄语墙 / 链上见证迁到「协作」之下,导航不再单独暴露「黑客松/展示」。
-    // hackathon/web3 旧页在删除前仍可达,但导航高亮统一落到 Atelier。
-    if (
-      pathname.startsWith('/atelier')
-      || pathname.startsWith('/manage')
-      || pathname.startsWith('/hackathon')
-      || pathname.startsWith('/web3-profile')
-      || pathname.startsWith('/witness')
-    ) {
-      return navItems[3]
-    }
-
-    return navItems[3]
+    return navItems[0]
   }
 
   const primaryNav = resolvePrimaryNav(location.pathname)
@@ -89,7 +69,7 @@ export default function Layout() {
         <p className="site-footer-rule" aria-hidden="true">─────</p>
         <p className="site-footer-secondary">Pour la classe.</p>
         <p className="site-footer-link">
-          <Link to="/witness">班级寄语墙 · 给这个班留一句话 →</Link>
+          <Link to="/resources">Bibliothèque · 资源与书目</Link>
         </p>
       </footer>
     </div>

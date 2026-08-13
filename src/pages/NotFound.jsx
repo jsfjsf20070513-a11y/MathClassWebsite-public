@@ -17,7 +17,6 @@ export default function NotFound() {
       <nav className="notfound-exits" aria-label="出口">
         <Link to="/resources">资源 · 书目</Link>
         <Link to="/vocabulary">背词</Link>
-        <Link to="/atelier">协作</Link>
       </nav>
       <p className="notfound-home"><Link to="/">← 回到扉页 · Accueil</Link></p>
     </article>

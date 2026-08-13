@@ -235,7 +235,7 @@ export default function Login() {
         </header>
         <div className="login-dest">
           <Link to="/vocabulary" className="vocab-verify">去背词 →</Link>
-          <Link to="/witness" className="vocab-verify">去寄语墙 →</Link>
+          <Link to="/" className="vocab-verify">回扉页 →</Link>
         </div>
         <section className="home-meditation"><DailyMeditation offset={7} /></section>
       </article>
