@@ -732,7 +732,7 @@ export default function Vocabulary() {
 
       {!user ? (
         <div className="vocab-notice">
-          <p>背词进度按账号保存,请先登录。</p>
+          <p>背词进度按账号保存，请先登录。</p>
           <p><Link to="/login" className="vocab-link">前往登录 →</Link></p>
         </div>
       ) : null}

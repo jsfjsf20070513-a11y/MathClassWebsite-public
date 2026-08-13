@@ -4,26 +4,28 @@
 
 .site-shell {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
+
+.site-shell > .site-main { flex: 1 0 auto; }
 
 .site-header {
   border-bottom: 1px solid var(--rule);
 }
 
-/* Design header: « Carnet de classe » wordmark + auth on one row,
-   four nav items inline below. Naturally responsive via flex-wrap. */
+/* Design header(2026-08 对称版): wordmark 与导航都落在中轴上;
+   登录是角上的功能小字(如书页角的 folio),不参与主构图。 */
 .site-header-inner {
+  position: relative;
   max-width: var(--header-width);
   margin: 0 auto;
-  padding: 20px 24px 0;
+  padding: 22px 24px 0;
+  text-align: center;
 }
 
 .site-head-top {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
+  display: block;
 }
 
 .site-wordmark,
@@ -39,23 +41,25 @@
 .site-wordmark:hover { color: var(--accent); }
 
 .site-auth {
+  position: absolute;
+  top: 24px;
+  right: 24px;
   display: flex;
   align-items: baseline;
   gap: 10px;
-  flex-wrap: wrap;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--muted);
 }
-.site-auth-note { color: var(--muted); font-size: 14px; }
+.site-auth-note { color: var(--muted); font-size: 13px; }
 .site-auth-link,
 .site-auth-link:visited {
   border: none;
-  border-bottom: 1px solid currentColor;
+  border-bottom: 1px solid var(--rule);
   background: none;
   padding: 0;
-  color: var(--accent);
+  color: var(--muted);
   font-family: inherit;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -64,10 +68,11 @@
 .site-nav {
   display: flex;
   align-items: baseline;
-  gap: 6px 26px;
+  justify-content: center;
+  gap: 6px 32px;
   flex-wrap: wrap;
-  margin-top: 16px;
-  padding-bottom: 14px;
+  margin-top: 14px;
+  padding-bottom: 16px;
   font-size: 16px;
 }
 .site-nav a,
@@ -2709,10 +2714,21 @@
     font-size: 16px;
   }
 
+  /* 移动端:招牌 → 导航 → 登录小字,自上而下同一中轴。 */
+  .site-header-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .site-head-top { display: contents; }
+  .site-nav { order: 2; padding-bottom: 4px; }
   .site-auth {
+    position: static;
+    order: 3;
     width: auto;
     justify-content: center;
     gap: 10px;
+    margin: 2px 0 12px;
   }
 
   .site-header-tools {
@@ -3621,7 +3637,7 @@
   font-size: 24px;
   font-weight: 500;
 }
-.home-theorem-prelude { margin: 0 0 14px; color: var(--ink); }
+.home-theorem-prelude { margin: 0 0 14px; color: var(--ink); text-wrap: balance; }
 .home-theorem-formula { margin: 8px 0 18px; text-align: center; color: var(--ink); overflow-x: auto; }
 .home-theorem-note { margin: 0; color: var(--muted); font-size: 15px; }
 
