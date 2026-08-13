@@ -56,7 +56,7 @@ export default function Home() {
       </header>
 
       <section className="home-theorem" aria-label="每日定理">
-        <p className="home-theorem-kicker">每日定理</p>
+        <p className="home-theorem-kicker"><span lang="fr">Rappel mathématique</span> · 每日定理</p>
         <h2 className="home-theorem-title">{dailyTheorem.title}</h2>
         <p className="home-theorem-prelude">{dailyTheorem.prelude}</p>
         <div

@@ -81,6 +81,8 @@
   color: var(--muted);
   white-space: nowrap;
 }
+/* 法语在功能文本中的衬体:全站法语一律斜体(与副题/kicker 同语法)。 */
+.site-nav-fr { font-style: italic; }
 .site-nav a:hover { color: var(--ink); }
 .site-nav a.is-active {
   color: var(--accent);
@@ -154,7 +156,7 @@
 }
 
 .title-page h1 {
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 40px;
   letter-spacing: 0.02em;
 }
@@ -429,7 +431,7 @@
 }
 
 .page-header h1 {
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 34px;
 }
 
@@ -469,7 +471,7 @@
 
 .section-title {
   margin-bottom: 24px;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 30px;
 }
 
@@ -538,7 +540,7 @@
   padding: 16px 20px;
   border-bottom: none;
   color: var(--accent);
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 30px;
   line-height: 1.2;
   text-align: center;
@@ -581,7 +583,7 @@
 
 .manage-desk-heading {
   margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 18px;
   font-weight: 500;
 }
@@ -708,7 +710,7 @@
 
 .editorial-centerpiece-title {
   margin-bottom: 10px;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 34px;
 }
 
@@ -992,7 +994,7 @@
 
 .reading-line-title {
   margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 22px;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -1123,7 +1125,7 @@
   border: 1px solid #d0c9be;
   background: transparent;
   color: var(--ink);
-  font-family: "EB Garamond", "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "EB Garamond", "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 18px;
   resize: none;
 }
@@ -1274,7 +1276,7 @@
 
 .submission-receipt-title {
   margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 24px;
   font-weight: 500;
   line-height: 1.25;
@@ -1468,7 +1470,7 @@
 }
 
 .hackathon-hero h1 {
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 52px;
   letter-spacing: 0;
 }
@@ -1585,7 +1587,7 @@
 .hackathon-section h2 {
   max-width: 760px;
   margin-bottom: 24px;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 32px;
   letter-spacing: 0;
 }
@@ -2783,7 +2785,7 @@
 .vocab-study-rule { width: 54px; height: 3px; background: var(--accent); margin: 18px auto 0; }
 .vocab-study-zh {
   margin: 24px 0 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 26px;
   color: var(--ink);
 }
@@ -2837,7 +2839,7 @@
 }
 .vocab-cue {
   margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 38px;
   font-weight: 500;
 }
@@ -2883,7 +2885,7 @@
   border-top: 1px solid var(--rule);
   background: transparent;
   color: var(--ink);
-  font-family: "EB Garamond", "Noto Serif SC", serif;
+  font-family: "EB Garamond", "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 19px;
   cursor: pointer;
   transition: background 0.12s ease;
@@ -2971,7 +2973,7 @@
   border-radius: 2px;
   background: transparent;
   color: var(--ink);
-  font-family: "EB Garamond", "Noto Serif SC", serif;
+  font-family: "EB Garamond", "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 18px;
   cursor: pointer;
   transition: color 0.15s ease, border-color 0.15s ease;
@@ -3012,7 +3014,7 @@
 }
 .vocab-fb-verdict {
   margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 26px;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -3021,7 +3023,7 @@
 .vocab-fb.is-no .vocab-fb-verdict { color: var(--accent); }
 .vocab-fb-answer { margin: 14px 0 0; font-size: 18px; color: var(--ink); }
 .vocab-fb-answer span[lang="fr"] { color: var(--accent); font-weight: 500; }
-.vocab-fb-gloss { color: var(--muted); font-family: "Noto Serif SC", serif; font-size: 16px; }
+.vocab-fb-gloss { color: var(--muted); font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif; font-size: 16px; }
 .vocab-fb-actions { margin-top: 22px; }
 .vocab-explain,
 .vocab-explain:visited { display: inline-block; margin-left: 18px; border-bottom: 1px solid var(--rule); color: var(--muted); font-size: 14px; }
@@ -3045,7 +3047,7 @@
 .vocab-done { margin-top: 48px; text-align: center; }
 .vocab-done-score {
   margin: 10px 0 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 34px;
   font-weight: 500;
 }
@@ -3067,7 +3069,7 @@
   border-top: 1px solid var(--rule);
 }
 .vocab-review-row span[lang="fr"] { font-size: 18px; }
-.vocab-review-zh { color: var(--muted); font-family: "Noto Serif SC", serif; font-size: 16px; }
+.vocab-review-zh { color: var(--muted); font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif; font-size: 16px; }
 .vocab-done-actions {
   margin-top: 36px;
   display: flex;
@@ -3115,7 +3117,7 @@
 .home-cover { text-align: center; }
 .home-cover-title {
   margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 40px;
   font-weight: 500;
   line-height: 1.18;
@@ -3138,7 +3140,7 @@
 .home-theorem-kicker { margin: 0 0 8px; color: var(--accent); font-size: 14px; font-style: italic; }
 .home-theorem-title {
   margin: 0 0 8px;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 24px;
   font-weight: 500;
 }
@@ -3236,7 +3238,7 @@
 /* ── 404 NotFound (centered) ────────────────────────────────────────── */
 .notfound-page { text-align: center; }
 .notfound-code { margin: 0; font-family: "JetBrains Mono", monospace; font-size: 13px; letter-spacing: 0.3em; color: var(--accent); }
-.notfound-title { margin: 18px 0 0; font-family: "Noto Serif SC", "Source Han Serif SC", serif; font-size: 36px; font-weight: 500; }
+.notfound-title { margin: 18px 0 0; font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif; font-size: 36px; font-weight: 500; }
 .notfound-sub { margin: 10px 0 0; color: var(--muted); font-size: 18px; }
 .notfound-quote { margin: 30px auto 0; max-width: 34rem; color: var(--ink); font-style: italic; font-size: 19px; line-height: 1.55; }
 .notfound-quote-zh { margin: 10px auto 0; max-width: 30rem; color: var(--muted); font-size: 15px; }
@@ -3267,7 +3269,7 @@
 .pl-eyebrow { margin: 0; font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
 .pl-body { min-height: 128px; display: flex; flex-direction: column; justify-content: center; margin-top: 34px; }
 .pl-fr { margin: 0; font-style: italic; font-size: 19px; line-height: 1.5; color: var(--accent); animation: pl-fade 0.5s ease both; }
-.pl-zh { margin: 12px 0 0; font-family: "Noto Serif SC", "Source Han Serif SC", serif; font-size: 22px; line-height: 1.5; color: var(--ink); animation: pl-fade 0.5s ease both; }
+.pl-zh { margin: 12px 0 0; font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif; font-size: 22px; line-height: 1.5; color: var(--ink); animation: pl-fade 0.5s ease both; }
 .pl-note { margin: 14px 0 0; color: var(--muted); font-size: 13px; animation: pl-fade 0.5s ease both; }
 .pl-foot { margin-top: 40px; display: flex; align-items: center; gap: 16px; justify-content: center; }
 .pl-track { position: relative; width: 140px; height: 2px; background: rgba(26, 26, 26, 0.1); overflow: hidden; }
@@ -3292,7 +3294,7 @@
 }
 .biblio-title {
   margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 36px;
   font-weight: 500;
   line-height: 1.2;
@@ -3323,7 +3325,7 @@
 .biblio-shelf-head { display: flex; align-items: baseline; gap: 12px; justify-content: center; }
 .biblio-shelf-title {
   margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 26px;
   font-weight: 500;
 }
@@ -3364,7 +3366,7 @@
 }
 .login-title {
   margin: 0;
-  font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+  font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
   font-size: 30px;
   font-weight: 500;
 }
