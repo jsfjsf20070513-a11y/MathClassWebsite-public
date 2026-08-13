@@ -29,18 +29,6 @@ export default function Layout() {
         <div className="site-header-inner">
           <div className="site-head-top">
             <Link to="/" className="site-wordmark">Carnet de classe</Link>
-            <div className="site-auth">
-              {user ? (
-                <>
-                  <span className="site-auth-note">已登录 · {displayName}</span>
-                  <button type="button" className="site-auth-link" onClick={() => signOut()}>退出</button>
-                </>
-              ) : isAuthEnabled ? (
-                <Link to="/login" className="site-auth-link"><span lang="fr">Connexion</span> · 登录</Link>
-              ) : (
-                <span className="site-auth-note">登录未启用</span>
-              )}
-            </div>
           </div>
 
           <nav className="site-nav" aria-label="全站导航 · Plan du site">
@@ -72,6 +60,19 @@ export default function Layout() {
         <p className="site-footer-secondary">Pour la classe.</p>
         <p className="site-footer-link">
           <Link to="/resources"><span className="site-nav-fr" lang="fr">Bibliothèque</span> · 资源与书目</Link>
+        </p>
+        {/* 登录是页脚的功能小字,不参与页眉构图(背词页自身另有登录门)。 */}
+        <p className="site-footer-auth">
+          {user ? (
+            <>
+              <span className="site-auth-note">已登录 · {displayName}</span>
+              <button type="button" className="site-auth-link" onClick={() => signOut()}>退出</button>
+            </>
+          ) : isAuthEnabled ? (
+            <Link to="/login" className="site-auth-link"><span className="site-nav-fr" lang="fr">Connexion</span> · 登录</Link>
+          ) : (
+            <span className="site-auth-note">登录未启用</span>
+          )}
         </p>
       </footer>
     </div>

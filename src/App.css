@@ -40,13 +40,12 @@
 }
 .site-wordmark:hover { color: var(--accent); }
 
-.site-auth {
-  position: absolute;
-  top: 24px;
-  right: 24px;
+.site-footer-auth {
   display: flex;
   align-items: baseline;
+  justify-content: center;
   gap: 10px;
+  margin-top: 10px;
   font-size: 13px;
   color: var(--muted);
 }
@@ -81,8 +80,6 @@
   color: var(--muted);
   white-space: nowrap;
 }
-/* 法语在功能文本中的衬体:全站法语一律斜体(与副题/kicker 同语法)。 */
-.site-nav-fr { font-style: italic; }
 .site-nav a:hover { color: var(--ink); }
 .site-nav a.is-active {
   color: var(--accent);
@@ -108,7 +105,7 @@
 }
 
 .site-footer-secondary {
-  font-style: italic;
+ 
 }
 
 .site-footer-rule {
@@ -140,7 +137,7 @@
 .notfound-page { max-width: 680px; }   /* 404 */
 
 .home-page {
-  padding-top: 96px;
+  padding-top: 72px;
 }
 
 .title-page {
@@ -165,7 +162,7 @@
   margin: 10px 0 0;
   color: var(--muted);
   font-size: 17px;
-  font-style: italic;
+ 
   letter-spacing: 0.03em;
 }
 
@@ -211,7 +208,7 @@
   color: var(--accent);
   font-family: inherit;
   font-size: 15px;
-  font-style: italic;
+ 
   letter-spacing: 0.02em;
   cursor: pointer;
   transition: color 0.18s ease, border-color 0.18s ease;
@@ -286,7 +283,7 @@
   margin: 0 0 8px;
   color: var(--accent);
   font-size: 14px;
-  font-style: italic;
+ 
 }
 
 .daily-entry h2 {
@@ -313,7 +310,7 @@
 }
 
 .daily-entry-quote {
-  font-style: italic;
+ 
 }
 
 .daily-entry-meta {
@@ -336,7 +333,7 @@
   cursor: pointer;
   color: var(--accent);
   font-size: 15px;
-  font-style: italic;
+ 
   letter-spacing: 0.02em;
   user-select: none;
   transition: color 0.18s ease;
@@ -491,12 +488,12 @@
   margin: 0 0 8px;
   color: var(--accent);
   font-size: 13px;
-  font-style: italic;
+ 
 }
 
 .section-coda-quote {
   margin: 0 0 8px;
-  font-style: italic;
+ 
 }
 
 .section-coda-translation {
@@ -1835,7 +1832,7 @@
   gap: 4px;
   color: var(--accent);
   font-size: 13px;
-  font-style: italic;
+ 
   border-bottom: 1px solid currentColor;
 }
 
@@ -1997,7 +1994,7 @@
 .web3-class-letter-kicker {
   margin: 0 0 14px;
   color: var(--accent);
-  font-style: italic;
+ 
   font-size: 13px;
   font-variant: small-caps;
   letter-spacing: 0.08em;
@@ -2005,7 +2002,7 @@
 
 .web3-class-letter-pull {
   margin: 22px 0;
-  font-style: italic;
+ 
   font-size: 18px;
   color: var(--accent);
   text-align: center;
@@ -2291,22 +2288,7 @@
     font-size: 16px;
   }
 
-  /* 移动端:招牌 → 导航 → 登录小字,自上而下同一中轴。 */
-  .site-header-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .site-head-top { display: contents; }
-  .site-nav { order: 2; padding-bottom: 4px; }
-  .site-auth {
-    position: static;
-    order: 3;
-    width: auto;
-    justify-content: center;
-    gap: 10px;
-    margin: 2px 0 12px;
-  }
+  .site-nav { padding-bottom: 12px; }
 
   .site-header-tools {
     flex-direction: row;
@@ -2772,7 +2754,7 @@
   flex-wrap: wrap;
 }
 .vocab-study-title h2 { margin: 0; font-size: 48px; font-weight: 500; line-height: 1; }
-.vocab-study-pos { font-style: italic; font-size: 18px; color: var(--muted); }
+.vocab-study-pos { font-size: 18px; color: var(--muted); }
 .vocab-study-tag {
   align-self: center;
   font-family: "JetBrains Mono", monospace;
@@ -2792,7 +2774,7 @@
 .vocab-study-example {
   margin: 16px auto 0;
   max-width: 30rem;
-  font-style: italic;
+ 
   font-size: 17px;
   line-height: 1.6;
   color: var(--muted);
@@ -2811,7 +2793,7 @@
   margin: 0 0 22px;
   color: var(--accent);
   font-size: 13px;
-  font-style: italic;
+ 
 }
 .vocab-prompt-sub {
   margin: 6px 0 0;
@@ -2917,7 +2899,7 @@
   text-align: center;
   color: var(--ink);
 }
-.vocab-input::placeholder { color: rgba(26, 26, 26, 0.3); font-style: italic; }
+.vocab-input::placeholder { color: rgba(26, 26, 26, 0.3); }
 .vocab-input:focus { outline: none; border-bottom-color: var(--accent); }
 
 .vocab-grade { margin-top: 28px; }
@@ -2966,7 +2948,7 @@
   gap: 11px;
   justify-content: center;
 }
-.vocab-build-placeholder { color: var(--muted); font-style: italic; }
+.vocab-build-placeholder { color: var(--muted); }
 .vocab-tile {
   padding: 8px 16px;
   border: 1px solid rgba(26, 26, 26, 0.2);
@@ -3118,17 +3100,18 @@
 .home-cover-title {
   margin: 0;
   font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
-  font-size: 40px;
-  font-weight: 500;
+  font-size: 46px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
   line-height: 1.18;
 }
-.home-cover-subtitle { margin: 16px 0 0; color: var(--muted); font-size: 21px; font-style: italic; }
+.home-cover-subtitle { margin: 14px 0 0; color: var(--muted); font-size: 20px; }
+/* 刊头日期行:汉字纪年 + 法语刊期,与封面同一衬线声部,不再用等宽体。 */
 .home-cover-edition {
-  margin: 22px 0 0;
+  margin: 18px 0 0;
   color: var(--muted);
-  font-family: "JetBrains Mono", monospace;
-  font-size: 12px;
-  letter-spacing: 0.08em;
+  font-size: 14px;
+  letter-spacing: 0.05em;
 }
 
 .home-theorem {
@@ -3137,7 +3120,7 @@
   border-top: 1px solid var(--rule);
   text-align: center;
 }
-.home-theorem-kicker { margin: 0 0 8px; color: var(--accent); font-size: 14px; font-style: italic; }
+.home-theorem-kicker { margin: 0 0 8px; color: var(--accent); font-size: 14px; }
 .home-theorem-title {
   margin: 0 0 8px;
   font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
@@ -3148,64 +3131,79 @@
 .home-theorem-formula { margin: 8px 0 18px; text-align: center; color: var(--ink); overflow-x: auto; }
 .home-theorem-note { margin: 0; color: var(--muted); font-size: 15px; }
 
-.home-proof { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--rule); }
+.home-proof { margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--rule); text-align: center; }
 .home-proof summary {
   display: inline-flex;
   align-items: baseline;
-  gap: 8px;
-  color: var(--accent);
+  gap: 7px;
+  color: var(--muted);
   font-size: 15px;
-  font-style: italic;
   letter-spacing: 0.02em;
   cursor: pointer;
   list-style: none;
 }
 .home-proof summary::-webkit-details-marker { display: none; }
-.home-proof summary > span:first-child { font-style: normal; }
-.home-proof-body { margin: 14px 0 0; display: grid; gap: 18px; text-align: left; }
-.home-proof-body .theorem-explanation-block { max-width: 34rem; margin: 0 auto; }
-.home-proof-body .theorem-explanation-lang { text-align: center; }
+.home-proof summary:hover { color: var(--accent); }
+.home-proof-mark::before {
+  content: "+";
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  color: var(--accent);
+}
+.home-proof[open] .home-proof-mark::before { content: "−"; }
 
-/* Numbered proof steps — one move per line, ①②③④ in the margin. */
+/* 证明思路 = 注文:比正文小一号、行距放宽;中文步骤以汉字序数朱笔标目,
+   法文步骤以 Garamond 斜体旧式数字——同一份推理,两种书页传统。 */
+.home-proof-body { margin: 24px 0 0; display: grid; gap: 32px; text-align: left; }
+.home-proof-body .theorem-explanation-block { max-width: 34rem; width: 100%; margin: 0 auto; }
+.home-proof-body .theorem-explanation-lang {
+  margin: 0 0 14px;
+  text-align: center;
+  color: var(--muted);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
 .home-proof-steps {
   list-style: none;
-  margin: 10px 0 0;
+  margin: 0;
   padding: 0;
   counter-reset: proof-step;
   text-align: left;
+  font-size: 16px;
 }
 .home-proof-steps > li {
   counter-increment: proof-step;
   position: relative;
-  margin: 0 0 12px;
-  padding-left: 2.1rem;
-  line-height: 1.6;
+  margin: 0 0 14px;
+  padding-left: 2.6rem;
+  line-height: 1.85;
 }
 .home-proof-steps > li:last-child { margin-bottom: 0; }
 .home-proof-steps > li::before {
-  content: counter(proof-step);
+  content: counter(proof-step, cjk-decimal) "、";
   position: absolute;
   left: 0;
-  top: 0.12em;
-  width: 1.45rem;
-  height: 1.45rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--accent);
-  border-radius: 50%;
+  top: 0;
+  width: 2.2rem;
   color: var(--accent);
-  font-family: "JetBrains Mono", monospace;
-  font-size: 12px;
-  line-height: 1;
+  font-size: 15px;
 }
+.home-proof-steps[lang="fr"] > li::before {
+  content: counter(proof-step) ".";
+  font-family: "EB Garamond", serif;
+ 
+}
+/* 行内公式与注文同高,不再跳出行距。 */
+.home-proof-steps .katex { font-size: 1.04em; }
 .home-proof-credit {
-  margin: 0;
+  margin: 6px 0 0;
   text-align: center;
   color: var(--muted);
   font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
-  letter-spacing: 0.04em;
+  font-size: 10px;
+  letter-spacing: 0.08em;
 }
 
 .home-meditation {
@@ -3224,7 +3222,7 @@
 .home-meditation .section-coda-quote {
   margin: 0 auto;
   max-width: 34rem;
-  font-style: italic;
+ 
   font-size: 19px;
   line-height: 1.55;
 }
@@ -3240,7 +3238,7 @@
 .notfound-code { margin: 0; font-family: "JetBrains Mono", monospace; font-size: 13px; letter-spacing: 0.3em; color: var(--accent); }
 .notfound-title { margin: 18px 0 0; font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif; font-size: 36px; font-weight: 500; }
 .notfound-sub { margin: 10px 0 0; color: var(--muted); font-size: 18px; }
-.notfound-quote { margin: 30px auto 0; max-width: 34rem; color: var(--ink); font-style: italic; font-size: 19px; line-height: 1.55; }
+.notfound-quote { margin: 30px auto 0; max-width: 34rem; color: var(--ink); font-size: 19px; line-height: 1.55; }
 .notfound-quote-zh { margin: 10px auto 0; max-width: 30rem; color: var(--muted); font-size: 15px; }
 .notfound-rule { height: 1px; width: 64px; background: var(--rule); margin: 34px auto; }
 .notfound-lead { margin: 0 auto 18px; max-width: 32rem; color: var(--muted); font-size: 16px; }
@@ -3268,7 +3266,7 @@
 .pl-shell { max-width: 440px; width: 100%; text-align: center; }
 .pl-eyebrow { margin: 0; font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
 .pl-body { min-height: 128px; display: flex; flex-direction: column; justify-content: center; margin-top: 34px; }
-.pl-fr { margin: 0; font-style: italic; font-size: 19px; line-height: 1.5; color: var(--accent); animation: pl-fade 0.5s ease both; }
+.pl-fr { margin: 0; font-size: 19px; line-height: 1.5; color: var(--accent); animation: pl-fade 0.5s ease both; }
 .pl-zh { margin: 12px 0 0; font-family: "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif; font-size: 22px; line-height: 1.5; color: var(--ink); animation: pl-fade 0.5s ease both; }
 .pl-note { margin: 14px 0 0; color: var(--muted); font-size: 13px; animation: pl-fade 0.5s ease both; }
 .pl-foot { margin-top: 40px; display: flex; align-items: center; gap: 16px; justify-content: center; }
@@ -3299,7 +3297,7 @@
   font-weight: 500;
   line-height: 1.2;
 }
-.biblio-quote { margin: 16px auto 0; max-width: 34rem; color: var(--muted); font-size: 17px; font-style: italic; }
+.biblio-quote { margin: 16px auto 0; max-width: 34rem; color: var(--muted); font-size: 17px; }
 .biblio-quote-zh { margin: 6px auto 0; max-width: 30rem; color: var(--muted); font-size: 15px; }
 
 .biblio-index { margin-top: 56px; }
@@ -3432,7 +3430,7 @@
 .curate-form select:focus,
 .curate-form textarea:focus { outline: none; border-bottom-color: var(--accent); }
 .curate-actions { margin-top: 8px; gap: 24px; align-items: baseline; justify-content: center; }
-.curate-note { margin: 8px 0 0; color: var(--muted); font-size: 13px; font-style: italic; }
+.curate-note { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
 
 /* ── Login · value-prop bullets (login mode) ───────────────────────── */
 .login-values {
@@ -3467,7 +3465,7 @@
   color: var(--accent);
 }
 .assistant-title { font-size: 30px; font-weight: 500; margin: 0 0 8px; }
-.assistant-subtitle { color: var(--muted); font-style: italic; margin: 0; }
+.assistant-subtitle { color: var(--muted); margin: 0; }
 .assistant-gate { text-align: center; margin-top: 40px; color: var(--muted); }
 .assistant-link { color: var(--accent); }
 
