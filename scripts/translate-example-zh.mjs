@@ -17,7 +17,7 @@ import { argv, exit } from 'node:process'
 const SOURCE = new URL('./vocab-source.json', import.meta.url)
 const ENDPOINT = 'https://rucmathclass.com/api/chat'
 const BATCH_SIZE = 35
-const PAUSE_MS = 2300
+const PAUSE_MS = 4500
 const LEVEL_ORDER = { A1: 0, A2: 1, B1: 2, B2: 3, C1: 4, C2: 5 }
 const PRIORITY_TAGS = new Set(['math', 'mathématiques', 'logique'])
 
@@ -58,11 +58,21 @@ function extractJson(text) {
 const HAS_CJK = /[一-鿿]/
 
 async function translateBatch(batch, attempt = 1) {
-  const res = await fetch(ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages: [{ role: 'user', content: buildPrompt(batch) }] }),
-  })
+  let res
+  try {
+    res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: [{ role: 'user', content: buildPrompt(batch) }] }),
+    })
+  } catch (err) {
+    // 网络层失败(连接被边缘保护掐断等):指数退避后重试,最多 3 次。
+    if (attempt > 3) throw new Error(`网络失败(${err.message},重试后仍失败)`)
+    const wait = attempt * 90000
+    console.log(`  网络失败,等待 ${wait / 1000}s 重试(第 ${attempt} 次)…`)
+    await sleep(wait)
+    return translateBatch(batch, attempt + 1)
+  }
   if (res.status === 429 || res.status >= 500) {
     if (attempt > 2) throw new Error(`HTTP ${res.status}(重试后仍失败)`)
     console.log(`  HTTP ${res.status},等待 65s 重试…`)
