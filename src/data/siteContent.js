@@ -697,4 +697,204 @@ export const dailyFrenchPhrases = [
     text: 'Apprendre une langue, c’est aussi découvrir un autre rythme pour la précision.',
     note: '学一门语言，也是在发现另一种通往精确的节奏。',
   },
+  {
+    title: 'Meditation du jour',
+    text: 'Un contre-exemple bien choisi enseigne plus qu’une longue défense.',
+    note: '一个选得好的反例,胜过一场冗长的辩护。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Définir, c’est préparer une chambre où la pensée pourra loger.',
+    note: '下定义,是为思想预备一间可以安身的屋子。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'L’intuition arrive la première; la preuve lui apprend à marcher.',
+    note: '直觉总是先到,证明教它走路。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Une erreur corrigée éclaire plus loin qu’une réussite muette.',
+    note: '一个被改正的错误,比一次沉默的成功照得更远。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Le tableau s’efface; ce qui a été compris reste.',
+    note: '黑板可以擦去,被理解的东西留下来。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Le brouillon n’est pas l’envers du travail; il en est le lieu véritable.',
+    note: '草稿不是正文的反面,它才是工作真正发生的地方。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'La symétrie plaît parce qu’elle promet qu’aucun côté n’a été oublié.',
+    note: '对称之所以悦目,是因为它承诺没有哪一边被遗忘。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'S’approcher sans jamais atteindre: la limite enseigne aussi une conduite.',
+    note: '不断逼近而永不抵达——极限教的也是一种处世。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Devant l’infini, la seule politesse est la précision.',
+    note: '面对无穷,唯一的礼貌是精确。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Une bonne notation pense déjà à moitié pour nous.',
+    note: '一个好记号,已经替我们完成了一半思考。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Abstraire n’est pas fuir le monde; c’est le tenir par ce qui ne change pas.',
+    note: '抽象不是逃离世界,而是握住它不变的部分。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Un exemple bien choisi est une fenêtre; il ne remplace pas la maison.',
+    note: '恰当的例子是一扇窗,但它代替不了房子。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Une conjecture est une promesse que l’on se fait d’être patient.',
+    note: '猜想是对自己许下的耐心之约。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'L’élégance commence quand il n’y a plus rien à retirer.',
+    note: '当再无一物可删,优雅才开始。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'L’induction avance comme on monte un escalier: une marche, puis la confiance.',
+    note: '归纳像上楼梯:先一级台阶,然后是信任。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Il y a des jours où être présent est déjà tout le travail.',
+    note: '有些日子,到场本身就是全部功课。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Le matin prête aux idées une netteté qu’il faut cueillir tôt.',
+    note: '清晨借给思想一种清亮,要趁早去取。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Traduire, c’est comprendre deux fois.',
+    note: '翻译,是理解两遍。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Deux langues ne disent pas deux vérités; elles éclairent la même de deux côtés.',
+    note: '两种语言说的不是两个真理,而是从两侧照亮同一个。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Prononcer un mot juste, c’est lui donner un corps.',
+    note: '把一个词读准,是给它一副身体。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'L’oubli n’est pas l’ennemi de la mémoire; il est son tri.',
+    note: '遗忘不是记忆的敌人,而是它的筛选。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Une bonne question survit à toutes ses réponses.',
+    note: '一个好问题,比它所有的答案都活得久。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Se taire en cours n’est pas s’absenter; c’est parfois travailler au plus près.',
+    note: '课上的沉默不是缺席,有时是最贴近的用功。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'L’écriture à la main ralentit la pensée jusqu’à sa vraie vitesse.',
+    note: '手写把思想放慢,慢到它真实的速度。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Les outils simples laissent toute la difficulté à la pensée: c’est leur mérite.',
+    note: '简单的工具把全部难度留给思想——这正是它们的好处。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'La marge n’est pas du papier perdu; c’est la respiration de la page.',
+    note: '页边不是浪费的纸,是页面的呼吸。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Suivre le chemin d’un autre apprend aussi le sien.',
+    note: '沿着别人的路走一遍,也认得了自己的路。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Expliquer à autrui, c’est ranger enfin sa propre maison.',
+    note: '向别人讲清楚,是终于收拾了自己的屋子。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'La hâte lit deux fois moins et oublie deux fois plus.',
+    note: '匆忙读得少一半,忘得多一倍。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'L’ordre ne contraint pas l’attention; il la libère.',
+    note: '秩序不束缚注意力,它释放注意力。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Regarder par la fenêtre fait parfois partie de la démonstration.',
+    note: '望望窗外,有时也是证明的一部分。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Certains problèmes se résolvent au pas de promenade.',
+    note: '有些问题,是在散步的步幅里解开的。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Chaque matin, il faut rouvrir le cahier comme si la veille avait porté conseil.',
+    note: '每天清晨重新打开本子,就当昨夜真的给出了忠告。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Bien finir, c’est s’arrêter sans geste superflu.',
+    note: '好的收尾,是不带多余动作地停住。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Ce qui reste constant permet à tout le reste de bouger.',
+    note: '有什么保持不变,其余的一切才敢移动。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'La continuité est une promesse: pas de saut sans prévenir.',
+    note: '连续是一种承诺:不打招呼,就不跳跃。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Une figure est une phrase qui se passe de mots.',
+    note: '图形是一句不需要词语的话。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Les faits simples méritent aussi d’être salués.',
+    note: '简单的事实,也值得郑重致意。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'La patience n’attend pas sans rien faire; elle prépare la place.',
+    note: '耐心不是干等,它在腾地方。',
+  },
+  {
+    title: 'Meditation du jour',
+    text: 'Relire ses notes, c’est rendre visite à celui qu’on était.',
+    note: '重读笔记,是去拜访从前的自己。',
+  },
 ]
