@@ -22,6 +22,12 @@ export const resourceCategories = [
         tag: '实分析',
       },
       {
+        title: 'Terence Tao — An Introduction to Measure Theory',
+        url: 'https://terrytao.wordpress.com/books/an-introduction-to-measure-theory/',
+        desc: '测度论成书草稿,可免费在线阅读;实变函数的现代参照。',
+        tag: '实分析',
+      },
+      {
         title: 'Exo7 — Analyse',
         url: 'http://exo7.emath.fr/',
         desc: '法语课程、习题、视频、讲义。',
@@ -127,6 +133,12 @@ export const resourceCategories = [
         title: 'MIT OCW — Introduction to Probability and Statistics',
         url: 'https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/',
         desc: '概率、统计、习题、试题。',
+        tag: '概率',
+      },
+      {
+        title: 'MIT OCW — Probability and Random Variables (18.600)',
+        url: 'https://ocw.mit.edu/courses/18-600-probability-and-random-variables-fall-2019/',
+        desc: '概率论主干课;讲义、习题与往年试题齐全。',
         tag: '概率',
       },
       {
@@ -256,6 +268,24 @@ export const resourceCategories = [
         tag: '法语数学',
       },
       {
+        title: 'BibM@th — La bibliothèque des mathématiques',
+        url: 'https://www.bibmath.net/',
+        desc: '法语数学词典与百科;查定义、定理的法语表述首选。',
+        tag: '法语数学',
+      },
+      {
+        title: 'Culture Math (ENS)',
+        url: 'https://culturemath.ens.fr/',
+        desc: 'ENS 出品的法语数学文章库;面向教学,难度友好。',
+        tag: '法语数学',
+      },
+      {
+        title: 'Images des Mathématiques (CNRS)',
+        url: 'https://images.math.cnrs.fr/',
+        desc: 'CNRS 的数学科普纵览;当纯法语阅读练习也极好。',
+        tag: '法语阅读',
+      },
+      {
         title: 'Bibmath',
         url: 'https://bibmath.net/',
         desc: '专题、习题、竞赛材料。',
@@ -352,10 +382,10 @@ export const resourceCategories = [
         tag: '机器学习',
       },
       {
-        title: 'Columbia COMS W4731 — Computer Vision I',
-        url: 'https://w4731.cs.columbia.edu/',
-        desc: 'notes、assignments、项目。',
-        tag: '计算机视觉',
+        title: 'Stanford CS231n — Deep Learning for Computer Vision',
+        url: 'https://cs231n.stanford.edu/',
+        desc: '视觉与深度学习经典课;讲义与作业公开。',
+        tag: '视觉',
       },
       {
         title: 'TensorFlow — Tutorials',
@@ -395,7 +425,7 @@ export const resourceCategories = [
       },
       {
         title: 'MIT OCW — Game Theory',
-        url: 'https://ocw.mit.edu/courses/14-126-game-theory-spring-2024/',
+        url: 'https://ocw.mit.edu/courses/14-126-game-theory-spring-2016/',
         desc: '静态、动态、均衡、重复博弈。',
         tag: '博弈',
       },
