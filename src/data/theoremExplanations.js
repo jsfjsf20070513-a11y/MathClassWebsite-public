@@ -374,11 +374,315 @@ export const theoremExplanations = {
       String.raw`L'équation $a(u,v)=L(v)$ devient $Au=f$ ; $A$ inversible donne l'existence et l'unicité de $u$.`,
     ],
   },
+  'Leibniz 判别法': {
+    zh: [
+      '偶部分和 $S_{2m}$ 单调递增,奇部分和 $S_{2m+1}$ 单调递减,且始终 $S_{2m}\\le S_{2m+1}$。',
+      '两列单调有界,各自收敛;其差 $S_{2m+1}-S_{2m}=a_{2m+1}\\to 0$,故极限相同,记为 $S$。',
+      '任意 $S_N$ 都被相邻两个部分和夹住,故 $S_N\\to S$。',
+      '由夹逼,$|S-S_N|\\le|S_{N+1}-S_N|=a_{N+1}$。',
+    ],
+    fr: [
+      'Les sommes partielles paires $S_{2m}$ croissent, les impaires $S_{2m+1}$ décroissent, et $S_{2m}\\le S_{2m+1}$.',
+      'Monotones et bornées, elles convergent; leur écart $a_{2m+1}$ tend vers $0$, donc la limite $S$ est commune.',
+      'Chaque $S_N$ est encadrée par deux sommes partielles consécutives, donc $S_N\\to S$.',
+      'L’encadrement donne $|S-S_N|\\le|S_{N+1}-S_N|=a_{N+1}$.',
+    ],
+  },
+  'd’Alembert 比值判别法': {
+    zh: [
+      '设 $\\ell<1$,取 $q$ 满足 $\\ell<q<1$;由极限定义,存在 $N$,当 $n\\ge N$ 时 $|a_{n+1}|\\le q\\,|a_n|$。',
+      '递推得 $|a_{N+k}|\\le q^k|a_N|$,与几何级数 $\\sum q^k$ 比较,$\\sum|a_n|$ 收敛。',
+      '若 $\\ell>1$,则从某项起 $|a_{n+1}|>|a_n|$,通项不趋于零,级数必发散。',
+    ],
+    fr: [
+      'Si $\\ell<1$, choisir $q$ avec $\\ell<q<1$: il existe $N$ tel que $|a_{n+1}|\\le q\\,|a_n|$ pour $n\\ge N$.',
+      'Par récurrence $|a_{N+k}|\\le q^k|a_N|$; la comparaison avec la série géométrique donne la convergence absolue.',
+      'Si $\\ell>1$, le terme général ne tend pas vers $0$: la série diverge.',
+    ],
+  },
+  'Weierstrass 优级数判别法': {
+    zh: [
+      '对任意 $x$ 与 $m<n$,有 $\\bigl|\\sum_{k=m+1}^{n}f_k(x)\\bigr|\\le\\sum_{k=m+1}^{n}M_k$,右端与 $x$ 无关。',
+      '$\\sum M_n$ 收敛,其部分和是 Cauchy 列,故右端可任意小。',
+      '于是 $\\sum f_n$ 的部分和在 $E$ 上一致满足 Cauchy 条件,由一致收敛的 Cauchy 准则得证。',
+    ],
+    fr: [
+      'Pour tout $x$ et $m<n$: $\\bigl|\\sum_{k=m+1}^{n}f_k(x)\\bigr|\\le\\sum_{k=m+1}^{n}M_k$, borne indépendante de $x$.',
+      'La série $\\sum M_n$ converge: ses sommes partielles forment une suite de Cauchy.',
+      'Le critère de Cauchy uniforme s’applique donc à $\\sum f_n$ sur $E$.',
+    ],
+  },
+  '一致极限的连续性': {
+    zh: [
+      '任取 $x_0$ 与 $\\varepsilon>0$;由一致收敛,存在 $N$ 使 $\\sup_x|f_N(x)-f(x)|<\\varepsilon/3$。',
+      '$f_N$ 在 $x_0$ 连续:存在 $\\delta$,当 $|x-x_0|<\\delta$ 时 $|f_N(x)-f_N(x_0)|<\\varepsilon/3$。',
+      '三段拼接:$|f(x)-f(x_0)|\\le|f-f_N|(x)+|f_N(x)-f_N(x_0)|+|f_N-f|(x_0)<\\varepsilon$。',
+    ],
+    fr: [
+      'Soit $x_0$ et $\\varepsilon>0$; par convergence uniforme, $\\sup_x|f_N(x)-f(x)|<\\varepsilon/3$ pour un certain $N$.',
+      'La continuité de $f_N$ en $x_0$ fournit $\\delta$ tel que $|f_N(x)-f_N(x_0)|<\\varepsilon/3$ si $|x-x_0|<\\delta$.',
+      'L’inégalité triangulaire en trois morceaux donne $|f(x)-f(x_0)|<\\varepsilon$.',
+    ],
+  },
+  'Cauchy–Hadamard 公式': {
+    zh: [
+      '设 $L=\\limsup\\sqrt[n]{|a_n|}$,$|x|<1/L$;取 $q$ 使 $|x|\\,L<q<1$。',
+      '由上极限定义,从某项起 $\\sqrt[n]{|a_n|}\\le q/|x|$,即 $|a_nx^n|\\le q^n$,与几何级数比较得绝对收敛。',
+      '若 $|x|>1/L$,则有无穷多个 $n$ 使 $\\sqrt[n]{|a_n|}>1/|x|$,即 $|a_nx^n|>1$,通项不趋于零,发散。',
+    ],
+    fr: [
+      'Soit $L=\\limsup\\sqrt[n]{|a_n|}$ et $|x|<1/L$; choisir $q$ avec $|x|\\,L<q<1$.',
+      'À partir d’un rang, $\\sqrt[n]{|a_n|}\\le q/|x|$, donc $|a_nx^n|\\le q^n$: convergence absolue par comparaison géométrique.',
+      'Si $|x|>1/L$, une infinité de termes vérifient $|a_nx^n|>1$: le terme général ne tend pas vers $0$.',
+    ],
+  },
+  'Abel 第一定理': {
+    zh: [
+      '$\\sum a_nx_0^n$ 收敛,故通项 $a_nx_0^n\\to 0$,从而有界:$|a_nx_0^n|\\le M$。',
+      '对 $|x|<|x_0|$,记 $q=|x|/|x_0|<1$,则 $|a_nx^n|=|a_nx_0^n|\\,q^n\\le Mq^n$。',
+      '与几何级数比较,$\\sum|a_nx^n|$ 收敛。',
+    ],
+    fr: [
+      'La convergence de $\\sum a_nx_0^n$ force $a_nx_0^n\\to 0$, donc $|a_nx_0^n|\\le M$.',
+      'Pour $|x|<|x_0|$, posons $q=|x|/|x_0|<1$: alors $|a_nx^n|\\le Mq^n$.',
+      'La comparaison avec la série géométrique conclut.',
+    ],
+  },
+  'Riemann 重排定理': {
+    zh: [
+      '条件收敛蕴含正部与负部各自发散到 $+\\infty$,而两者通项都趋于零。',
+      '给定目标 $S$:先取正项直到部分和首次超过 $S$,再取负项直到跌破 $S$,如此交替。',
+      '每次越过 $S$ 的幅度不超过刚用掉的那一项;通项趋零,故振荡幅度趋零。',
+      '于是重排后的部分和收敛于 $S$。',
+    ],
+    fr: [
+      'La convergence conditionnelle force les parties positive et négative à diverger, avec un terme général tendant vers $0$.',
+      'Pour viser $S$: prendre des termes positifs jusqu’à dépasser $S$, puis des négatifs jusqu’à repasser dessous, et alterner.',
+      'Chaque dépassement est majoré par le dernier terme utilisé, qui tend vers $0$.',
+      'Les sommes partielles réarrangées convergent donc vers $S$.',
+    ],
+  },
+  '隐函数定理(二元情形)': {
+    zh: [
+      '不妨设 $F_y(x_0,y_0)>0$;由连续性,在一个小矩形内恒有 $F_y>0$,故 $F$ 关于 $y$ 严格递增。',
+      '于是 $F(x_0,y_0\\pm\\delta)$ 一负一正;再由 $F$ 对 $x$ 连续,邻近的每个 $x$ 都有唯一 $y$ 使 $F(x,y)=0$,记 $y=\\varphi(x)$。',
+      '夹逼可证 $\\varphi$ 连续;对 $F(x,\\varphi(x))=0$ 用链式法则:$F_x+F_y\\varphi\\prime=0$。',
+      '解出 $\\varphi\\prime=-F_x/F_y$,右端连续,故 $\\varphi$ 连续可微。',
+    ],
+    fr: [
+      'Supposons $F_y(x_0,y_0)>0$: par continuité $F_y>0$ sur un petit rectangle, donc $F$ est strictement croissante en $y$.',
+      'Ainsi $F(x_0,y_0\\pm\\delta)$ change de signe; pour chaque $x$ voisin, un unique $y=\\varphi(x)$ annule $F$.',
+      'Un encadrement montre la continuité de $\\varphi$; la règle de la chaîne sur $F(x,\\varphi(x))=0$ donne $F_x+F_y\\varphi\\prime=0$.',
+      'D’où $\\varphi\\prime=-F_x/F_y$, continue: $\\varphi$ est de classe $C^1$.',
+    ],
+  },
+  'Schwarz 定理': {
+    zh: [
+      '考察二阶差商 $\\Delta=f(x+h,y+k)-f(x+h,y)-f(x,y+k)+f(x,y)$。',
+      '先对第一变量用中值定理,再对第二变量用一次:$\\Delta=f_{xy}(\\xi,\\eta)\\,hk$。',
+      '交换次序同理得 $\\Delta=f_{yx}(\\xi\\prime,\\eta\\prime)\\,hk$。',
+      '令 $(h,k)\\to(0,0)$,由两个混合偏导的连续性得 $f_{xy}=f_{yx}$。',
+    ],
+    fr: [
+      'Considérer l’accroissement double $\\Delta=f(x+h,y+k)-f(x+h,y)-f(x,y+k)+f(x,y)$.',
+      'Deux applications du théorème des accroissements finis donnent $\\Delta=f_{xy}(\\xi,\\eta)\\,hk$.',
+      'En échangeant l’ordre: $\\Delta=f_{yx}(\\xi\\prime,\\eta\\prime)\\,hk$.',
+      'Faire $(h,k)\\to(0,0)$ et utiliser la continuité des deux dérivées mixtes.',
+    ],
+  },
+  'Dini 定理': {
+    zh: [
+      '设 $g_n=f-f_n\\ge 0$ 连续且逐点递减趋于 $0$;取 $\\varepsilon>0$,令 $U_n=\\{x:g_n(x)<\\varepsilon\\}$。',
+      '每个 $U_n$ 开,且由单调性 $U_1\\subset U_2\\subset\\cdots$;逐点收敛使 $\\{U_n\\}$ 覆盖 $K$。',
+      '紧性给出有限子覆盖,故存在 $N$ 使 $U_N=K$,即 $n\\ge N$ 时 $\\sup_K g_n\\le\\varepsilon$。',
+    ],
+    fr: [
+      'Poser $g_n=f-f_n\\ge 0$, continues, décroissantes, tendant vers $0$; soit $U_n=\\{g_n<\\varepsilon\\}$.',
+      'Les $U_n$ sont ouverts, croissants, et recouvrent $K$ par convergence simple.',
+      'La compacité extrait un recouvrement fini: $U_N=K$, d’où $\\sup_K g_n\\le\\varepsilon$ pour $n\\ge N$.',
+    ],
+  },
+  '一致收敛下的逐项积分': {
+    zh: [
+      '一致收敛保证 $f$ 可积(Riemann 意义下可由 $f_n$ 的可积性传递)。',
+      '估计 $\\bigl|\\int_a^b f_n-\\int_a^b f\\bigr|\\le\\int_a^b|f_n-f|\\le (b-a)\\,\\sup|f_n-f|$。',
+      '右端由一致收敛趋于零,故积分收敛于 $\\int f$。',
+    ],
+    fr: [
+      'La convergence uniforme transmet l’intégrabilité de $f_n$ à $f$.',
+      'Majorer: $\\bigl|\\int f_n-\\int f\\bigr|\\le (b-a)\\,\\sup|f_n-f|$.',
+      'Le membre de droite tend vers $0$: les intégrales convergent.',
+    ],
+  },
+  'Dirichlet 收敛定理': {
+    zh: [
+      '部分和可写成与 Dirichlet 核的卷积:$S_Nf(x)=\\int f(x-t)D_N(t)\\,dt$,其中 $D_N$ 的积分恒为 $1$。',
+      '于是差 $S_Nf(x)-\\tfrac{f(x^-)+f(x^+)}{2}$ 化为一个带振荡因子 $\\sin\\bigl((N+\\tfrac12)t\\bigr)$ 的积分。',
+      '分段光滑性使被积的伴随因子可积;由 Riemann–Lebesgue 引理,该振荡积分趋于零。',
+    ],
+    fr: [
+      'La somme partielle est une convolution avec le noyau de Dirichlet: $S_Nf(x)=\\int f(x-t)D_N(t)\\,dt$, et $\\int D_N=1$.',
+      'L’écart à la moyenne des limites latérales devient une intégrale oscillante en $\\sin\\bigl((N+\\tfrac12)t\\bigr)$.',
+      'La régularité par morceaux rend le facteur intégrable: le lemme de Riemann–Lebesgue conclut.',
+    ],
+  },
+  '全概率公式': {
+    zh: [
+      '$A=A\\cap\\Omega=\\bigcup_i(A\\cap B_i)$,且诸 $A\\cap B_i$ 两两互斥。',
+      '由可加性,$P(A)=\\sum_iP(A\\cap B_i)$。',
+      '对每项用乘法公式 $P(A\\cap B_i)=P(B_i)P(A\\mid B_i)$(设 $P(B_i)>0$)。',
+    ],
+    fr: [
+      '$A=\\bigcup_i(A\\cap B_i)$, union disjointe.',
+      'L’additivité donne $P(A)=\\sum_iP(A\\cap B_i)$.',
+      'La formule du produit $P(A\\cap B_i)=P(B_i)P(A\\mid B_i)$ conclut.',
+    ],
+  },
+  'Borel–Cantelli 引理': {
+    zh: [
+      '事件"$A_n$ 发生无穷多次"即 $\\limsup A_n=\\bigcap_{m}\\bigcup_{n\\ge m}A_n$。',
+      '对每个 $m$,$P\\bigl(\\bigcup_{n\\ge m}A_n\\bigr)\\le\\sum_{n\\ge m}P(A_n)$。',
+      '级数收敛,尾和趋于零;令 $m\\to\\infty$ 得 $P(\\limsup A_n)=0$。',
+    ],
+    fr: [
+      '« $A_n$ a lieu une infinité de fois » s’écrit $\\limsup A_n=\\bigcap_m\\bigcup_{n\\ge m}A_n$.',
+      'Pour chaque $m$: $P\\bigl(\\bigcup_{n\\ge m}A_n\\bigr)\\le\\sum_{n\\ge m}P(A_n)$.',
+      'Le reste d’une série convergente tend vers $0$: faire $m\\to\\infty$.',
+    ],
+  },
+  'Poisson 极限定理': {
+    zh: [
+      '固定 $k$,把二项概率写开:$\\binom{n}{k}p_n^k(1-p_n)^{n-k}=\\frac{n(n-1)\\cdots(n-k+1)}{k!}\\,p_n^k\\,(1-p_n)^{n-k}$。',
+      '前一因子乘 $p_n^k$ 给出 $\\frac{(np_n)^k}{k!}\\prod_{j=0}^{k-1}\\bigl(1-\\tfrac{j}{n}\\bigr)\\to\\frac{\\lambda^k}{k!}$。',
+      '又 $(1-p_n)^{n-k}=\\exp\\bigl((n-k)\\ln(1-p_n)\\bigr)\\to e^{-\\lambda}$。',
+      '两极限相乘即得 Poisson 概率。',
+    ],
+    fr: [
+      'À $k$ fixé, développer le coefficient binomial et regrouper: $\\frac{(np_n)^k}{k!}\\prod_{j=0}^{k-1}\\bigl(1-\\tfrac{j}{n}\\bigr)\\,(1-p_n)^{n-k}$.',
+      'Le produit fini tend vers $1$ et $(np_n)^k\\to\\lambda^k$.',
+      'Enfin $(1-p_n)^{n-k}\\to e^{-\\lambda}$ par le logarithme.',
+      'D’où la limite $e^{-\\lambda}\\lambda^k/k!$.',
+    ],
+  },
+  '几何分布的无记忆性': {
+    zh: [
+      '几何分布的尾概率为 $P(X>n)=(1-p)^n$。',
+      '代入条件概率:$P(X>m+n\\mid X>m)=\\dfrac{(1-p)^{m+n}}{(1-p)^m}=(1-p)^n$。',
+      '反之,尾函数满足 $g(m+n)=g(m)g(n)$ 的离散解只有指数形式,故无记忆性刻画了几何分布。',
+    ],
+    fr: [
+      'La queue géométrique vaut $P(X>n)=(1-p)^n$.',
+      'Donc $P(X>m+n\\mid X>m)=\\dfrac{(1-p)^{m+n}}{(1-p)^m}=(1-p)^n$.',
+      'Réciproquement, $g(m+n)=g(m)g(n)$ n’a que des solutions exponentielles: la propriété caractérise la loi.',
+    ],
+  },
+  'Cantor 三分集': {
+    zh: [
+      '每步去掉中间三分之一:$C_n$ 由 $2^n$ 个长 $3^{-n}$ 的闭区间组成,总长 $(2/3)^n\\to 0$,故 $\\lambda(C)=0$。',
+      '$C$ 是闭集的交,故闭;它不含任何区间,无处稠密。',
+      '三进制刻画:$C$ 恰是可用 $0,2$ 两个数字写出的小数,与 $\\{0,2\\}^{\\mathbb N}$ 一一对应。',
+      '后者与 $\\{0,1\\}^{\\mathbb N}$ 等势,不可数。',
+    ],
+    fr: [
+      'À chaque étape on ôte le tiers médian: $C_n$ compte $2^n$ intervalles de longueur $3^{-n}$, de somme $(2/3)^n\\to 0$.',
+      'Intersection de fermés, $C$ est fermé et ne contient aucun intervalle.',
+      'En base $3$, $C$ est l’ensemble des développements n’utilisant que $0$ et $2$: bijection avec $\\{0,2\\}^{\\mathbb N}$.',
+      'Cet ensemble est équipotent à $\\{0,1\\}^{\\mathbb N}$: non dénombrable.',
+    ],
+  },
+  '单调收敛定理': {
+    zh: [
+      '单调性给出 $\\int f_n$ 递增且 $\\le\\int f$,故极限存在并有一侧不等式。',
+      '反向:取任意简单函数 $0\\le s\\le f$ 与 $c<1$,考察 $E_n=\\{f_n\\ge cs\\}$,它单调上升穷尽全空间。',
+      '$\\int f_n\\ge c\\int_{E_n}s$,令 $n\\to\\infty$ 再令 $c\\to 1$,对所有 $s$ 取上确界得 $\\lim\\int f_n\\ge\\int f$。',
+    ],
+    fr: [
+      'La monotonie donne $\\int f_n$ croissante, majorée par $\\int f$: une inégalité est acquise.',
+      'Pour l’autre: soit $s$ simple, $0\\le s\\le f$, $c<1$; les ensembles $E_n=\\{f_n\\ge cs\\}$ croissent vers tout l’espace.',
+      'Alors $\\int f_n\\ge c\\int_{E_n}s$; faire $n\\to\\infty$, puis $c\\to 1$, puis passer au sup sur $s$.',
+    ],
+  },
+  'Fatou 引理': {
+    zh: [
+      '令 $g_m=\\inf_{n\\ge m}f_n$,则 $g_m$ 非负、单调上升,且 $g_m\\uparrow\\liminf f_n$。',
+      '对 $g_m$ 用单调收敛定理:$\\int\\liminf f_n=\\lim_m\\int g_m$。',
+      '又 $g_m\\le f_n$ 对一切 $n\\ge m$,故 $\\int g_m\\le\\inf_{n\\ge m}\\int f_n$;取极限即得结论。',
+    ],
+    fr: [
+      'Poser $g_m=\\inf_{n\\ge m}f_n$: suite croissante de fonctions positives, $g_m\\uparrow\\liminf f_n$.',
+      'Le théorème de convergence monotone donne $\\int\\liminf f_n=\\lim_m\\int g_m$.',
+      'Comme $g_m\\le f_n$ pour $n\\ge m$, $\\int g_m\\le\\inf_{n\\ge m}\\int f_n$; passer à la limite.',
+    ],
+  },
+  '控制收敛定理': {
+    zh: [
+      '由 $|f_n|\\le g$ 得 $g\\pm f_n\\ge 0$,可对它们用 Fatou 引理。',
+      '对 $g+f_n$:$\\int g+\\int f\\le\\int g+\\liminf\\int f_n$,即 $\\int f\\le\\liminf\\int f_n$。',
+      '对 $g-f_n$:同理得 $\\limsup\\int f_n\\le\\int f$。',
+      '两侧夹逼,极限存在且等于 $\\int f$。',
+    ],
+    fr: [
+      'De $|f_n|\\le g$ on tire $g\\pm f_n\\ge 0$: Fatou s’applique.',
+      'Avec $g+f_n$: $\\int f\\le\\liminf\\int f_n$.',
+      'Avec $g-f_n$: $\\limsup\\int f_n\\le\\int f$.',
+      'L’encadrement force la convergence des intégrales vers $\\int f$.',
+    ],
+  },
+  'Lagrange 定理(群论)': {
+    zh: [
+      '在 $G$ 上定义关系 $a\\sim b\\iff a^{-1}b\\in H$;这是等价关系,其等价类是左陪集 $aH$。',
+      '映射 $h\\mapsto ah$ 是 $H$ 到 $aH$ 的双射,故每个陪集都恰有 $|H|$ 个元素。',
+      '诸陪集划分 $G$,设共 $k$ 个,则 $|G|=k\\,|H|$。',
+    ],
+    fr: [
+      'La relation $a\\sim b\\iff a^{-1}b\\in H$ est une équivalence; ses classes sont les classes à gauche $aH$.',
+      '$h\\mapsto ah$ est une bijection de $H$ sur $aH$: toutes les classes ont $|H|$ éléments.',
+      'Elles partitionnent $G$: si $k$ est leur nombre, $|G|=k\\,|H|$.',
+    ],
+  },
+  '群同态基本定理': {
+    zh: [
+      '核 $K=\\ker\\varphi$ 是正规子群,商群 $G/K$ 良定义。',
+      '令 $\\bar\\varphi(aK)=\\varphi(a)$;若 $aK=bK$ 则 $a^{-1}b\\in K$,故 $\\varphi(a)=\\varphi(b)$,映射良定义且为同态。',
+      '$\\bar\\varphi$ 显然满到 $\\operatorname{im}\\varphi$;若 $\\bar\\varphi(aK)=e$ 则 $a\\in K$,故单。',
+      '故 $\\bar\\varphi$ 是同构。',
+    ],
+    fr: [
+      'Le noyau $K=\\ker\\varphi$ est distingué: le quotient $G/K$ existe.',
+      'Poser $\\bar\\varphi(aK)=\\varphi(a)$: bien défini (si $aK=bK$, $\\varphi(a)=\\varphi(b)$) et morphisme.',
+      'Surjectif sur $\\operatorname{im}\\varphi$; injectif car $\\bar\\varphi(aK)=e$ force $a\\in K$.',
+      'C’est donc un isomorphisme.',
+    ],
+  },
+  '循环群的子群定理': {
+    zh: [
+      '设 $H\\neq\\{e\\}$,取最小正整数 $d$ 使 $g^d\\in H$。',
+      '任取 $g^k\\in H$,带余除法 $k=qd+r$,$0\\le r<d$;则 $g^r=g^k(g^d)^{-q}\\in H$。',
+      '由 $d$ 的最小性,$r=0$,即 $d\\mid k$;故 $H=\\langle g^d\\rangle$。',
+    ],
+    fr: [
+      'Si $H\\neq\\{e\\}$, soit $d$ le plus petit entier positif avec $g^d\\in H$.',
+      'Pour $g^k\\in H$, la division euclidienne $k=qd+r$ donne $g^r\\in H$ avec $0\\le r<d$.',
+      'La minimalité force $r=0$: $H=\\langle g^d\\rangle$.',
+    ],
+  },
+  'Fermat 小定理': {
+    zh: [
+      '非零剩余类构成乘法群 $(\\mathbb Z/p\\mathbb Z)^{\\times}$,其阶为 $p-1$。',
+      '元素 $a$ 的阶 $d$ 是循环子群 $\\langle a\\rangle$ 的阶,由 Lagrange 定理 $d\\mid p-1$。',
+      '于是 $a^{p-1}=(a^{d})^{(p-1)/d}\\equiv 1$。',
+    ],
+    fr: [
+      'Les classes non nulles forment le groupe multiplicatif $(\\mathbb Z/p\\mathbb Z)^{\\times}$, d’ordre $p-1$.',
+      'L’ordre $d$ de $a$ est l’ordre du sous-groupe $\\langle a\\rangle$: par Lagrange, $d\\mid p-1$.',
+      'Donc $a^{p-1}=(a^{d})^{(p-1)/d}\\equiv 1$.',
+    ],
+  },
 }
 
 export const explanationsCredit = {
   generator: 'Anthropic Claude',
   mode: 'Bilingual stepped proof outlines (Chinese / French) with KaTeX-rendered math',
   scope:
-    'Generated during a Dev3pack development session. Stored statically because the public deployment runs on free static infrastructure; a production deployment would route runtime requests through a Cloudflare Worker with the API key.',
+    '初始 24 篇生成于 2026-06 开发期;2026-08 由现行模型新增 24 篇(对齐大二上课程:数学分析 III / 概率论 / 实变函数 / 近世代数)并复核旧篇。静态存储,构建期由 render-theorems.mjs 预渲染 KaTeX。',
 }
