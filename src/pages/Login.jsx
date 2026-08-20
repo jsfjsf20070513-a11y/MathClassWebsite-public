@@ -54,7 +54,10 @@ const ERRORS = {
 }
 
 export default function Login() {
-  const [mode, setMode] = useState('login')
+  // aux=1:从杂志撕开屏(它本身就是登录)跳来,本页只承担登录做不了的三件事:
+  // 注册 / 验证码 / 找回密码,默认落注册;直接访问 /login 仍是完整四页签。
+  const [aux] = useState(() => new URLSearchParams(window.location.search).get('aux') === '1')
+  const [mode, setMode] = useState(() => (aux ? 'signup' : 'login'))
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -247,7 +250,9 @@ export default function Login() {
 
       <section className="login-section">
         <div className="editorial-actions tabs login-tabs">
-          <button type="button" className={`text-button ${mode === 'login' ? 'active' : ''}`} onClick={() => switchMode('login')}>登录</button>
+          {!aux ? (
+            <button type="button" className={`text-button ${mode === 'login' ? 'active' : ''}`} onClick={() => switchMode('login')}>登录</button>
+          ) : null}
           <button type="button" className={`text-button ${mode === 'signup' ? 'active' : ''}`} onClick={() => switchMode('signup')}>注册</button>
           <button type="button" className={`text-button ${mode === 'otp' ? 'active' : ''}`} onClick={() => switchMode('otp')}>验证码</button>
           <button type="button" className={`text-button ${mode === 'forgot' ? 'active' : ''}`} onClick={() => switchMode('forgot')}>找回密码</button>

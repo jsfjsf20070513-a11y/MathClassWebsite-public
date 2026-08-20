@@ -20,9 +20,16 @@ const DAY_IN_MS = 24 * 60 * 60 * 1000
 const THEOREM_ROTATION_START_DAY = Math.floor(Date.UTC(2025, 8, 1) / DAY_IN_MS)
 const WEATHER_CACHE_KEY = 'mcw_weather_cache'
 const WEATHER_CACHE_MS = 3 * 3600 * 1000
-const PAGE_SIDES = ['none', 'right', 'left', 'top', 'bottom']
-// ← Accueil 按来路落页:从背词回 02、从书目回 04、从登录回 05(Parole)。
-const RETURN_PAGE = { '/vocabulary': 1, '/assistant': 1, '/resources': 3, '/login': 4 }
+// 未登录 5 页;登录后插入 05 Correspondance(AI 答疑之门),Parole 顺延为 06 压卷。
+const SIDES_BASE = ['none', 'right', 'left', 'top', 'bottom']
+const SIDES_FULL = ['none', 'right', 'left', 'top', 'left', 'bottom']
+// ← Accueil 按来路落页:从背词回 02、从书目回 04、从答疑回 05、从登录回压卷 Parole。
+const returnPageFor = (from, hasAssistant) => ({
+  '/vocabulary': 1,
+  '/resources': 3,
+  '/assistant': hasAssistant ? 4 : 1,
+  '/login': hasAssistant ? 5 : 4,
+}[from] ?? 0)
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
 
 function getShanghaiDaySerial(reference = new Date()) {
@@ -74,10 +81,11 @@ export default function Home() {
   const navigate = useNavigate()
   const { user, signOut, isAuthEnabled } = useAuth()
   const [weather, setWeather] = useState(() => readCachedWeather())
+  const hasAssistant = Boolean(user)
   // 站内返回:按来路直落对应页,整册从左侧翻入(反向对称)。
   const [entry] = useState(() => {
     const from = flipNavFrom()
-    return { back: Boolean(from), page: RETURN_PAGE[from] ?? 0 }
+    return { back: Boolean(from), from, page: from ? returnPageFor(from, Boolean(user)) : 0 }
   })
   const [connexionOpen, setConnexionOpen] = useState(false)
 
@@ -94,13 +102,30 @@ export default function Home() {
   const entranceStartedRef = useRef(false)
   const splittingRef = useRef(false)
 
-  const { page, next, prev, setPageEl } = usePageFlip({
-    count: 5,
-    sides: PAGE_SIDES,
+  const corIdx = 4
+  const paroleIdx = hasAssistant ? 5 : 4
+  const pageCount = hasAssistant ? 6 : 5
+  const { page, next, prev, jumpTo, setPageEl } = usePageFlip({
+    count: pageCount,
+    sides: hasAssistant ? SIDES_FULL : SIDES_BASE,
     durationMs: 900,
     enabled: !connexionOpen,
     initialPage: entry.page,
   })
+
+  // 登录态迁移时页序移位:登录(auth 迟到水合)→ Correspondance 插入 04 之后,
+  // 当前页与来路直跳校正;登出 → 收回一页,越界收敛到 Parole。全部无动画直跳。
+  const hasAssistantRef = useRef(hasAssistant)
+  useEffect(() => {
+    const had = hasAssistantRef.current
+    hasAssistantRef.current = hasAssistant
+    if (hasAssistant && !had) {
+      if (entry.from === '/assistant' && page < corIdx) jumpTo(corIdx)
+      else if (page >= corIdx) jumpTo(page + 1)
+    } else if (!hasAssistant && had && page > 4) {
+      jumpTo(4)
+    }
+  }, [hasAssistant, page, entry.from, jumpTo])
 
   const dailyTheorem = dailyTheoremNotes[getRotatingTheoremIndex(dailyTheoremNotes.length)]
   const editionDateLabel = getEditionDateLabel()
@@ -238,7 +263,7 @@ export default function Home() {
     }
   }, [email, password, splitParole])
 
-  const folio = `0${page + 1} — 05`
+  const folio = `0${page + 1} — 0${pageCount}`
 
   return (
     <div className={`mag${entry.back ? ' mag-arrive-back' : ''}`}>
@@ -282,7 +307,7 @@ export default function Home() {
       {/* ── 02 Vocabulaire(引导页,全页无汉字) ── */}
       <section ref={setPageEl(1)} className="mag-page mag-vocab" style={{ zIndex: 11, transform: entry.page >= 1 ? 'none' : 'translateX(105%) rotate(2.2deg)' }} aria-label="Vocabulaire">
         <div className="mag-vocab-inner">
-          <div className="mag-pageno" data-animate=""><p>02&nbsp;—&nbsp;05</p></div>
+          <div className="mag-pageno" data-animate=""><p>{`02 — 0${pageCount}`}</p></div>
           <div className="mag-rule" data-animate="" />
           <h2 className="mag-giant" lang="fr" data-animate="">Vocabulaire</h2>
           <div className="mag-vocab-foot" data-animate="">
@@ -344,11 +369,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 05 Parole(木色卡片页) ── */}
+      {/* ── 05 Correspondance(登录后才存在的一页;AI 答疑之门,镜像 02) ── */}
+      {hasAssistant ? (
+        <section
+          ref={setPageEl(corIdx)}
+          className="mag-page mag-cor"
+          style={{ zIndex: 10 + corIdx, transform: entry.page >= corIdx ? 'none' : 'translateX(-105%) rotate(-2.2deg)' }}
+          aria-label="Correspondance"
+        >
+          <div className="mag-vocab-inner mag-cor-inner">
+            <div className="mag-pageno" data-animate=""><p>{`05 — 0${pageCount}`}</p></div>
+            <div className="mag-rule" data-animate="" />
+            <h2 className="mag-giant" lang="fr" data-animate="">Correspondance</h2>
+            <div className="mag-vocab-foot" data-animate="">
+              <button type="button" className="mag-enter" lang="fr" onClick={() => flipNavigate('/assistant')}>
+                Entrer&nbsp;&nbsp;→
+              </button>
+              <p className="mag-vocab-quote" lang="fr">Pose une question de maths ou de français — en chinois ou en français.</p>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ── 压卷 Parole(木色卡片页;登录后为 06) ── */}
       <section
-        ref={(el) => { setPageEl(4)(el); paroleRef.current = el }}
+        ref={(el) => { setPageEl(paroleIdx)(el); paroleRef.current = el }}
         className="mag-page mag-parole"
-        style={{ zIndex: 14, transform: entry.page >= 4 ? 'none' : 'translateY(105%) rotate(-1.2deg)' }}
+        style={{ zIndex: 10 + paroleIdx, transform: entry.page >= paroleIdx ? 'none' : 'translateY(105%) rotate(-1.2deg)' }}
         aria-label="Parole du jour"
       >
         <aside className="mag-parole-card" aria-label="Parole du jour">
@@ -417,7 +464,7 @@ export default function Home() {
               <button
                 type="button"
                 className="mag-connexion-more"
-                onClick={() => flipNavigate('/login')}
+                onClick={() => flipNavigate('/login?aux=1')}
               >
                 注册 / 验证码 / 找回密码 →
               </button>
@@ -435,7 +482,7 @@ export default function Home() {
       <div className="mag-folio" aria-hidden="true">{folio}</div>
       <div className="mag-controls">
         <button type="button" onClick={prev} aria-label="上一页" className="mag-arrow" disabled={page === 0}>‹</button>
-        <button type="button" onClick={next} aria-label="下一页" className="mag-arrow is-next" disabled={page === 4}>›</button>
+        <button type="button" onClick={next} aria-label="下一页" className="mag-arrow is-next" disabled={page === pageCount - 1}>›</button>
       </div>
     </div>
   )

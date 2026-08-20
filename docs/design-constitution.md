@@ -83,7 +83,10 @@ Connexion 视觉);/resources/curate 与 404 仍走 Layout。
 
 五页横翻 + Connexion 屏,100svh 无纵向滚动。要点照抄稿与 DESIGN.md §4–§7:
 肖像墙 12×13.5svh 五行、有意溢出、统一黑白、multiply 0.74;花体 Math 顶中;
-角落 ACCUEIL / SUZHOU {temp};Édition 行;02 从右、03 从左、04 从上、05 从下;
+角落 ACCUEIL / SUZHOU {temp};Édition 行;02 从右、03 从左、04 从上、压卷 Parole 从下;
+**05 Correspondance(2026-08-20 用户裁定,取代 DESIGN.md「Assistant 不进杂志导航」):
+登录后才存在的一页**——镜像 02 的编辑页(刊名靠右、从左翻入,bg #fdfcf8),
+ENTRER → /assistant;未登录整页不存在,书为 5 页,folio 随页数 0X — 0N;
 天气四模式(雨/雷/晴昼/晴夜,cloud/snow 删除、阴雪回落 clear),Open-Meteo 苏州
 缓存 3h,入场契约(文字与天气 1.1s 同淡入,API 超 1.2s 兜底);
 03 定理页契约(2026-08-20 用户两次裁定收敛到极简):**只有 kicker/题/KaTeX 三件**,
@@ -129,7 +132,12 @@ Connexion 撕开转场(clip-path 双半 ±58%),**原地渲染**对接 useAuth,
 
 ### 5.5 /login 与 /reset-password
 
-保留全部 auth 流程(登录/注册/验证码/找回/手机别名),视觉改为 Connexion 屏同款:
+保留 auth 流程(登录/注册/验证码/找回;**手机号方式已按用户裁定移除**),
+视觉为 Connexion 屏同款占位符发丝线表单,刊头随模式换法语单词
+(Connexion / Inscription / Code / Réinitialisation)。
+**撕开屏跳来的 /login?aux=1 只有三页签(注册/验证码/找回,默认注册)**——
+撕开屏本身就是登录,辅页不重复它;直接访问 /login 仍是完整四页签。
+原文:
 斜体 Bodoni 刊头、居中发丝线输入框(focus 下划线转酒红)、`ENTRER` 下划线按钮。
 `/login` 直链与 reset 流程不断链。
 

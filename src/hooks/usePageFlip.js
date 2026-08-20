@@ -160,6 +160,16 @@ export function usePageFlip({ count, sides = [], durationMs = 900, enabled = tru
   const next = useCallback(() => goTo(pageStateRef.current + 1), [goTo])
   const prev = useCallback(() => goTo(pageStateRef.current - 1), [goTo])
 
+  // 无动画直跳:页面栈成员数变化(如登录后插入一页)时校正当前页,不演翻页。
+  const jumpTo = useCallback((idx) => {
+    const max = count - 1
+    const target = Math.max(0, Math.min(max, idx))
+    if (target === pageStateRef.current) return
+    instantRef.current = true
+    pageStateRef.current = target
+    setPage(target)
+  }, [count])
+
   // 出场翻页(跨路由衔接的前半个动作):当前页向 exit 侧翻出,~0.45s 后回调。
   const flipOut = useCallback((onDone, exitSide = 'left') => {
     const el = pagesRef.current[pageStateRef.current]
@@ -172,5 +182,5 @@ export function usePageFlip({ count, sides = [], durationMs = 900, enabled = tru
     window.setTimeout(onDone, 430)
   }, [])
 
-  return { page, goTo, next, prev, setPageEl, flipOut }
+  return { page, goTo, next, prev, jumpTo, setPageEl, flipOut }
 }
