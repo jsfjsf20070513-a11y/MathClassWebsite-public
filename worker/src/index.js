@@ -15,17 +15,61 @@ const ALLOWED_ORIGINS = new Set([
   'http://localhost:5173',
 ])
 
-// 免费层配额按模型分开计:一个打满自动降级到下一个,把全家额度榨干。
-// 顺序 = 质量/速度权衡;Gemma 收尾兜底(不支持 systemInstruction,请求侧适配)。
-const CHAT_MODELS = [
-  'gemini-flash-latest',
-  'gemini-2.5-pro',
+// ── 动态降级链:免费层配额按模型独立计,把全家额度榨干 ──
+// 每小时从 ListModels 拉一次当前可用模型,自动排序(flash 新版本优先 → pro →
+// flash-lite → gemma 兜底);Google 上新模型自动收编,不用改代码。
+// ListModels 失败时用静态兜底链(2026-08 快照)。
+const CHAIN_TTL_MS = 3600 * 1000
+const CHAIN_MAX = 10
+const FALLBACK_CHAIN = [
+  'gemini-3.7-flash',
+  'gemini-3.6-flash',
+  'gemini-3-flash',
+  'gemini-2.5-flash',
   'gemini-2.5-flash-lite',
-  'gemini-2.0-flash',
-  'gemini-2.0-flash-lite',
   'gemma-3-27b-it',
   'gemma-3-12b-it',
 ]
+// 排除:别名(latest 与具体版本重复)、特种模态与实验通道。
+const CHAIN_EXCLUDE = /latest|tts|image|imagen|veo|embed|audio|live|dialog|native|computer|research|robotic|banana|antigravity|thinking|-exp|preview-\d|aqa|learnlm/i
+
+let chainCache = null
+let chainCacheAt = 0
+
+function rankModel(name) {
+  const m = /gemini-(\d+(?:\.\d+)?)/.exec(name)
+  const ver = m ? parseFloat(m[1]) : 0
+  let family = 0 // gemma
+  if (/flash-lite/.test(name)) family = 1
+  else if (/pro/.test(name)) family = 2
+  else if (/flash/.test(name)) family = 3
+  return family * 100 + ver
+}
+
+async function getChatModels(env) {
+  const now = Date.now()
+  if (chainCache && now - chainCacheAt < CHAIN_TTL_MS) return chainCache
+  try {
+    const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000', {
+      headers: { 'X-goog-api-key': env.GEMINI_API_KEY },
+    })
+    if (r.ok) {
+      const data = await r.json()
+      const names = (data.models || [])
+        .filter((m2) => Array.isArray(m2.supportedGenerationMethods)
+          && m2.supportedGenerationMethods.includes('generateContent'))
+        .map((m2) => `${m2.name || ''}`.replace(/^models\//, ''))
+        .filter((n) => (n.startsWith('gemini-') || n.startsWith('gemma-')) && !CHAIN_EXCLUDE.test(n))
+      if (names.length) {
+        names.sort((a, b) => rankModel(b) - rankModel(a))
+        chainCache = names.slice(0, CHAIN_MAX)
+        chainCacheAt = now
+        return chainCache
+      }
+    }
+  } catch { /* 走兜底 */ }
+  return FALLBACK_CHAIN
+}
 const MAX_MESSAGES = 20
 const MAX_CHARS = 4000
 // 图片问答(多模态):只收常见图片类型,base64 体积设上限防刷配额。
@@ -115,7 +159,8 @@ async function handleChat(request, env, origin) {
   }
 
   let lastStatus = 0
-  for (const model of CHAT_MODELS) {
+  const chatModels = await getChatModels(env)
+  for (const model of chatModels) {
     let upstream
     try {
       upstream = await fetch(
