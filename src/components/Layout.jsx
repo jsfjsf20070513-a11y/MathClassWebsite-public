@@ -14,11 +14,13 @@ export default function Layout() {
   const displayName = user?.user_metadata?.nickname || user?.user_metadata?.real_name || user?.email || ''
 
   // 杂志刊页面自带角落导航/细导航条,不渲染站点页眉页脚(宪法 §5)。
-  // `/` 是 100svh 翻页刊;三个内页(背词/书目/答疑)是它的内页,同属一本书。
+  // `/` 是 100svh 翻页刊;内页与登录页同属一本书(Connexion 即杂志第 06 屏)。
   const isMagazinePage = location.pathname === '/'
     || location.pathname === '/vocabulary'
     || location.pathname === '/resources'
     || location.pathname === '/assistant'
+    || location.pathname === '/login'
+    || location.pathname === '/reset-password'
   if (isMagazinePage) {
     return <Outlet />
   }

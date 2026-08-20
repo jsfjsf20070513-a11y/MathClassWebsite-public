@@ -5175,11 +5175,21 @@
 
 /* ══ /login Connexion 视觉(宪法 §5.5;逻辑与流程全保留) ══ */
 
+/* /login /reset-password 已脱离 Layout,自成杂志第 06 屏同款纸面:
+   根容器铺满视口(封面同纸色),内容按 Connexion 屏收进居中窄列。 */
 .lgn {
-  max-width: 420px;
+  max-width: none;
+  min-height: 100svh;
+  background: #f4efe6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding-top: 24px;
+  padding: 48px 24px 56px;
+  font-variant-numeric: lining-nums tabular-nums;
 }
+.lgn > * { width: min(420px, 100%); }
 .lgn-masthead { margin-bottom: 30px; }
 .lgn-back,
 .lgn-back:visited {

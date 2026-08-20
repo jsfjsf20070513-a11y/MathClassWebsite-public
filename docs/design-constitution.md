@@ -74,7 +74,8 @@ Claude Design 交接包(`docs/handoff-2026-08-20/`)+ 用户三轮口头拍板 + 
 三个内页(/vocabulary /resources /assistant)与 `/` 同属一本书:**不渲染 Layout
 页眉页脚**,各自带一条细导航(← Accueil / 刊名 / 状态小字,Bodoni 10px 大写,
 底衬发丝线),这取代了 DESIGN.md §1 的"内页暂保留现有 Layout"。
-/login、/reset-password、/resources/curate、404 仍走 Layout。
+/login 与 /reset-password 也脱离 Layout,自成杂志第 06 屏同款纸面(#f4efe6,
+Connexion 视觉);/resources/curate 与 404 仍走 Layout。
 
 ### 5.1 Home(按 Home-B-Galerie 稿原样)
 
@@ -133,6 +134,8 @@ Connexion 撕开转场(clip-path 双半 ±58%),**原地渲染**对接 useAuth,
 - **肖像**:`scripts/portraits.json`(60 条,年代序)+ `scripts/fetch-portraits.mjs`
   → `public/portraits/{slug}.jpg`(宽 ≤480),产物入库(git),前端只引本地路径;
   运行时兜底 `onerror` 隐藏 img 露纸底格,不做热链回退。肖像仅 Home 封面使用。
+- **本地 dev 环境**:Supabase anon key(公开随前端发布,RLS 是安全边界)写在
+  本地 `.env`(gitignored);没有它登录相关 UI 会显示登录未启用。
 - **字体**:`@fontsource-variable/bodoni-moda`(含 italic)、
   `@fontsource-variable/cormorant-garamond`(含 italic)、`@fontsource/pinyon-script`,
   vendor.css 显式 @font-face(latin + latin-ext),Vite 打包自托管。
