@@ -78,8 +78,8 @@ Claude Design 交接包(`docs/handoff-2026-08-20/`)+ 用户三轮口头拍板 + 
 角落 ACCUEIL / SUZHOU {temp};Édition 行;02 从右、03 从左、04 从上、05 从下;
 天气四模式(雨/雷/晴昼/晴夜,cloud/snow 删除、阴雪回落 clear),Open-Meteo 苏州
 缓存 3h,入场契约(文字与天气 1.1s 同淡入,API 超 1.2s 兜底);
-03 定理页保留完整契约(kicker/题/prelude/KaTeX/note/Démonstration 折叠双语分步证明),
-不按稿内简化版;05 Parole 用现有 `paroles` 池随机(作者·出处规矩不变);
+03 定理页契约:kicker/题/prelude/KaTeX/note;**Démonstration 折叠证明不进杂志页**
+(2026-08-20 用户裁定"定理无需证明",双语证明数据保留在库,仅不在此渲染);05 Parole 用现有 `paroles` 池随机(作者·出处规矩不变);
 Connexion 撕开转场(clip-path 双半 ±58%),**原地渲染**对接 useAuth,
 动画完约 0.62s 后即可输入;Retour 反向合拢。`/` 路由不渲染 Layout 页眉页脚。
 
@@ -137,7 +137,7 @@ Connexion 撕开转场(clip-path 双半 ±58%),**原地渲染**对接 useAuth,
 - [ ] Home:100svh 无纵向滚动;五页四方向翻页正确、回翻对称;60 肖像全本地、
       年代序、统一黑白、左右溢出截断;花体 Math 不遮角落导航;天气四模式正确、
       阴/雪回落 clear、缓存与入场契约不变;撕开/合拢 60fps;Connexion 原地渲染。
-- [ ] 每日定理与现站同源同轮换;KaTeX 正常;证明折叠可用。
+- [ ] 每日定理与现站同源同轮换;KaTeX 正常;无证明折叠(用户裁定)。
 - [ ] Parole 木色页 multiply 通透感;随机引语有出处。
 - [ ] 三内页:一页一停成立;翻页物理与 Home 同参;内页无任何肖像;
       每停顿至多一条计数;筛选器不进答题屏;页内滚动优先手感正确。

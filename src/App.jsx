@@ -14,6 +14,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-route
 import Layout from './components/Layout'
 import PageLoading from './components/PageLoading'
 import Home from './pages/Home'
+import { wasFlipNav } from './lib/flipNav'
 import './App.css'
 
 const Resources = lazy(() => import('./pages/Resources'))
@@ -170,6 +171,9 @@ function RoutedExperience() {
     fadeDuration: LOADING_FADE_DURATION,
     maxDuration: MAX_LOADING_DURATION,
   })
+  // 翻页衔接的跳转不走加载幕(宪法 §4):记录被抑制的 pathname,
+  // markRouteReady 对它直接短路,避免 leaving 幽灵帧。
+  const flipSkipRef = useRef('')
 
   const clearLoadingTimers = useCallback(() => {
     window.clearTimeout(timerRef.current.leave)
@@ -213,6 +217,9 @@ function RoutedExperience() {
     if (pathname !== activePathnameRef.current) {
       return
     }
+    if (flipSkipRef.current === pathname) {
+      return
+    }
 
     scheduleLoadingExit(pathname)
   }, [scheduleLoadingExit])
@@ -222,6 +229,16 @@ function RoutedExperience() {
 
     const isInitialLoad = isFirstLoadRef.current
     isFirstLoadRef.current = false
+
+    // 站内翻页衔接:出场翻页已演完前半个动作,这里不再插加载幕。
+    if (!isInitialLoad && wasFlipNav()) {
+      flipSkipRef.current = location.pathname
+      previousPathnameRef.current = location.pathname
+      activePathnameRef.current = location.pathname
+      setLoadingPhase('hidden')
+      return undefined
+    }
+    flipSkipRef.current = ''
     const previousPathname = previousPathnameRef.current
     const isReturning = isInitialLoad && isReturningVisitorRef.current
     const factor = isReturning ? RETURNING_LOADING_FACTOR : 1.0

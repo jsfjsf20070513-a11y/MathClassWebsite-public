@@ -13,6 +13,11 @@ export default function Layout() {
   const { user, signOut, isAuthEnabled } = useAuth()
   const displayName = user?.user_metadata?.nickname || user?.user_metadata?.real_name || user?.email || ''
 
+  // `/` 是杂志刊(100svh 自带角落导航与 folio),不渲染页眉页脚(宪法 §5.1)。
+  if (location.pathname === '/') {
+    return <Outlet />
+  }
+
   const resolvePrimaryNav = (pathname) => {
     if (pathname.startsWith('/vocabulary') || pathname.startsWith('/assistant')) {
       return navItems[1]

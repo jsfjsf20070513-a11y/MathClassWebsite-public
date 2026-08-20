@@ -1,9 +1,27 @@
-import DailyMeditation from '../components/DailyMeditation'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/useAuth'
+import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { dailyTheoremNotes } from '../data/dailyTheoremNotes.generated'
-import { explanationsCredit, theoremExplanations } from '../data/theoremExplanations.generated'
+import { paroles } from '../data/siteContent'
+import { portraits, portraitSrc } from '../data/portraits'
+import { resourceCategories } from '../data/resourceCatalog'
+import { usePageFlip } from '../hooks/usePageFlip'
+import { startWeatherCanvas, weatherInkFor } from '../lib/weatherCanvas'
+import { markFlipNav } from '../lib/flipNav'
+
+// 扉页 Home — 2026-08 杂志刊(宪法 docs/design-constitution.md §5.1;
+// 设计稿 docs/handoff-2026-08-20/Home-B-Galerie.dc.html 原样执行):
+// 一本 5 页横翻的美术馆图录 + 撕开进入的 Connexion 屏。100svh 无纵向滚动。
+// 01 封面(60 人肖像墙 + 天气 canvas)/ 02 Vocabulaire / 03 Théorème /
+// 04 Bibliothèque / 05 Parole(木色)→ 撕开 → 06 Connexion(原地对接 auth)。
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000
 const THEOREM_ROTATION_START_DAY = Math.floor(Date.UTC(2025, 8, 1) / DAY_IN_MS)
+const WEATHER_CACHE_KEY = 'mcw_weather_cache'
+const WEATHER_CACHE_MS = 3 * 3600 * 1000
+const PAGE_SIDES = ['none', 'right', 'left', 'top', 'bottom']
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
 
 function getShanghaiDaySerial(reference = new Date()) {
   const parts = Object.fromEntries(
@@ -38,89 +56,382 @@ function getEditionDateLabel() {
   }).format(new Date())
 }
 
-// 汉字日期(八月十三日)——刊头的中文声部,不带年份。
-const CN_NUM = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九']
-function getChineseDateLabel(reference = new Date()) {
-  const parts = Object.fromEntries(
-    new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', month: 'numeric', day: 'numeric' })
-      .formatToParts(reference)
-      .filter(({ type }) => type !== 'literal')
-      .map(({ type, value }) => [type, Number(value)]),
-  )
-  const month = parts.month <= 10 ? (parts.month === 10 ? '十' : CN_NUM[parts.month]) : `十${CN_NUM[parts.month % 10]}`
-  const d = parts.day
-  const day = d <= 10
-    ? (d === 10 ? '十' : CN_NUM[d])
-    : d < 20
-      ? `十${CN_NUM[d % 10]}`
-      : `${CN_NUM[Math.floor(d / 10)]}十${d % 10 ? CN_NUM[d % 10] : ''}`
-  return `${month}月${day}日`
+function readCachedWeather() {
+  try {
+    const raw = window.localStorage.getItem(WEATHER_CACHE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (parsed && Date.now() - parsed.at < WEATHER_CACHE_MS) return parsed.w
+  } catch {
+    // storage unavailable
+  }
+  return null
 }
 
-// 扉页 Home — 2026-08 减法后的契约:封面三行(题名/法语副题/日期)→
-// 每日定理(KaTeX + 折叠证明)→ 每日哲思 → 细页脚。每屏一件事,不再有
-// 学院名 kicker 与朗读器。
 export default function Home() {
+  const navigate = useNavigate()
+  const { user, signOut, isAuthEnabled } = useAuth()
+  const [weather, setWeather] = useState(() => readCachedWeather())
+  const [connexionOpen, setConnexionOpen] = useState(false)
+
+  // Connexion 屏(原地渲染,对接 Supabase auth)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [authLoading, setAuthLoading] = useState(false)
+  const [authError, setAuthError] = useState('')
+
+  const canvasRef = useRef(null)
+  const coverContentRef = useRef(null)
+  const paroleRef = useRef(null)
+  const loginRef = useRef(null)
+  const entranceStartedRef = useRef(false)
+  const splittingRef = useRef(false)
+
+  const { page, next, prev, setPageEl, flipOut } = usePageFlip({
+    count: 5,
+    sides: PAGE_SIDES,
+    durationMs: 900,
+    enabled: !connexionOpen,
+  })
+
   const dailyTheorem = dailyTheoremNotes[getRotatingTheoremIndex(dailyTheoremNotes.length)]
   const editionDateLabel = getEditionDateLabel()
-  const chineseDateLabel = getChineseDateLabel()
-  const proof = theoremExplanations[dailyTheorem.title]
+  const [parole] = useState(() => paroles[Math.floor(Math.random() * paroles.length)])
+  const coverInk = weatherInkFor(weather)
+  const displayName = user?.user_metadata?.nickname || user?.user_metadata?.real_name || user?.email || ''
+
+  // 入场契约:文字与天气一起淡入(1.1s);API 超 1.2s 兜底直显。
+  const startEntrance = useCallback(() => {
+    if (entranceStartedRef.current) return
+    entranceStartedRef.current = true
+    const cc = coverContentRef.current
+    if (!cc) return
+    cc.style.transition = 'opacity 1.1s ease'
+    requestAnimationFrame(() => requestAnimationFrame(() => { cc.style.opacity = '1' }))
+    window.setTimeout(() => { cc.style.transition = 'none' }, 1300)
+  }, [])
+
+  useEffect(() => {
+    if (weather) startEntrance()
+    const fallback = window.setTimeout(startEntrance, 1200)
+    const controller = new AbortController()
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=31.30&longitude=120.62&current=temperature_2m,weather_code,is_day&timezone=Asia/Shanghai', { signal: controller.signal })
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data?.current) return
+        const fresh = {
+          temp: Math.round(data.current.temperature_2m),
+          code: data.current.weather_code,
+          isDay: data.current.is_day,
+        }
+        try {
+          window.localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({ at: Date.now(), w: fresh }))
+        } catch {
+          // ignore
+        }
+        setWeather((prevW) => {
+          if (prevW && prevW.temp === fresh.temp && prevW.code === fresh.code && prevW.isDay === fresh.isDay) {
+            return prevW
+          }
+          return fresh
+        })
+        startEntrance()
+      })
+      .catch(() => {})
+    return () => {
+      window.clearTimeout(fallback)
+      controller.abort()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startEntrance])
+
+  // 天气粒子:weather 就绪后启动;移动端粒子数减半。
+  useEffect(() => {
+    if (!weather || !canvasRef.current) return undefined
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+    const particleScale = window.innerWidth < 720 ? 0.5 : 1
+    return startWeatherCanvas(canvasRef.current, weather, { particleScale })
+  }, [weather])
+
+  // 站内衔接:当前页翻出 → navigate,目标页自播翻入(宪法 §4)。
+  const flipNavigate = useCallback((to) => {
+    flipOut(() => {
+      markFlipNav()
+      navigate(to)
+    })
+  }, [flipOut, navigate])
+
+  // Connexion 撕开转场:克隆 Parole 两半,双半外翻露出底下的登录屏;Retour 反向合拢。
+  const splitParole = useCallback((open) => {
+    const parole5 = paroleRef.current
+    const login = loginRef.current
+    if (!parole5 || !login || splittingRef.current) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      login.style.visibility = open ? 'visible' : 'hidden'
+      setConnexionOpen(open)
+      return
+    }
+    splittingRef.current = true
+    const parent = parole5.parentElement
+    const OUT_L = 'translateX(-58%) rotate(-1.6deg)'
+    const OUT_R = 'translateX(58%) rotate(1.6deg)'
+    const mk = (clipRight) => {
+      const c = parole5.cloneNode(true)
+      c.style.zIndex = '60'
+      c.style.transition = 'none'
+      c.style.transform = open ? 'none' : (clipRight ? OUT_R : OUT_L)
+      c.style.clipPath = clipRight ? 'inset(0 0 0 50%)' : 'inset(0 50% 0 0)'
+      c.style.pointerEvents = 'none'
+      c.style.willChange = 'transform'
+      c.style.opacity = '1'
+      parent.appendChild(c)
+      return c
+    }
+    const l = mk(false)
+    const r = mk(true)
+    if (open) login.style.visibility = 'visible'
+    requestAnimationFrame(() => {
+      l.getBoundingClientRect()
+      const tr = `transform 0.62s cubic-bezier(0.45, 0, 0.12, 1)`
+      l.style.transition = tr
+      r.style.transition = tr
+      l.style.transform = open ? OUT_L : 'translateX(0) rotate(0deg)'
+      r.style.transform = open ? OUT_R : 'translateX(0) rotate(0deg)'
+    })
+    window.setTimeout(() => {
+      if (!open) login.style.visibility = 'hidden'
+      l.remove()
+      r.remove()
+      splittingRef.current = false
+      setConnexionOpen(open)
+    }, 650)
+  }, [])
+
+  const handleConnexion = useCallback(async (event) => {
+    event.preventDefault()
+    if (!isSupabaseConfigured || !supabase) {
+      setAuthError('站点尚未配置登录服务。')
+      return
+    }
+    setAuthLoading(true)
+    setAuthError('')
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      })
+      if (error) throw error
+      setPassword('')
+      // 成功后合拢回 Parole,页脚随 user 状态改写为已登录。
+      window.setTimeout(() => splitParole(false), 500)
+    } catch (error) {
+      setAuthError(error?.message || '登录失败,请稍后再试。')
+    } finally {
+      setAuthLoading(false)
+    }
+  }, [email, password, splitParole])
+
+  const folio = `0${page + 1} — 05`
 
   return (
-    <article className="page-column home-page">
-      <header className="home-cover">
-        <h1 className="home-cover-title">2025 级数学班</h1>
-        <p className="home-cover-subtitle" lang="fr">Trente mathématiciens, une classe.</p>
-        <p className="home-cover-edition">
-          <span>{chineseDateLabel}</span>
-          <span aria-hidden="true"> · </span>
-          <span lang="fr">{`Édition du ${editionDateLabel}`}</span>
-        </p>
-      </header>
-
-      <section className="home-theorem" aria-label="每日定理">
-        <p className="home-theorem-kicker"><span lang="fr">Rappel mathématique</span> · 每日定理</p>
-        <h2 className="home-theorem-title">{dailyTheorem.title}</h2>
-        <p className="home-theorem-prelude">{dailyTheorem.prelude}</p>
-        <div
-          className="home-theorem-formula"
-          dangerouslySetInnerHTML={{ __html: dailyTheorem.displayHtml || dailyTheorem.fallback }}
-        />
-        <p className="home-theorem-note">{dailyTheorem.note}</p>
-        {proof ? (
-          <details className="home-proof">
-            <summary>
-              <span className="home-proof-mark" aria-hidden="true" />
-              <span className="site-nav-fr" lang="fr">Démonstration</span>
-              <span aria-hidden="true"> · </span>
-              <span>证明思路</span>
-            </summary>
-            <div className="home-proof-body">
-              <div className="theorem-explanation-block">
-                <p className="theorem-explanation-lang" aria-hidden="true">中文</p>
-                <ol className="home-proof-steps">
-                  {(Array.isArray(proof.zh) ? proof.zh : [proof.zh]).map((step, idx) => (
-                    <li key={idx} dangerouslySetInnerHTML={{ __html: step }} />
-                  ))}
-                </ol>
-              </div>
-              <div className="theorem-explanation-block">
-                <p className="theorem-explanation-lang" aria-hidden="true">Français</p>
-                <ol className="home-proof-steps" lang="fr">
-                  {(Array.isArray(proof.fr) ? proof.fr : [proof.fr]).map((step, idx) => (
-                    <li key={idx} dangerouslySetInnerHTML={{ __html: step }} />
-                  ))}
-                </ol>
-              </div>
-              <p className="home-proof-credit" lang="fr">{`Raisonnement bilingue · ${explanationsCredit.generator}`}</p>
+    <div className="mag">
+      {/* ── 01 封面:肖像长墙 ── */}
+      <section ref={setPageEl(0)} className="mag-page mag-cover" style={{ zIndex: 10 }} aria-label="封面">
+        <canvas ref={canvasRef} className="mag-weather" />
+        <div className="mag-wall" aria-hidden="true">
+          {portraits.map((p) => (
+            <div key={p.slug} className="mag-wall-cell">
+              <img
+                src={portraitSrc(p.slug)}
+                alt=""
+                loading="eager"
+                decoding="async"
+                draggable={false}
+                onError={(e) => { e.currentTarget.style.visibility = 'hidden' }}
+              />
             </div>
-          </details>
-        ) : null}
+          ))}
+        </div>
+        <div className="mag-fade mag-fade-top" aria-hidden="true" />
+        <div className="mag-fade mag-fade-bottom" aria-hidden="true" />
+        <nav className="mag-cover-nav" aria-label="封面导航">
+          <span>Accueil</span>
+          {weather ? (
+            <span className="mag-cover-weather" style={{ color: coverInk }}>
+              {`Suzhou\u00A0${weather.temp}℃`}
+            </span>
+          ) : <span />}
+        </nav>
+        <div ref={coverContentRef} className="mag-cover-content">
+          <h1 className="mag-masthead">Math</h1>
+          <div className="mag-edition">
+            <span className="mag-edition-rule" aria-hidden="true" />
+            <p lang="fr" style={{ color: 'rgba(111,103,94,0.75)' }}>{`Édition du ${editionDateLabel}`}</p>
+            <span className="mag-edition-rule" aria-hidden="true" />
+          </div>
+        </div>
       </section>
 
-      <section className="home-meditation">
-        <DailyMeditation offset={0} />
+      {/* ── 02 Vocabulaire(引导页,全页无汉字) ── */}
+      <section ref={setPageEl(1)} className="mag-page mag-vocab" style={{ zIndex: 11, transform: 'translateX(105%) rotate(2.2deg)' }} aria-label="Vocabulaire">
+        <div className="mag-vocab-inner">
+          <div className="mag-pageno" data-animate=""><p>02&nbsp;—&nbsp;05</p></div>
+          <div className="mag-rule" data-animate="" />
+          <h2 className="mag-giant" lang="fr" data-animate="">Vocabulaire</h2>
+          <div className="mag-vocab-foot" data-animate="">
+            <p className="mag-vocab-quote" lang="fr">Dire les mathématiques en français, un mot à la fois.</p>
+            <button
+              type="button"
+              className="mag-enter"
+              lang="fr"
+              onClick={() => flipNavigate('/vocabulary')}
+            >
+              Entrer&nbsp;&nbsp;→
+            </button>
+          </div>
+        </div>
       </section>
-    </article>
+
+      {/* ── 03 Théorème(完整契约:kicker/题/prelude/公式/note/折叠证明) ── */}
+      <section ref={setPageEl(2)} className="mag-page mag-theorem" style={{ zIndex: 12, transform: 'translateX(-105%) rotate(-2.2deg)' }} aria-label="每日定理">
+        <div className="mag-scroll" data-flip-scroll="">
+          <div className="mag-theorem-inner">
+            <p className="mag-kicker" lang="fr" data-animate="">Rappel mathématique</p>
+            <h2 className="mag-theorem-title" data-animate="">{dailyTheorem.title}</h2>
+            <p className="mag-theorem-prelude" data-animate="">{dailyTheorem.prelude}</p>
+            <div
+              className="mag-theorem-formula"
+              data-animate=""
+              dangerouslySetInnerHTML={{ __html: dailyTheorem.displayHtml || dailyTheorem.fallback }}
+            />
+            <p className="mag-theorem-note" data-animate="">{dailyTheorem.note}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 04 Bibliothèque(真实八书架索引) ── */}
+      <section ref={setPageEl(3)} className="mag-page mag-biblio" style={{ zIndex: 13, transform: 'translateY(-105%) rotate(1.2deg)' }} aria-label="Bibliothèque">
+        <div className="mag-biblio-inner">
+          <p className="mag-kicker" lang="fr" data-animate="">Bibliothèque</p>
+          <p className="mag-biblio-zh" data-animate="">资源与书目</p>
+          <div className="mag-biblio-grid" data-animate="">
+            {resourceCategories.map((category, index) => (
+              <button
+                key={category.label}
+                type="button"
+                className="mag-biblio-row"
+                onClick={() => flipNavigate(`/resources#shelf-${index + 1}`)}
+              >
+                <span className="mag-biblio-roman">{ROMAN[index]}</span>
+                <span className="mag-biblio-label">{category.label}</span>
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            className="mag-enter mag-biblio-enter"
+            lang="fr"
+            data-animate=""
+            onClick={() => flipNavigate('/resources')}
+          >
+            Consulter&nbsp;&nbsp;→
+          </button>
+        </div>
+      </section>
+
+      {/* ── 05 Parole(木色卡片页) ── */}
+      <section
+        ref={(el) => { setPageEl(4)(el); paroleRef.current = el }}
+        className="mag-page mag-parole"
+        style={{ zIndex: 14, transform: 'translateY(105%) rotate(-1.2deg)' }}
+        aria-label="Parole du jour"
+      >
+        <aside className="mag-parole-card" aria-label="Parole du jour">
+          <p className="mag-parole-kicker" lang="fr" data-animate="">Parole du jour</p>
+          <p className="mag-parole-text" lang="fr" data-animate="">{parole.text}</p>
+          <p className="mag-parole-note" data-animate="">{parole.note}</p>
+          <div className="mag-parole-rule" aria-hidden="true" />
+          <p className="mag-parole-author" data-animate="">
+            {parole.author}
+            {parole.src ? ` · ${parole.src}` : ''}
+          </p>
+        </aside>
+        <footer className="mag-parole-foot">
+          {user ? (
+            <p>
+              <span>已登录 · {displayName}</span>
+              <button type="button" className="mag-parole-link" onClick={() => signOut()}>退出</button>
+            </p>
+          ) : isAuthEnabled ? (
+            <p>
+              <button type="button" className="mag-parole-link" onClick={() => splitParole(true)}>
+                Connexion · 登录
+              </button>
+            </p>
+          ) : (
+            <p><span>登录未启用</span></p>
+          )}
+        </footer>
+      </section>
+
+      {/* ── 06 Connexion(撕开后露出;原地对接 Supabase auth) ── */}
+      <section ref={loginRef} className="mag-page mag-connexion" aria-label="Connexion">
+        <form className="mag-connexion-box" onSubmit={handleConnexion}>
+          <h2 className="mag-connexion-title" lang="fr">Connexion</h2>
+          {user ? (
+            <>
+              <p className="mag-connexion-done">Connecté · 已登录 {displayName}</p>
+              <button type="button" className="mag-enter" onClick={() => splitParole(false)} lang="fr">
+                Retour&nbsp;→
+              </button>
+            </>
+          ) : (
+            <>
+              <input
+                type="email"
+                className="mag-connexion-input"
+                placeholder="Adresse e-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
+              <input
+                type="password"
+                className="mag-connexion-input"
+                placeholder="Mot de passe"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
+              {authError ? <p className="mag-connexion-error">{authError}</p> : null}
+              <button type="submit" className="mag-enter mag-connexion-submit" disabled={authLoading} lang="fr">
+                {authLoading ? 'Connexion…' : 'Entrer'}
+              </button>
+              <button
+                type="button"
+                className="mag-connexion-more"
+                onClick={() => flipNavigate('/login')}
+              >
+                注册 / 验证码 / 找回密码 →
+              </button>
+            </>
+          )}
+          {!user ? (
+            <button type="button" className="mag-connexion-back" onClick={() => splitParole(false)} lang="fr">
+              ← Retour
+            </button>
+          ) : null}
+        </form>
+      </section>
+
+      {/* ── folio 与翻页钮(不翻的常驻层) ── */}
+      <div className="mag-folio" aria-hidden="true">{folio}</div>
+      <div className="mag-controls">
+        <button type="button" onClick={prev} aria-label="上一页" className="mag-arrow" disabled={page === 0}>‹</button>
+        <button type="button" onClick={next} aria-label="下一页" className="mag-arrow is-next" disabled={page === 4}>›</button>
+      </div>
+    </div>
   )
 }
