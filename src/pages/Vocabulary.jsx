@@ -524,46 +524,55 @@ export default function Vocabulary() {
       ? { fill: (studyIdx + 1) / studyList.length, label: `Aperçu ${studyIdx + 1} / ${studyList.length}` }
       : null
 
-  // 筛选行(只住扉页/空/结算屏 — 禁令 #3)。
+  // 筛选:两行同构小表(右对齐标签 + 左对齐值),只住扉页/空/结算屏(禁令 #3)。
   function renderFilters() {
     return (
       <div className="vpl-filters">
         <div className="vpl-filter-row">
           <span className="vpl-filter-key" lang="fr">Niveau</span>
-          {DECK_LEVELS.map((l) => (
-            <button
-              key={l}
-              type="button"
-              onClick={() => setLevel(l)}
-              aria-pressed={level === l}
-              className={`vpl-chip${level === l ? ' is-on' : ''}`}
-            >
-              {l === 'all' ? 'Tous' : l}
-            </button>
-          ))}
+          <span className="vpl-filter-val">
+            {DECK_LEVELS.map((l) => (
+              <button
+                key={l}
+                type="button"
+                onClick={() => setLevel(l)}
+                aria-pressed={level === l}
+                className={`vpl-chip${level === l ? ' is-on' : ''}`}
+              >
+                {l === 'all' ? 'Tous' : l}
+              </button>
+            ))}
+          </span>
         </div>
         <div className="vpl-filter-row">
           <span className="vpl-filter-key" lang="fr">Thème</span>
-          {/* 词库主题近 60 个,铺 chips 就是"混乱"雷区——收进一个发丝线下拉。 */}
-          <select
-            className="vpl-select"
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
-            aria-label="主题筛选"
-          >
-            <option value="all">tous · 全部主题</option>
-            {DECK_TAGS.filter((t) => t !== 'all').map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
+          <span className="vpl-filter-val">
+            {/* 词库主题近 60 个,铺 chips 就是"混乱"雷区——收进一个发丝线下拉。 */}
+            <select
+              className="vpl-select"
+              value={tag}
+              onChange={(e) => setTag(e.target.value)}
+              aria-label="主题筛选"
+            >
+              <option value="all">tous · 全部</option>
+              {DECK_TAGS.filter((t) => t !== 'all').map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
+            </select>
+          </span>
         </div>
-        <div className="vpl-filter-row">
-          <span className="vpl-filter-key">选项</span>
-          <button type="button" className={`vpl-chip${shuffle ? ' is-on' : ''}`} onClick={() => setShuffle((s) => !s)} aria-pressed={shuffle}>乱序</button>
-          <button type="button" className="vpl-chip" onClick={handleExport}>导出</button>
-          <button type="button" className="vpl-chip" onClick={() => fileInputRef.current?.click()}>导入</button>
-          <input ref={fileInputRef} type="file" accept="application/json,.json" onChange={handleImportFile} style={{ display: 'none' }} />
-        </div>
+      </div>
+    )
+  }
+
+  // 维护动作(乱序/导出/导入):耳语级小字,不与 COMMENCER 争主角。
+  function renderUtils() {
+    return (
+      <div className="vpl-utils">
+        <button type="button" className={`vpl-chip${shuffle ? ' is-on' : ''}`} onClick={() => setShuffle((s) => !s)} aria-pressed={shuffle}>乱序</button>
+        <button type="button" className="vpl-chip" onClick={handleExport}>导出</button>
+        <button type="button" className="vpl-chip" onClick={() => fileInputRef.current?.click()}>导入</button>
+        <input ref={fileInputRef} type="file" accept="application/json,.json" onChange={handleImportFile} style={{ display: 'none' }} />
         {importMsg ? <p className="vpl-msg">{importMsg}</p> : null}
       </div>
     )
@@ -780,6 +789,7 @@ export default function Vocabulary() {
       <>
         <p className="vpl-notice-text">这个范围今天没有要背的词了。换个级别、主题,或明天再来。</p>
         {renderFilters()}
+        {renderUtils()}
       </>,
     )
   } else if (status === 'idle') {
@@ -788,13 +798,9 @@ export default function Vocabulary() {
         <p className="vpl-kicker" lang="fr">Vocabulaire</p>
         <h1 className="vpl-title" lang="fr">Leçon du jour</h1>
         <p className="vpl-quota" lang="fr">{`Nouveaux ${newInQueue} · Révisions ${revInQueue}`}</p>
-        {deckStats ? (
-          <p className="vpl-deckstats">
-            已掌握 {deckStats.mastered} · 学习中 {deckStats.learning} · 新词 {deckStats.newCount} · 连续 {deckStats.streak} 天
-          </p>
-        ) : null}
         {renderFilters()}
         <button type="button" className="mag-enter vpl-commencer" onClick={commencer} lang="fr">Commencer&nbsp;&nbsp;→</button>
+        {renderUtils()}
       </div>
     )
   } else if (status === 'study' && studyList[studyIdx]) {
@@ -834,6 +840,11 @@ export default function Vocabulary() {
         <p className="vpl-kicker" lang="fr">Leçon terminée</p>
         <h1 className="vpl-title">本节完成</h1>
         <p className="vpl-done-score">答对 {stats.correct} / {stats.attempts} · 正确率 {acc} · 最高连击 ×{stats.maxCombo}</p>
+        {deckStats ? (
+          <p className="vpl-deckstats">
+            已掌握 {deckStats.mastered} · 学习中 {deckStats.learning} · 新词 {deckStats.newCount} · 连续 {deckStats.streak} 天
+          </p>
+        ) : null}
         <div className="vpl-done-rule" aria-hidden="true" />
         {wrong.length ? (
           <>
@@ -855,6 +866,7 @@ export default function Vocabulary() {
           <button type="button" className="mag-enter" onClick={load} lang="fr">Encore&nbsp;&nbsp;→</button>
         </div>
         {renderFilters()}
+        {renderUtils()}
       </div>
     )
   }
