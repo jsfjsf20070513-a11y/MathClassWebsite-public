@@ -16,8 +16,7 @@ import {
   buildMatchExercise,
   gradeExercise,
 } from '../lib/exerciseGenerator'
-import { fetchReviewStateMap, importReviewStates, saveReviewState } from '../lib/vocabularyBackend'
-import { parseProgressImport, serializeProgress } from '../lib/vocabularyProgress'
+import { fetchReviewStateMap, saveReviewState } from '../lib/vocabularyBackend'
 import { markFlipNav, wasFlipNav } from '../lib/flipNav'
 
 // 背词 Vocabulary — 2026-08 编排版「一叠卡片」(宪法 §5.2):
@@ -42,7 +41,6 @@ const SPEAK_ENDPOINT = 'https://rucmathclass.com/api/speak'
 const USE_WORKER_VOICE = false
 
 const VALID_DECK = cleanFrenchDeck(frenchVocabulary).valid
-const DECK_TAGS = ['all', ...Array.from(new Set(VALID_DECK.map((w) => w.tag).filter(Boolean)))]
 // CEFR ladder A1→C2; only the levels actually present in the deck are offered.
 const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 const DECK_LEVELS = ['all', ...LEVEL_ORDER.filter((l) => VALID_DECK.some((w) => w.level === l))]
@@ -59,20 +57,9 @@ const TYPE_KICKER = {
   [EXERCISE_TYPES.build]: ['Traduction', '拼句'],
 }
 
-// Filter the deck on both axes the learner controls: CEFR level and theme tag.
-function selectDeck(level, tag) {
-  return VALID_DECK.filter(
-    (w) => (level === 'all' || w.level === level) && (tag === 'all' || w.tag === tag),
-  )
-}
-
-function shuffled(arr) {
-  const a = [...arr]
-  for (let i = a.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[a[i], a[j]] = [a[j], a[i]]
-  }
-  return a
+// 学习者唯一的筛选轴:CEFR 级别(主题筛选与乱序已按 2026-08-20 用户裁定移除)。
+function selectDeck(level) {
+  return VALID_DECK.filter((w) => level === 'all' || w.level === level)
 }
 
 // Short grammatical label for the prompt line, e.g. « n.f. » / « v. » / « adj. ».
@@ -134,12 +121,8 @@ export default function Vocabulary() {
   const [wrong, setWrong] = useState([]) // {word, state} missed this session — feeds the review list + 只练错词
   const [deckStats, setDeckStats] = useState(null)
   const [errorMessage, setErrorMessage] = useState('')
-  const [tag, setTag] = useState('all')
   const [level, setLevel] = useState('all')
-  const [shuffle, setShuffle] = useState(false)
-  const [importMsg, setImportMsg] = useState('')
   const [arrive] = useState(() => wasFlipNav())
-  const fileInputRef = useRef(null)
   const inputRef = useRef(null)
   const audioRef = useRef(null)
   const voiceRef = useRef(null)
@@ -242,13 +225,12 @@ export default function Vocabulary() {
       if (mode === 'disabled') return setStatus('disabled')
       if (mode === 'compat') return setStatus('compat')
       const now = new Date().toISOString()
-      const deck = selectDeck(level, tag)
+      const deck = selectDeck(level)
       setDeckStats({
         ...computeDeckStats({ deck, stateMap: states, now }),
         streak: computeStudyStreak(Object.values(states), now),
       })
-      let queue = buildStudyQueue({ deck, stateMap: states, now, maxNew: MAX_NEW, maxReview: MAX_REVIEW })
-      if (shuffle) queue = shuffled(queue)
+      const queue = buildStudyQueue({ deck, stateMap: states, now, maxNew: MAX_NEW, maxReview: MAX_REVIEW })
       const built = buildSession(queue, deck)
       setSteps(built)
       setStudyList(queue.map((q) => ({ word: q.word, state: q.state, isNew: q.isNew })))
@@ -269,7 +251,7 @@ export default function Vocabulary() {
       setStatus('error')
     }
     return undefined
-  }, [user, tag, level, shuffle])
+  }, [user, level])
 
   useEffect(() => {
     if (user) load()
@@ -381,7 +363,7 @@ export default function Vocabulary() {
   // Re-drill only the words missed this session (design: « 只练错词 »).
   const retryWrong = useCallback(() => {
     if (!wrong.length) return
-    const deck = selectDeck(level, tag)
+    const deck = selectDeck(level)
     const built = buildSession(wrong.map((x) => ({ word: x.word, state: x.state })), deck)
     setSteps(built)
     setI(0)
@@ -394,7 +376,7 @@ export default function Vocabulary() {
     setWrong([])
     spokenRef.current = -1
     setStatus('ready')
-  }, [wrong, tag, level])
+  }, [wrong, level])
 
   // Study (preview) navigation: step through the deck, then begin the test.
   const studyNext = useCallback(() => {
@@ -463,48 +445,6 @@ export default function Vocabulary() {
     return () => window.removeEventListener('keydown', onKey)
   }, [status, studyNext, commencer])
 
-  // ── export / import progress ──
-  const handleExport = useCallback(async () => {
-    if (!user) return
-    try {
-      const { states } = await fetchReviewStateMap(user.id)
-      const json = serializeProgress(Object.values(states), { exportedAt: new Date().toISOString() })
-      const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }))
-      const anchor = document.createElement('a')
-      anchor.href = url
-      anchor.download = `vocab-progress-${new Date().toISOString().slice(0, 10)}.json`
-      anchor.click()
-      URL.revokeObjectURL(url)
-      setImportMsg('已导出进度 JSON。')
-    } catch (error) {
-      setImportMsg(`导出失败:${error?.message || error}`)
-    }
-  }, [user])
-
-  const handleImportFile = useCallback(
-    async (event) => {
-      const file = event.target.files?.[0]
-      if (!file || !user) return
-      setImportMsg('正在导入…')
-      try {
-        const text = await file.text()
-        const { rows, report } = parseProgressImport(text)
-        const { mode, count } = await importReviewStates(rows, user.id)
-        if (mode === 'compat') setImportMsg('数据表还没建立,无法导入。')
-        else if (mode === 'disabled') setImportMsg('Supabase 未配置,无法导入。')
-        else {
-          setImportMsg(`导入完成:写入 ${count} 条,跳过 ${report.rejected.length} 条无效行。`)
-          await load()
-        }
-      } catch (error) {
-        setImportMsg(`导入失败:${error?.message || error}`)
-      } finally {
-        event.target.value = ''
-      }
-    },
-    [user, load],
-  )
-
   const goHome = useCallback(() => {
     markFlipNav('/vocabulary')
     navigate('/')
@@ -524,7 +464,7 @@ export default function Vocabulary() {
       ? { fill: (studyIdx + 1) / studyList.length, label: `Aperçu ${studyIdx + 1} / ${studyList.length}` }
       : null
 
-  // 筛选:两行同构小表(右对齐标签 + 左对齐值),只住扉页/空/结算屏(禁令 #3)。
+  // 筛选:只剩 CEFR 级别一行,只住扉页/空/结算屏(禁令 #3)。
   function renderFilters() {
     return (
       <div className="vpl-filters">
@@ -544,36 +484,6 @@ export default function Vocabulary() {
             ))}
           </span>
         </div>
-        <div className="vpl-filter-row">
-          <span className="vpl-filter-key" lang="fr">Thème</span>
-          <span className="vpl-filter-val">
-            {/* 词库主题近 60 个,铺 chips 就是"混乱"雷区——收进一个发丝线下拉。 */}
-            <select
-              className="vpl-select"
-              value={tag}
-              onChange={(e) => setTag(e.target.value)}
-              aria-label="主题筛选"
-            >
-              <option value="all">tous · 全部</option>
-              {DECK_TAGS.filter((t) => t !== 'all').map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
-          </span>
-        </div>
-      </div>
-    )
-  }
-
-  // 维护动作(乱序/导出/导入):耳语级小字,不与 COMMENCER 争主角。
-  function renderUtils() {
-    return (
-      <div className="vpl-utils">
-        <button type="button" className={`vpl-chip${shuffle ? ' is-on' : ''}`} onClick={() => setShuffle((s) => !s)} aria-pressed={shuffle}>乱序</button>
-        <button type="button" className="vpl-chip" onClick={handleExport}>导出</button>
-        <button type="button" className="vpl-chip" onClick={() => fileInputRef.current?.click()}>导入</button>
-        <input ref={fileInputRef} type="file" accept="application/json,.json" onChange={handleImportFile} style={{ display: 'none' }} />
-        {importMsg ? <p className="vpl-msg">{importMsg}</p> : null}
       </div>
     )
   }
@@ -789,7 +699,6 @@ export default function Vocabulary() {
       <>
         <p className="vpl-notice-text">这个范围今天没有要背的词了。换个级别、主题,或明天再来。</p>
         {renderFilters()}
-        {renderUtils()}
       </>,
     )
   } else if (status === 'idle') {
@@ -800,7 +709,6 @@ export default function Vocabulary() {
         <p className="vpl-quota" lang="fr">{`Nouveaux ${newInQueue} · Révisions ${revInQueue}`}</p>
         {renderFilters()}
         <button type="button" className="mag-enter vpl-commencer" onClick={commencer} lang="fr">Commencer&nbsp;&nbsp;→</button>
-        {renderUtils()}
       </div>
     )
   } else if (status === 'study' && studyList[studyIdx]) {
@@ -866,7 +774,6 @@ export default function Vocabulary() {
           <button type="button" className="mag-enter" onClick={load} lang="fr">Encore&nbsp;&nbsp;→</button>
         </div>
         {renderFilters()}
-        {renderUtils()}
       </div>
     )
   }
