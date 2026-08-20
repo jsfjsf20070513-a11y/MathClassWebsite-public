@@ -795,6 +795,9 @@ export default function Vocabulary() {
         ) : null}
         {renderFilters()}
         <button type="button" className="mag-enter vpl-commencer" onClick={commencer} lang="fr">Commencer&nbsp;&nbsp;→</button>
+        <Link className="vpl-assistant" to="/assistant" onClick={() => markFlipNav('/vocabulary')}>
+          <span lang="fr">Correspondance</span> · AI 答疑 →
+        </Link>
       </div>
     )
   } else if (status === 'study' && studyList[studyIdx]) {
@@ -854,6 +857,9 @@ export default function Vocabulary() {
           {wrong.length ? <button type="button" className="mag-enter" onClick={retryWrong}>只练错词&nbsp;&nbsp;→</button> : null}
           <button type="button" className="mag-enter" onClick={load} lang="fr">Encore&nbsp;&nbsp;→</button>
         </div>
+        <Link className="vpl-assistant" to="/assistant" onClick={() => markFlipNav('/vocabulary')}>
+          <span lang="fr">Correspondance</span> · AI 答疑 →
+        </Link>
         {renderFilters()}
       </div>
     )

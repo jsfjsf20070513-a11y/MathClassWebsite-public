@@ -6,6 +6,14 @@ import { markFlipNav } from '../lib/flipNav'
 
 const OTP_RESEND_SECONDS = 60
 
+// 刊头随模式换法语单词——注册页的大标题不能还是 Connexion(登录)。
+const TITLES = {
+  login: 'Connexion',
+  signup: 'Inscription',
+  otp: 'Code',
+  forgot: 'Réinitialisation',
+}
+
 const COPY = {
   login: {
     title: '登录 · Connexion',
@@ -233,7 +241,7 @@ export default function Login() {
     <article className="page-column login-page lgn">
       <header className="lgn-masthead">
         <Link to="/" className="lgn-back" lang="fr" onClick={() => markFlipNav('/login')}>← Accueil</Link>
-        <h1 className="lgn-title" lang="fr">Connexion</h1>
+        <h1 className="lgn-title" lang="fr">{TITLES[mode]}</h1>
         <p className="lgn-summary">{copy.summary}</p>
       </header>
 

@@ -5259,3 +5259,14 @@
 /* 登录表单占位符化:空标签隐藏,占位符同 Connexion 屏灰度 */
 .lgn .password-field > span:empty { display: none; }
 .lgn .login-form input::placeholder { color: rgba(111, 103, 94, 0.65); }
+
+/* 背词页里的 AI 助手入口(安静的一行,不与 COMMENCER 争主角) */
+.vpl-assistant,
+.vpl-assistant:visited {
+  margin-top: 22px;
+  border-bottom: none;
+  color: var(--mag-muted);
+  font-size: 13px;
+  transition: color 0.15s ease;
+}
+.vpl-assistant:hover { color: var(--mag-wine-hover); }
