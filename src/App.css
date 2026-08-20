@@ -146,6 +146,7 @@
 }
 
 .title-page {
+  min-height: calc(100vh - 240px);
   min-height: calc(100svh - 240px);
   display: flex;
   flex-direction: column;
@@ -1456,6 +1457,7 @@
 }
 
 .hackathon-hero {
+  min-height: calc(100vh - 190px);
   min-height: calc(100svh - 190px);
   display: grid;
   grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr);
@@ -3716,6 +3718,7 @@
 
 .mag {
   position: relative;
+  height: 100vh;
   height: 100svh;
   overflow: hidden;
   background: #f4efe6;
@@ -3755,6 +3758,7 @@
   inset: 0;
   z-index: 0;
   display: grid;
+  grid-template-columns: repeat(12, 13.5vh);
   grid-template-columns: repeat(12, 13.5svh);
   grid-template-rows: repeat(5, minmax(0, 1fr));
   justify-content: center;
@@ -3827,6 +3831,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
+  padding: 17vh 0 7vh;
   padding: 17svh 0 7svh;
   will-change: transform, opacity;
   opacity: 0;
@@ -3894,11 +3899,13 @@
 .mag-rule {
   height: 1px;
   background: var(--mag-hairline-dark);
+  margin: 14px 0 9vh;
   margin: 14px 0 9svh;
 }
 .mag-giant {
   margin: 0;
   font-family: "Bodoni Moda", serif;
+  font-size: min(12.5vw, 19vh);
   font-size: min(12.5vw, 19svh);
   font-weight: 400;
   font-style: italic;
@@ -3912,6 +3919,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  margin-top: 8vh;
   margin-top: 8svh;
   gap: 32px;
 }
@@ -4048,6 +4056,7 @@
 .mag-cor-inner .mag-giant {
   text-align: right;
   /* Correspondance 比 Vocabulaire 长 3 字母,同字号会溢出 */
+  font-size: min(9vw, 15vh);
   font-size: min(9vw, 15svh);
 }
 .mag-cor-inner .mag-vocab-quote { text-align: right; }
@@ -4137,6 +4146,7 @@
   align-items: center;
 }
 .mag-connexion-title {
+  margin: 0 0 6vh;
   margin: 0 0 6svh;
   font-family: "Bodoni Moda", serif;
   font-size: 44px;
@@ -4164,13 +4174,14 @@
   border-bottom-color: var(--mag-wine);
   outline: none;
 }
-.mag-connexion-submit { margin-top: 6svh; }
+.mag-connexion-submit { margin-top: 6vh; margin-top: 6svh; }
 .mag-connexion-error {
   margin: 18px 0 0;
   color: var(--mag-wine);
   font-size: 13px;
 }
 .mag-connexion-done {
+  margin: 0 0 4vh;
   margin: 0 0 4svh;
   color: var(--mag-muted);
   font-size: 14px;
@@ -4188,6 +4199,7 @@
 }
 .mag-connexion-more:hover { color: var(--mag-wine-hover); }
 .mag-connexion-back {
+  margin-top: 5vh;
   margin-top: 5svh;
   background: transparent;
   border: none;
@@ -4258,6 +4270,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 24px;
+    margin-top: 6vh;
     margin-top: 6svh;
   }
   .mag-biblio-grid {
@@ -4306,6 +4319,7 @@
 }
 
 .vpl {
+  height: 100vh;
   height: 100svh;
   display: flex;
   flex-direction: column;
@@ -4349,6 +4363,7 @@
   position: relative;
   display: flex;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .vpl-card {
@@ -4357,13 +4372,13 @@
   max-width: 1080px;
   padding: 40px 56px;
   display: grid;
-  grid-template-columns: 1fr 1px 400px;
+  grid-template-columns: minmax(0, 1fr) 1px 400px;
   gap: 0 44px;
   animation: vplCardIn 0.5s var(--flip-ease) both;
 }
 .vpl-divider { background: var(--mag-hairline); }
 
-.vpl-card-narrow { max-width: 900px; grid-template-columns: 1fr 1px 360px; }
+.vpl-card-narrow { max-width: 900px; grid-template-columns: minmax(0, 1fr) 1px 360px; }
 
 .vpl-card-notice,
 .vpl-card-idle,
@@ -4698,6 +4713,9 @@
 }
 
 @media (max-width: 880px) {
+  .vpl-filter-row { flex-wrap: wrap; justify-content: center; row-gap: 10px; }
+  .vpl-filter-key { width: auto; text-align: center; }
+  .vpl-filter-val { width: auto; justify-content: center; }
   .vpl-card,
   .vpl-card-narrow {
     grid-template-columns: 1fr;
@@ -4716,6 +4734,7 @@
 /* ══ /resources 「一册图录」(宪法 §5.3) ══ */
 
 .bib {
+  height: 100vh;
   height: 100svh;
   display: flex;
   flex-direction: column;
@@ -4849,6 +4868,7 @@
 }
 
 .cor {
+  height: 100vh;
   height: 100svh;
   display: flex;
   flex-direction: column;
@@ -4930,6 +4950,7 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .cor-thread-inner {
   max-width: 760px;
@@ -4958,7 +4979,7 @@
 
 .cor-turn {
   display: grid;
-  grid-template-columns: 52px 1fr;
+  grid-template-columns: 52px minmax(0, 1fr);
   column-gap: 18px;
   animation: magFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -5122,8 +5143,11 @@
   color: rgba(111, 103, 94, 0.7);
 }
 
+.cor-joindre-short { display: none; }
 @media (max-width: 640px) {
-  .cor-turn { grid-template-columns: 38px 1fr; column-gap: 12px; }
+  .cor-joindre-long { display: none; }
+  .cor-joindre-short { display: inline; }
+  .cor-turn { grid-template-columns: 38px minmax(0, 1fr); column-gap: 12px; }
   .cor-composer { gap: 12px; padding: 12px 18px 4px; }
   .cor-thread-inner { padding: 24px 18px 10px; }
   .cor-foot { padding: 4px 18px 12px; }
@@ -5153,6 +5177,7 @@
    根容器铺满视口(封面同纸色),内容按 Connexion 屏收进居中窄列。 */
 .lgn {
   max-width: none;
+  min-height: 100vh;
   min-height: 100svh;
   background: #f4efe6;
   display: flex;

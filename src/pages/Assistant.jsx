@@ -21,6 +21,8 @@ function renderProse(s) {
     .replace(/^\s*[*-]\s+/gm, '· ')
     .replace(/^\s*&gt;\s?/gm, '')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    // 加粗跨过公式边界时配不上对:残余的裸 ** 直接清掉,不让星号见人
+    .replace(/\*\*/g, '')
 }
 function renderRich(text) {
   const out = []
@@ -329,7 +331,8 @@ export default function Assistant() {
           disabled={loading}
           lang="fr"
         >
-          Joindre une figure
+          <span className="cor-joindre-long">Joindre une figure</span>
+          <span className="cor-joindre-short">Figure</span>
         </button>
         <input ref={fileRef} type="file" accept="image/*" onChange={onPickImage} style={{ display: 'none' }} />
         <textarea
@@ -343,7 +346,7 @@ export default function Assistant() {
               send(input)
             }
           }}
-          placeholder="Poser une question… · 中法双语均可"
+          placeholder={typeof window !== 'undefined' && window.innerWidth < 640 ? 'Poser une question…' : 'Poser une question… · 中法双语均可'}
           rows={1}
           disabled={loading}
           aria-label="向 AI 助手提问"
