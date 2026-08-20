@@ -49,14 +49,11 @@
     />
     <script src="/boot-start.js"></script>
     <style>
-      /* 启动骨架:与 React 侧 PageLoading(pl-*)同一视觉语言的静态复刻——
-         纸底、居中等宽小字、2px 发丝扫描线。无光晕、无渐变、无卡片。 */
+      /* 启动纸面(2026-08 杂志刊):刷新时不再放旧站扫描条加载页,
+         直接铺封面纸色 + 花体刊名极淡浮现——React 一挂载即被杂志盖上。 */
       :root {
-        --boot-paper: #fdfcf8;
-        --boot-ink: #221d18;
-        --boot-muted: #6f675e;
-        --boot-accent: #7f302b;
-        --boot-rule: rgba(34, 29, 24, 0.16);
+        --boot-paper: #f4efe6;
+        --boot-wine: #7d2f28;
       }
 
       html,
@@ -68,11 +65,11 @@
       body {
         margin: 0;
         min-width: 320px;
-        color: var(--boot-ink);
       }
 
       #root {
         min-height: 100vh;
+        min-height: 100svh;
       }
 
       .boot-overlay {
@@ -84,57 +81,30 @@
         background: var(--boot-paper);
       }
 
-      .boot-shell {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
-      }
-
-      .boot-eyebrow {
+      .boot-mark {
         margin: 0;
-        font-family: "JetBrains Mono", ui-monospace, monospace;
-        font-size: 11px;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--boot-accent);
+        font-family: "Pinyon Script", cursive;
+        font-size: 52px;
+        line-height: 1.2;
+        color: var(--boot-wine);
+        opacity: 0;
+        /* 0.5s 后才浮现:秒开时观众根本看不到加载态,慢网才见刊名 */
+        animation: boot-in 0.9s 0.5s ease forwards;
       }
 
-      .boot-track {
-        position: relative;
-        width: 140px;
-        height: 2px;
-        background: rgba(26, 26, 26, 0.1);
-        overflow: hidden;
-      }
-
-      .boot-sweep {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 2px;
-        width: 30%;
-        background: var(--boot-accent);
-        animation: boot-sweep 1.2s ease-in-out infinite;
-      }
-
-      @keyframes boot-sweep {
-        0% { transform: translateX(-100%); }
-        100% { transform: translateX(320%); }
+      @keyframes boot-in {
+        to { opacity: 0.85; }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .boot-sweep { animation: none; width: 100%; opacity: 0.35; }
+        .boot-mark { animation: none; opacity: 0.85; }
       }
     </style>
   </head>
   <body>
     <div id="root">
       <div class="boot-overlay">
-        <div class="boot-shell" role="status" aria-live="polite" aria-busy="true">
-          <p class="boot-eyebrow">Carnet de classe</p>
-          <span class="boot-track" aria-hidden="true"><span class="boot-sweep"></span></span>
-        </div>
+        <p class="boot-mark" role="status" aria-label="Chargement">Math</p>
       </div>
     </div>
     <script type="module" src="/src/main.jsx"></script>

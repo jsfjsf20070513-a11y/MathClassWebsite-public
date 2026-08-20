@@ -52,6 +52,7 @@ async function getChatModels(env) {
   try {
     const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000', {
       headers: { 'X-goog-api-key': env.GEMINI_API_KEY },
+      signal: AbortSignal.timeout(3000),
     })
     if (r.ok) {
       const data = await r.json()
@@ -158,39 +159,45 @@ async function handleChat(request, env, origin) {
     })
   }
 
-  let lastStatus = 0
   const chatModels = await getChatModels(env)
-  for (const model of chatModels) {
-    let upstream
-    try {
-      upstream = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-goog-api-key': env.GEMINI_API_KEY },
-          body: buildBody(model),
-        },
-      )
-    } catch {
-      lastStatus = 502
-      continue
-    }
-    if (!upstream.ok) {
-      lastStatus = upstream.status
-      continue
-    }
+
+  const tryModel = async (model, timeoutMs) => {
+    const upstream = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-goog-api-key': env.GEMINI_API_KEY },
+        body: buildBody(model),
+        signal: AbortSignal.timeout(timeoutMs),
+      },
+    )
+    if (!upstream.ok) throw new Error(`status ${upstream.status}`)
     const data = await upstream.json()
     const parts = (((data.candidates || [])[0] || {}).content || {}).parts || []
     const text = parts.map((p) => p.text).filter(Boolean).join('')
-    if (!text.trim()) {
-      lastStatus = 502
-      continue
-    }
-    return json({ text, model }, 200, origin)
+    if (!text.trim()) throw new Error('empty')
+    return { text, model }
   }
+
+  // 并发赛跑而非串行降级:被限流的模型往往不是秒回 429 而是挂满超时,
+  // 串行等三个就是一分钟(用户感知 = "AI 没反应")。同时发给前 3 个,
+  // 谁先给出正文用谁;全败再补第二梯队。
+  const race = async (models, timeoutMs) => {
+    const attempts = models.map((m) => tryModel(m, timeoutMs))
+    const results = await Promise.allSettled(attempts)
+    for (const r of results) {
+      if (r.status === 'fulfilled') return r.value
+    }
+    return null
+  }
+
+  let win = await race(chatModels.slice(0, 3), 18000)
+  if (!win && chatModels.length > 3) win = await race(chatModels.slice(3, 6), 15000)
+  if (win) return json(win, 200, origin)
+
   // 整条链都打光
   return json(
-    { error: '今日 AI 免费额度已用完,明天再来。 · Quota du jour épuisé — reviens demain.', status: lastStatus },
+    { error: '今日 AI 免费额度已用完,明天再来。 · Quota du jour épuisé — reviens demain.' },
     429,
     origin,
   )

@@ -5286,3 +5286,34 @@
 /* 登录表单占位符化:空标签隐藏,占位符同 Connexion 屏灰度 */
 .lgn .password-field > span:empty { display: none; }
 .lgn .login-form input::placeholder { color: rgba(111, 103, 94, 0.65); }
+
+/* 登录页窄屏:旧站 @720px 把 .editorial-actions 压成竖排左对齐(页签散成四行),
+   杂志纸面必须夺回——页签一行横排居中,表单与按钮保持居中一列,与桌面同构。 */
+@media (max-width: 720px) {
+  .lgn .editorial-actions,
+  .lgn .editorial-actions.tabs {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .lgn .login-tabs { gap: 16px; }
+  .lgn .login-form { align-items: center; }
+  .lgn .login-form label,
+  .lgn .password-field { width: 100%; }
+  .lgn .lgn-submit { align-self: center; }
+}
+
+/* 窄屏 body 的 16px 内边距是旧站列式版面的遗产,杂志页自己管理留白。
+   用负外边距抵消(而非 body:has —— 微信老 WebView 不认 :has)。 */
+@media (max-width: 480px) {
+  .mag,
+  .vpl,
+  .bib,
+  .cor {
+    margin-left: -16px;
+    margin-right: -16px;
+    width: calc(100% + 32px);
+  }
+}

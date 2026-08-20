@@ -2,17 +2,13 @@ import {
   Suspense,
   createContext,
   lazy,
-  useCallback,
   useContext,
-  useLayoutEffect,
   useMemo,
   useRef,
-  useState,
   useEffect,
 } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import Layout from './components/Layout'
-import PageLoading from './components/PageLoading'
 import Home from './pages/Home'
 import './App.css'
 
@@ -24,14 +20,7 @@ const NotFound = lazy(() => import('./pages/NotFound'))
 const Vocabulary = lazy(() => import('./pages/Vocabulary'))
 const Assistant = lazy(() => import('./pages/Assistant'))
 
-const LOADING_FADE_DURATION = 180
-const INITIAL_LOADING_DURATION = 760
-const ROUTE_LOADING_DURATION = 180
-const RESOURCE_LOADING_DURATION = 110
-const RESOURCE_INTERNAL_LOADING_DURATION = 60
-const MAX_LOADING_DURATION = 2200
 const CARNET_VISITED_KEY = 'carnet_visited'
-const RETURNING_LOADING_FACTOR = 0.27
 
 const RouteLoadingContext = createContext({
   pathname: '/',
@@ -56,36 +45,6 @@ function rememberCarnetVisited() {
   } catch {
     // Loading should never fail just because storage is unavailable.
   }
-}
-
-function scaleLoadingDuration(duration, factor) {
-  return Math.max(0, Math.round(duration * factor))
-}
-
-function isResourcePath(pathname = '') {
-  return pathname.startsWith('/resources')
-}
-
-function resolveRouteLoadingDuration(pathname, previousPathname, isInitialLoad, factor = 1.0) {
-  if (isInitialLoad) {
-    const elapsedSinceBoot = Date.now() - (window.__MATH_CLASS_BOOT_STARTED_AT__ || Date.now())
-    const remainingInitialDuration = Math.max(
-      0,
-      INITIAL_LOADING_DURATION - elapsedSinceBoot,
-    )
-
-    return scaleLoadingDuration(remainingInitialDuration, factor)
-  }
-
-  if (isResourcePath(pathname) && isResourcePath(previousPathname)) {
-    return scaleLoadingDuration(RESOURCE_INTERNAL_LOADING_DURATION, factor)
-  }
-
-  if (isResourcePath(pathname)) {
-    return scaleLoadingDuration(RESOURCE_LOADING_DURATION, factor)
-  }
-
-  return scaleLoadingDuration(ROUTE_LOADING_DURATION, factor)
 }
 
 function RouteReadySignal() {
@@ -156,135 +115,27 @@ function AppRoutes() {
   )
 }
 
+// 路由外壳:杂志刊没有加载幕(启动纸面在 index.html,翻页动画即转场),
+// 这里只保留首访标记与站内 flip 记忆。
 function RoutedExperience() {
   const location = useLocation()
-  const [loadingPhase, setLoadingPhase] = useState('visible')
-  const isFirstLoadRef = useRef(true)
-  const previousPathnameRef = useRef(location.pathname)
-  const activePathnameRef = useRef(location.pathname)
-  const minVisibleUntilRef = useRef(Date.now())
-  const timerRef = useRef({ leave: 0, hide: 0, safety: 0 })
-  const isReturningVisitorRef = useRef(hasVisitedCarnet())
-  const shouldRememberVisitRef = useRef(!isReturningVisitorRef.current)
-  const loadingTimingRef = useRef({
-    fadeDuration: LOADING_FADE_DURATION,
-    maxDuration: MAX_LOADING_DURATION,
-  })
-  // 翻页衔接的跳转不走加载幕(宪法 §4):记录被抑制的 pathname,
-  // markRouteReady 对它直接短路,避免 leaving 幽灵帧。
-  const flipSkipRef = useRef('')
+  const shouldRememberVisitRef = useRef(!hasVisitedCarnet())
 
-  const clearLoadingTimers = useCallback(() => {
-    window.clearTimeout(timerRef.current.leave)
-    window.clearTimeout(timerRef.current.hide)
-    window.clearTimeout(timerRef.current.safety)
+  useEffect(() => {
+    if (shouldRememberVisitRef.current) {
+      rememberCarnetVisited()
+      shouldRememberVisitRef.current = false
+    }
   }, [])
-
-  const scheduleLoadingExit = useCallback((pathname) => {
-    if (pathname !== activePathnameRef.current) {
-      return
-    }
-
-    const remaining = Math.max(0, minVisibleUntilRef.current - Date.now())
-
-    window.clearTimeout(timerRef.current.leave)
-    window.clearTimeout(timerRef.current.hide)
-    window.clearTimeout(timerRef.current.safety)
-
-    timerRef.current.leave = window.setTimeout(() => {
-      if (pathname === activePathnameRef.current) {
-        setLoadingPhase('leaving')
-      }
-    }, remaining)
-
-    const { fadeDuration } = loadingTimingRef.current
-
-    timerRef.current.hide = window.setTimeout(() => {
-      if (pathname === activePathnameRef.current) {
-        setLoadingPhase('hidden')
-
-        if (shouldRememberVisitRef.current) {
-          rememberCarnetVisited()
-          shouldRememberVisitRef.current = false
-          isReturningVisitorRef.current = true
-        }
-      }
-    }, remaining + fadeDuration)
-  }, [])
-
-  const markRouteReady = useCallback((pathname) => {
-    if (pathname !== activePathnameRef.current) {
-      return
-    }
-    if (flipSkipRef.current === pathname) {
-      return
-    }
-
-    scheduleLoadingExit(pathname)
-  }, [scheduleLoadingExit])
-
-  useLayoutEffect(() => {
-    clearLoadingTimers()
-
-    const isInitialLoad = isFirstLoadRef.current
-    isFirstLoadRef.current = false
-
-    // 杂志刊契约:站内路由切换一律不出加载幕(翻入动画即转场);
-    // 加载幕只保留冷启动首访这一次。
-    if (!isInitialLoad) {
-      flipSkipRef.current = location.pathname
-      previousPathnameRef.current = location.pathname
-      activePathnameRef.current = location.pathname
-      setLoadingPhase('hidden')
-      return undefined
-    }
-    flipSkipRef.current = ''
-    const previousPathname = previousPathnameRef.current
-    const isReturning = isInitialLoad && isReturningVisitorRef.current
-    const factor = isReturning ? RETURNING_LOADING_FACTOR : 1.0
-    const visibleDuration = resolveRouteLoadingDuration(location.pathname, previousPathname, isInitialLoad, factor)
-    previousPathnameRef.current = location.pathname
-    activePathnameRef.current = location.pathname
-    minVisibleUntilRef.current = Date.now() + visibleDuration
-    loadingTimingRef.current = {
-      fadeDuration: scaleLoadingDuration(LOADING_FADE_DURATION, factor),
-      maxDuration: scaleLoadingDuration(MAX_LOADING_DURATION, factor),
-    }
-
-    setLoadingPhase('visible')
-    timerRef.current.safety = window.setTimeout(() => {
-      if (location.pathname !== activePathnameRef.current) {
-        return
-      }
-
-      scheduleLoadingExit(location.pathname)
-    }, Math.max(visibleDuration, loadingTimingRef.current.maxDuration))
-
-    return () => {
-      clearLoadingTimers()
-    }
-  }, [clearLoadingTimers, location.pathname, scheduleLoadingExit])
 
   const routeLoadingValue = useMemo(
-    () => ({
-      pathname: location.pathname,
-      markRouteReady,
-    }),
-    [location.pathname, markRouteReady],
+    () => ({ pathname: location.pathname, markRouteReady: () => {} }),
+    [location.pathname],
   )
 
   return (
     <RouteLoadingContext.Provider value={routeLoadingValue}>
-      <>
-        {loadingPhase !== 'hidden' ? (
-          <PageLoading
-            fullscreen
-            isLeaving={loadingPhase === 'leaving'}
-            pathname={location.pathname}
-          />
-        ) : null}
-        <AppRoutes />
-      </>
+      <AppRoutes />
     </RouteLoadingContext.Provider>
   )
 }
