@@ -4721,31 +4721,6 @@
   justify-content: center;
 }
 
-.bib-index-inner {
-  max-width: 720px;
-  width: 100%;
-  padding: 24px;
-  text-align: center;
-}
-.bib-masthead {
-  margin: 0 0 14px;
-  font-family: "Bodoni Moda", serif;
-  font-style: italic;
-  font-weight: 500;
-  font-size: clamp(48px, 8vw, 104px);
-  line-height: 0.95;
-  color: var(--mag-ink);
-  font-variation-settings: "opsz" 96;
-  letter-spacing: -0.01em;
-}
-.bib-quote {
-  margin: 0 0 42px;
-  font-style: italic;
-  font-size: 16px;
-  color: var(--mag-muted);
-}
-.bib-index-grid { max-width: 620px; margin: 0 auto; }
-
 .bib-scroll {
   height: 100%;
   width: 100%;
@@ -5280,3 +5255,7 @@
 .lgn .status-line { margin: 4px 0 0; font-size: 13px; }
 .lgn .status-line.is-error { color: var(--mag-wine); }
 .lgn .status-line.is-success { color: var(--ok); }
+
+/* 登录表单占位符化:空标签隐藏,占位符同 Connexion 屏灰度 */
+.lgn .password-field > span:empty { display: none; }
+.lgn .login-form input::placeholder { color: rgba(111, 103, 94, 0.65); }

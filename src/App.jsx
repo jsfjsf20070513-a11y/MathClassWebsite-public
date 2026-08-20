@@ -14,7 +14,6 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-route
 import Layout from './components/Layout'
 import PageLoading from './components/PageLoading'
 import Home from './pages/Home'
-import { wasFlipNav } from './lib/flipNav'
 import './App.css'
 
 const Resources = lazy(() => import('./pages/Resources'))
@@ -109,10 +108,10 @@ function ReadyPage({ children }) {
 }
 
 function DeferredPage({ children }) {
-  const location = useLocation()
-
+  // 杂志刊契约(2026-08-20):路由切换不再有加载页;懒加载空档留白纸,
+  // 由目标页的翻入动画接管。旧 carnet 加载视图只服务冷启动首访。
   return (
-    <Suspense fallback={<PageLoading pathname={location.pathname} />}>
+    <Suspense fallback={null}>
       <ReadyPage>{children}</ReadyPage>
     </Suspense>
   )
@@ -230,8 +229,9 @@ function RoutedExperience() {
     const isInitialLoad = isFirstLoadRef.current
     isFirstLoadRef.current = false
 
-    // 站内翻页衔接:出场翻页已演完前半个动作,这里不再插加载幕。
-    if (!isInitialLoad && wasFlipNav()) {
+    // 杂志刊契约:站内路由切换一律不出加载幕(翻入动画即转场);
+    // 加载幕只保留冷启动首访这一次。
+    if (!isInitialLoad) {
       flipSkipRef.current = location.pathname
       previousPathnameRef.current = location.pathname
       activePathnameRef.current = location.pathname

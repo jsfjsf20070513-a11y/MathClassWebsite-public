@@ -4,14 +4,13 @@ import PasswordField from '../components/PasswordField'
 import { supabase, isSupabaseConfigured, SUPABASE_MISSING_MESSAGE } from '../lib/supabase'
 import { markFlipNav } from '../lib/flipNav'
 
-const PHONE_PATTERN = /^1\d{10}$/
 const OTP_RESEND_SECONDS = 60
 
 const COPY = {
   login: {
     title: '登录 · Connexion',
     summary: '登录后,背词进度跨设备同步。',
-    submit: '登录 · Connexion',
+    submit: 'Entrer',
     submitting: '登录中…',
   },
   signup: {
@@ -37,7 +36,6 @@ const COPY = {
 }
 
 const ERRORS = {
-  invalidPhone: '请输入有效的 11 位手机号码。',
   realNameRequired: '请填写真实姓名。',
   nicknameRequired: '请填写昵称。',
   passwordTooShort: '密码至少需要 6 位字符。',
@@ -49,9 +47,7 @@ const ERRORS = {
 
 export default function Login() {
   const [mode, setMode] = useState('login')
-  const [loginMethod, setLoginMethod] = useState('email')
   const [email, setEmail] = useState('')
-  const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [nickname, setNickname] = useState('')
@@ -67,7 +63,6 @@ export default function Login() {
   const [otpCode, setOtpCode] = useState('')
   const [resendCountdown, setResendCountdown] = useState(0)
 
-  const finalEmail = loginMethod === 'phone' ? `${phone}@phone.local` : email
   const copy = COPY[mode]
 
   // Tick the resend countdown down once per second; the timer is re-scheduled
@@ -132,10 +127,7 @@ export default function Login() {
 
     try {
       if (mode === 'login') {
-        if (loginMethod === 'phone' && !PHONE_PATTERN.test(phone)) {
-          throw new Error(ERRORS.invalidPhone)
-        }
-        const { error } = await supabase.auth.signInWithPassword({ email: finalEmail, password })
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
         if (error) throw error
         setSignedIn(true)
         return
@@ -146,18 +138,14 @@ export default function Login() {
         if (!nickname.trim()) throw new Error(ERRORS.nicknameRequired)
         if (password.length < 6) throw new Error(ERRORS.passwordTooShort)
         if (password !== confirmPassword) throw new Error(ERRORS.passwordMismatch)
-        if (loginMethod === 'phone' && !PHONE_PATTERN.test(phone)) {
-          throw new Error(ERRORS.invalidPhone)
-        }
 
         const { data, error } = await supabase.auth.signUp({
-          email: finalEmail,
+          email: email.trim(),
           password,
           options: {
             data: {
               nickname: nickname.trim(),
               real_name: realName.trim(),
-              phone: loginMethod === 'phone' ? phone : null,
             },
           },
         })
@@ -257,53 +245,41 @@ export default function Login() {
           <button type="button" className={`text-button ${mode === 'forgot' ? 'active' : ''}`} onClick={() => switchMode('forgot')}>找回密码</button>
         </div>
 
-        {mode === 'login' || mode === 'signup' ? (
-          <div className="editorial-actions tabs login-tabs">
-            <button type="button" className={`text-button ${loginMethod === 'email' ? 'active' : ''}`} onClick={() => setLoginMethod('email')}>邮箱</button>
-            <button type="button" className={`text-button ${loginMethod === 'phone' ? 'active' : ''}`} onClick={() => setLoginMethod('phone')}>手机</button>
-          </div>
-        ) : null}
-
         <form className="editorial-form login-form" onSubmit={handleSubmit}>
           {mode === 'signup' ? (
             <>
-              <label>
-                <span>真实姓名 · Nom</span>
-                <input value={realName} onChange={(event) => setRealName(event.target.value)} required />
-              </label>
-              <label>
-                <span>昵称 · Pseudo</span>
-                <input value={nickname} onChange={(event) => setNickname(event.target.value)} required />
-              </label>
+              <input
+                value={realName}
+                onChange={(event) => setRealName(event.target.value)}
+                required
+                placeholder="真实姓名 · Nom"
+                aria-label="真实姓名"
+              />
+              <input
+                value={nickname}
+                onChange={(event) => setNickname(event.target.value)}
+                required
+                placeholder="昵称 · Pseudo"
+                aria-label="昵称"
+              />
             </>
           ) : null}
 
-          {mode === 'forgot' || mode === 'otp' || loginMethod === 'email' ? (
-            <label>
-              <span>邮箱 · E-mail</span>
-              <input
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required={mode === 'forgot' || mode === 'otp' || loginMethod === 'email'}
-                disabled={mode === 'otp' && otpSent}
-              />
-            </label>
-          ) : (
-            <label>
-              <span>手机号 · Téléphone</span>
-              <input
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-                inputMode="numeric"
-                required
-              />
-            </label>
-          )}
+          <input
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+            disabled={mode === 'otp' && otpSent}
+            autoComplete="email"
+            placeholder="Adresse e-mail"
+            aria-label="邮箱"
+          />
 
           {mode === 'login' || mode === 'signup' ? (
             <PasswordField
-              label="密码 · Mot de passe"
+              label=""
+              placeholder="Mot de passe"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required
@@ -313,7 +289,8 @@ export default function Login() {
 
           {mode === 'signup' ? (
             <PasswordField
-              label="确认密码 · Confirmer"
+              label=""
+              placeholder="确认密码 · Confirmer"
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
               required
@@ -323,16 +300,15 @@ export default function Login() {
 
           {mode === 'otp' && otpSent ? (
             <>
-              <label>
-                <span>验证码 · Code</span>
-                <input
-                  value={otpCode}
-                  onChange={(event) => setOtpCode(event.target.value)}
-                  inputMode="numeric"
-                  autoComplete="one-time-code"
-                  required
-                />
-              </label>
+              <input
+                value={otpCode}
+                onChange={(event) => setOtpCode(event.target.value)}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                required
+                placeholder="验证码 · Code"
+                aria-label="验证码"
+              />
               <div className="editorial-actions">
                 <button type="button" className="text-button" onClick={handleResendOtp} disabled={loading || resendCountdown > 0}>
                   {resendCountdown > 0

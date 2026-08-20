@@ -8,9 +8,9 @@ import { getResourceLead } from '../lib/resourceText'
 import { usePageFlip } from '../hooks/usePageFlip'
 import { markFlipNav, wasFlipNav } from '../lib/flipNav'
 
-// 书目 Resources — 2026-08 编排版「一册图录」(宪法 §5.3):
-// 第一停 = 斜体大刊头 + 罗马数字索引;之后一架一页(Ⅰ–Ⅷ),轻翻,
-// 翻入时条目逐条错开淡入;架内容超一屏走页内滚动优先。
+// 书目 Resources — 2026-08 编排版「一册图录」(宪法 §5.3,2026-08-20 修订):
+// 索引住在 Home 第 4 页(同一份索引不出现两次),本页直接一架一页(Ⅰ–Ⅷ)轻翻,
+// 翻入时条目逐条错开淡入;架内容超一屏走页内滚动优先;#shelf-N 直达对应架。
 // 条目 = 标题外链 + 酒红小标签 + 中文简介一行;数据源 resourceCatalog 不动。
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
 const toRoman = (n) => ROMAN[n] || `${n + 1}`
@@ -47,21 +47,21 @@ export default function Resources() {
       .filter((shelf) => shelf.items.length)
   }, [catalogItems])
 
-  // 页面栈:0 = 索引,1..n = 书架;书架轻翻(0.5s),索引 → 首架同参。
-  const pageCount = shelves.length + 1
-  const sides = useMemo(() => ['none', ...shelves.map(() => 'right')], [shelves])
+  // 页面栈 = 书架 Ⅰ..Ⅷ,轻翻(0.5s);首架平摊,其余停靠右侧。
+  const pageCount = shelves.length
+  const sides = useMemo(() => shelves.map((_, k) => (k === 0 ? 'none' : 'right')), [shelves])
   const { page, next, prev, goTo, setPageEl } = usePageFlip({
     count: pageCount,
     sides,
     durationMs: 500,
   })
 
-  // 支持 /resources#shelf-N 直达(Home 第 4 页索引行点击进来)。
+  // /resources#shelf-N 直达(Home 第 4 页索引行点击进来;N 从 1 计)。
   useEffect(() => {
     const m = window.location.hash.match(/^#shelf-(\d+)$/)
     if (!m) return
-    const idx = Number(m[1])
-    if (idx >= 1 && idx <= shelves.length) {
+    const idx = Number(m[1]) - 1
+    if (idx >= 1 && idx < shelves.length) {
       const t = window.setTimeout(() => goTo(idx), 60)
       return () => window.clearTimeout(t)
     }
@@ -73,9 +73,7 @@ export default function Resources() {
     navigate('/')
   }, [navigate])
 
-  const folio = page === 0
-    ? 'Index'
-    : `${toRoman(page - 1)} — ${toRoman(shelves.length - 1)}`
+  const folio = `${toRoman(page)} — ${toRoman(shelves.length - 1)}`
 
   return (
     <main className={`bib${arrive ? ' mag-arrive' : ''}`}>
@@ -86,35 +84,13 @@ export default function Resources() {
       </nav>
 
       <div className="bib-stack">
-        {/* ── 第一停:刊头 + 索引 ── */}
-        <section ref={setPageEl(0)} className="bib-page bib-index" style={{ zIndex: 10 }} aria-label="索引">
-          <div className="bib-index-inner">
-            <p className="vpl-kicker" data-animate="">Ressources &amp; bibliographie · 资源与书目</p>
-            <h1 className="bib-masthead" lang="fr" data-animate="">Bibliothèque</h1>
-            <p className="bib-quote" lang="fr" data-animate="">Classer n&apos;est pas clore ; c&apos;est laisser les chemins demeurer lisibles.</p>
-            <div className="mag-biblio-grid bib-index-grid" data-animate="">
-              {shelves.map((shelf, index) => (
-                <button
-                  key={shelf.title}
-                  type="button"
-                  className="mag-biblio-row"
-                  onClick={() => goTo(index + 1)}
-                >
-                  <span className="mag-biblio-roman">{toRoman(index)}</span>
-                  <span className="mag-biblio-label">{shelf.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ── 一架一页 ── */}
         {shelves.map((shelf, index) => (
           <section
             key={shelf.title}
-            ref={setPageEl(index + 1)}
+            ref={setPageEl(index)}
             className="bib-page bib-shelf"
-            style={{ zIndex: 11 + index, transform: 'translateX(105%) rotate(2.2deg)' }}
+            style={{ zIndex: 10 + index, transform: index === 0 ? 'none' : 'translateX(105%) rotate(2.2deg)' }}
             aria-label={shelf.title}
           >
             <div className="bib-scroll" data-flip-scroll="">
