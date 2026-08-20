@@ -4281,3 +4281,995 @@
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ══ /vocabulary 「一叠卡片」(宪法 §5.2) ══ */
+
+@keyframes magArrive {
+  from { transform: translateX(105%) rotate(2.2deg); }
+  to { transform: translateX(0) rotate(0deg); }
+}
+.mag-arrive {
+  animation: magArrive 0.6s var(--flip-ease) both;
+  transform-origin: 50% 100%;
+}
+
+@keyframes vplCardIn {
+  from { opacity: 0; transform: translateX(64px) rotate(0.6deg); }
+  to { opacity: 1; transform: translateX(0) rotate(0deg); }
+}
+
+.vpl {
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: #faf6ee;
+  color: var(--mag-ink-2);
+  font-family: "Cormorant Garamond", "EB Garamond", "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  overflow: hidden;
+}
+
+.vpl-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 20px 36px 16px;
+  border-bottom: 1px solid var(--mag-hairline);
+  font-family: "Bodoni Moda", serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.vpl-nav-back {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--mag-muted);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  transition: color 0.2s ease;
+}
+.vpl-nav-back:hover { color: #2a211c; }
+.vpl-nav-title { color: #2a211c; }
+.vpl-nav-side { color: var(--mag-muted); letter-spacing: 0.18em; }
+
+.vpl-stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  overflow-y: auto;
+}
+
+.vpl-card {
+  margin: auto;
+  width: 100%;
+  max-width: 1080px;
+  padding: 40px 56px;
+  display: grid;
+  grid-template-columns: 1fr 1px 400px;
+  gap: 0 44px;
+  animation: vplCardIn 0.5s var(--flip-ease) both;
+}
+.vpl-divider { background: var(--mag-hairline); }
+
+.vpl-card-narrow { max-width: 900px; grid-template-columns: 1fr 1px 360px; }
+
+.vpl-card-notice,
+.vpl-card-idle,
+.vpl-card-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 640px;
+  gap: 0;
+}
+
+.vpl-stagezone {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+.vpl-interzone {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.vpl-kicker {
+  margin: 0 0 26px;
+  color: var(--mag-wine);
+  font-family: "Bodoni Moda", serif;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+.vpl-card-notice .vpl-kicker,
+.vpl-card-idle .vpl-kicker,
+.vpl-card-done .vpl-kicker { margin-bottom: 10px; }
+
+.vpl-word {
+  margin: 0;
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(44px, 6.5vw, 96px);
+  line-height: 0.98;
+  color: var(--mag-ink);
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.01em;
+  overflow-wrap: break-word;
+}
+.vpl-word-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin-top: 22px;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--mag-muted);
+}
+.vpl-listen {
+  background: transparent;
+  border: none;
+  padding: 0 0 3px;
+  cursor: pointer;
+  font-family: "Bodoni Moda", serif;
+  font-style: normal;
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--mag-ink-2);
+  box-shadow: inset 0 -1px 0 rgba(34, 29, 24, 0.35);
+  transition: color 0.2s ease, box-shadow 0.2s ease;
+}
+.vpl-listen:hover { color: var(--mag-wine-hover); box-shadow: inset 0 -1px 0 var(--mag-wine-hover); }
+.vpl-listen-lg { font-size: 13px; align-self: flex-start; padding-bottom: 6px; }
+
+.vpl-sentence {
+  margin: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: clamp(22px, 2.6vw, 30px);
+  line-height: 1.45;
+  color: var(--mag-ink);
+}
+.vpl-cue {
+  margin: 0;
+  font-size: 17px;
+  color: #4a423a;
+}
+.vpl-cue-lg { font-size: clamp(21px, 2.2vw, 26px); line-height: 1.6; color: var(--mag-ink); }
+.vpl-cue-pos { color: var(--mag-muted); font-style: italic; font-size: 0.8em; }
+
+/* 选项:罗马数字发丝线行;反馈时正确项反白墨块、错选划线(宪法 §5.2) */
+.vpl-options { display: flex; flex-direction: column; }
+.vpl-option {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--mag-hairline);
+  padding: 16px 6px;
+  min-height: 44px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  transition: background 0.15s ease, opacity 0.3s ease;
+}
+.vpl-option:last-child { border-bottom: 1px solid var(--mag-hairline); }
+.vpl-option:hover:not(:disabled) { background: rgba(34, 29, 24, 0.04); }
+.vpl-option-roman {
+  font-family: "Bodoni Moda", serif;
+  font-size: 11px;
+  color: var(--mag-wine-hover);
+  width: 22px;
+  flex-shrink: 0;
+}
+.vpl-option-text {
+  font-family: "Cormorant Garamond", "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: 21px;
+  color: var(--mag-ink-2);
+}
+.vpl-option.is-answer { background: #221d18; border-color: #221d18; }
+.vpl-option.is-answer .vpl-option-text { color: #f4efe6; }
+.vpl-option.is-answer .vpl-option-roman { color: #c9a06a; }
+.vpl-option.is-answer + .vpl-option { border-top-color: #221d18; }
+.vpl-option.is-picked-wrong .vpl-option-text { color: var(--mag-wine); text-decoration: line-through; }
+.vpl-option.is-dim { opacity: 0.45; }
+
+/* 拼写 / 拼句 / 配对 */
+.vpl-write { display: flex; flex-direction: column; gap: 30px; align-items: flex-start; }
+.vpl-input {
+  width: 100%;
+  padding: 10px 2px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(34, 29, 24, 0.28);
+  border-radius: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 26px;
+  color: var(--mag-ink-2);
+  outline: none;
+}
+.vpl-input:focus { border-bottom-color: var(--mag-wine); }
+.vpl-verify { align-self: flex-start; }
+
+.vpl-build { display: flex; flex-direction: column; gap: 22px; align-items: flex-start; }
+.vpl-build-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 44px;
+  width: 100%;
+  border-bottom: 1px solid rgba(34, 29, 24, 0.28);
+  padding-bottom: 10px;
+  align-items: center;
+}
+.vpl-build-placeholder { color: var(--mag-muted); font-style: italic; font-size: 15px; }
+.vpl-build-bank { display: flex; flex-wrap: wrap; gap: 8px; }
+.vpl-tile {
+  background: transparent;
+  border: 1px solid var(--mag-hairline-dark);
+  padding: 8px 14px;
+  min-height: 40px;
+  cursor: pointer;
+  font-family: "Cormorant Garamond", "Songti SC", "SimSun", serif;
+  font-size: 18px;
+  color: var(--mag-ink-2);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.2s ease;
+}
+.vpl-tile:hover:not(:disabled) { background: rgba(34, 29, 24, 0.05); }
+.vpl-tile.is-chosen,
+.vpl-tile.is-sel { background: #221d18; color: #f4efe6; border-color: #221d18; }
+.vpl-tile.is-done { opacity: 0.25; }
+.vpl-tile.is-wrong { border-color: var(--mag-wine); color: var(--mag-wine); }
+
+.vpl-match { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+.vpl-match-col { display: flex; flex-direction: column; gap: 10px; }
+.vpl-match .vpl-tile { min-height: 44px; text-align: center; }
+
+/* 判定反馈:原页揭示 */
+.vpl-fb {
+  margin-top: 30px;
+  padding-top: 18px;
+  border-top: 1px solid var(--mag-hairline);
+  animation: magFadeIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.vpl-fb-verdict {
+  margin: 0 0 8px;
+  font-family: "Bodoni Moda", serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.vpl-fb.is-ok .vpl-fb-verdict { color: var(--ok); }
+.vpl-fb.is-no .vpl-fb-verdict { color: var(--mag-wine); }
+.vpl-fb-answer { margin: 0 0 6px; font-size: 21px; font-style: italic; color: var(--mag-ink); }
+.vpl-fb-gloss { font-style: normal; font-size: 15px; color: var(--mag-muted); }
+.vpl-fb-note { margin: 0 0 6px; font-size: 14px; color: var(--mag-muted); }
+.vpl-fb-actions { display: flex; align-items: baseline; gap: 26px; margin-top: 16px; }
+.vpl-explain,
+.vpl-explain:visited {
+  border-bottom: none;
+  color: var(--mag-muted);
+  font-size: 13px;
+}
+.vpl-explain:hover { color: var(--mag-wine-hover); }
+
+/* 扉页 / 结算 / 通知 */
+.vpl-title {
+  margin: 0 0 18px;
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(38px, 5vw, 58px);
+  line-height: 1;
+  color: var(--mag-ink);
+  font-variation-settings: "opsz" 96;
+}
+.vpl-quota {
+  margin: 0 0 6px;
+  font-family: "Bodoni Moda", serif;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--mag-muted);
+}
+.vpl-deckstats { margin: 0 0 8px; font-size: 14px; color: var(--mag-muted); }
+.vpl-commencer { margin-top: 34px; font-size: 13px; }
+
+.vpl-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 26px;
+  align-items: center;
+}
+.vpl-filter-row {
+  display: flex;
+  align-items: baseline;
+  gap: 13px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-family: "Bodoni Moda", serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.vpl-filter-key { color: var(--mag-wine-hover); min-width: 52px; text-align: right; }
+.vpl-chip {
+  background: transparent;
+  border: none;
+  padding: 0 0 3px;
+  cursor: pointer;
+  color: var(--mag-muted);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  transition: color 0.15s ease, box-shadow 0.15s ease;
+}
+.vpl-chip:hover { color: var(--mag-ink); }
+.vpl-chip.is-on { color: var(--mag-ink); box-shadow: inset 0 -1px 0 var(--mag-wine); }
+.vpl-msg { margin: 4px 0 0; font-size: 13px; color: var(--mag-muted); }
+
+.vpl-notice-text { margin: 0 0 22px; font-size: 17px; color: #4a423a; }
+
+.vpl-study-body { gap: 0; }
+.vpl-study-zh { margin: 0 0 14px; font-size: 24px; color: var(--mag-ink); }
+.vpl-study-example { margin: 0 0 6px; font-style: italic; font-size: 17px; line-height: 1.7; color: rgba(111, 103, 94, 0.9); }
+.vpl-study-example-zh { margin: 0 0 6px; font-size: 14px; color: var(--mag-muted); }
+.vpl-study-note { margin: 8px 0 0; font-size: 14px; color: var(--mag-muted); }
+.vpl-study-actions { display: flex; align-items: baseline; gap: 26px; margin-top: 30px; }
+
+.vpl-done-score { margin: 0 0 0; font-size: 16px; color: #4a423a; }
+.vpl-done-rule { width: 24px; height: 1px; margin: 22px auto; background: rgba(34, 29, 24, 0.3); }
+.vpl-review { display: flex; flex-direction: column; width: 100%; max-width: 420px; margin-top: 10px; }
+.vpl-review-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  border-top: 1px solid var(--mag-hairline);
+  padding: 10px 2px;
+  font-size: 17px;
+}
+.vpl-review-row:last-child { border-bottom: 1px solid var(--mag-hairline); }
+.vpl-review-zh { color: var(--mag-muted); font-size: 15px; }
+.vpl-done-actions { display: flex; gap: 30px; margin-top: 26px; }
+
+/* 底部常驻进度线(全场唯一计数) */
+.vpl-foot {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 14px 36px 22px;
+  min-height: 44px;
+}
+.vpl-progress {
+  flex: 1;
+  height: 1px;
+  background: var(--mag-hairline);
+  position: relative;
+  align-self: center;
+}
+.vpl-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 1px;
+  background: var(--mag-wine);
+  transition: width 0.4s ease;
+}
+.vpl-progress-label {
+  font-family: "Bodoni Moda", serif;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(111, 103, 94, 0.75);
+  white-space: nowrap;
+}
+
+@media (max-width: 880px) {
+  .vpl-card,
+  .vpl-card-narrow {
+    grid-template-columns: 1fr;
+    gap: 26px 0;
+    padding: 26px 22px;
+    max-width: 560px;
+  }
+  .vpl-divider { display: none; }
+  .vpl-word { font-size: clamp(40px, 15vw, 58px); }
+  .vpl-nav { padding: 16px 18px 12px; font-size: 9px; }
+  .vpl-foot { padding: 12px 18px 18px; }
+  .vpl-stagezone { justify-content: flex-start; }
+  .vpl-interzone { justify-content: flex-start; }
+}
+
+/* ══ /resources 「一册图录」(宪法 §5.3) ══ */
+
+.bib {
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: #f0eae0;
+  color: var(--mag-ink-2);
+  font-family: "Cormorant Garamond", "EB Garamond", "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  overflow: hidden;
+  position: relative;
+}
+
+.bib-stack {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.bib-page {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #f0eae0;
+  will-change: transform;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bib-index-inner {
+  max-width: 720px;
+  width: 100%;
+  padding: 24px;
+  text-align: center;
+}
+.bib-masthead {
+  margin: 0 0 14px;
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(48px, 8vw, 104px);
+  line-height: 0.95;
+  color: var(--mag-ink);
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.01em;
+}
+.bib-quote {
+  margin: 0 0 42px;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--mag-muted);
+}
+.bib-index-grid { max-width: 620px; margin: 0 auto; }
+
+.bib-scroll {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+  display: flex;
+}
+.bib-shelf-inner {
+  margin: auto;
+  max-width: 680px;
+  width: 100%;
+  padding: 56px 24px 72px;
+}
+.bib-shelf-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.bib-shelf-roman {
+  font-family: "Bodoni Moda", serif;
+  font-size: 16px;
+  color: var(--mag-wine-hover);
+}
+.bib-shelf-title {
+  margin: 0;
+  font-family: "Cormorant Garamond", "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-size: 25px;
+  font-weight: 500;
+  color: var(--mag-ink);
+}
+.bib-shelf-count {
+  font-family: "Bodoni Moda", serif;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--mag-muted);
+}
+.bib-shelf-intro {
+  margin: 5px 0 16px 30px;
+  font-size: 13px;
+  color: var(--mag-muted);
+}
+.bib-entries { list-style: none; margin: 0; padding: 0; }
+.bib-entry { border-top: 1px solid rgba(34, 29, 24, 0.14); padding: 13px 0; }
+.bib-entry:last-child { border-bottom: 1px solid rgba(34, 29, 24, 0.14); }
+.bib-entry-row {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.bib-entry-title,
+.bib-entry-title:visited {
+  flex: 1;
+  border-bottom: none;
+  font-size: 17px;
+  color: var(--mag-ink-2);
+}
+.bib-entry-title:hover { color: var(--mag-wine); }
+.bib-entry-tag {
+  font-family: "Bodoni Moda", serif;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  color: var(--mag-wine-hover);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.bib-entry-desc {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: var(--mag-muted);
+}
+
+/* 末架页脚:木色缩小版 Parole coda */
+.bib-coda {
+  margin-top: 52px;
+  background: #b9a58a;
+  padding: 30px 26px;
+  text-align: center;
+}
+.bib-coda .section-coda {
+  mix-blend-mode: multiply;
+  color: rgba(20, 13, 7, 0.96);
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.bib-folio { text-transform: uppercase; }
+
+@media (max-width: 640px) {
+  .bib-shelf-inner { padding: 32px 18px 72px; }
+  .bib-index-grid { max-width: none; }
+}
+
+/* ══ /assistant 「Correspondance 书信体」(宪法 §5.4) ══ */
+
+@keyframes corRule {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@keyframes corBreathe {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.7; }
+}
+
+.cor {
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  background: #fdfcf8;
+  color: var(--mag-ink-2);
+  font-family: "Cormorant Garamond", "EB Garamond", "Songti SC", "SimSun", "STSong", "Noto Serif SC", serif;
+  font-variant-numeric: lining-nums tabular-nums;
+  overflow: hidden;
+}
+.cor .vpl-nav { border-bottom-color: var(--mag-hairline); }
+.cor-effacer { letter-spacing: 0.18em; }
+
+.cor-gate {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+
+/* 停顿一:刊头空状态 */
+.cor-cover {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+.cor-cover .vpl-kicker { animation: magFadeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.cor-masthead {
+  margin: 0 0 12px;
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(40px, 6.5vw, 84px);
+  line-height: 0.95;
+  color: var(--mag-ink);
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.01em;
+  animation: magFadeIn 0.7s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.cor-sub {
+  margin: 0 0 46px;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--mag-muted);
+  animation: magFadeIn 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.cor-starters {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 520px;
+}
+.cor-starter {
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--mag-hairline);
+  padding: 14px 6px;
+  min-height: 44px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 16px;
+  color: #4a423a;
+  text-align: left;
+  transition: color 0.15s ease, background 0.15s ease;
+  animation: magFadeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.cor-starter:last-child { border-bottom: 1px solid var(--mag-hairline); }
+.cor-starter:hover { color: var(--mag-wine); background: rgba(34, 29, 24, 0.03); }
+
+/* 停顿二:信笺流 */
+.cor-thread {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+.cor-thread-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 34px 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.cor-dateline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.cor-dateline p {
+  margin: 0;
+  font-family: "Bodoni Moda", serif;
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(111, 103, 94, 0.75);
+  white-space: nowrap;
+}
+.cor-dateline-rule { display: block; width: 56px; height: 1px; background: rgba(34, 29, 24, 0.18); }
+
+.cor-turn {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  column-gap: 18px;
+  animation: magFadeIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.cor-mark {
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.2;
+  font-variation-settings: "opsz" 96;
+  text-align: right;
+  padding-right: 2px;
+}
+.cor-mark.is-q { color: var(--mag-wine); }
+.cor-mark.is-r { color: var(--mag-ink-2); }
+
+.cor-q-text {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--mag-ink-2);
+  padding-top: 2px;
+  white-space: pre-wrap;
+}
+.cor-r-body {
+  border-left: 1px solid rgba(34, 29, 24, 0.18);
+  padding: 4px 0 4px 20px;
+  transform-origin: top;
+  animation: corRule 0.5s ease both;
+}
+.cor-r-text {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.85;
+  color: var(--mag-ink-2);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  animation: magFadeIn 0.6s 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.cor-r-text .katex-display { overflow-x: auto; padding: 4px 0; }
+.cor-waiting { display: flex; align-items: center; min-height: 30px; }
+.cor-breathe {
+  display: block;
+  width: 120px;
+  height: 1px;
+  background: var(--mag-ink-2);
+  animation: corBreathe 1.6s ease-in-out infinite;
+}
+
+/* Figure n 图框 */
+.cor-figure {
+  margin: 0 0 10px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid rgba(34, 29, 24, 0.2);
+  padding: 10px 14px 12px;
+  background: transparent;
+  max-width: 100%;
+}
+.cor-figure figcaption {
+  font-family: "Bodoni Moda", serif;
+  font-size: 8px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--mag-muted);
+}
+.cor-figure img { max-width: min(320px, 100%); max-height: 220px; object-fit: contain; }
+
+.cor-error {
+  margin: 8px auto 0;
+  max-width: 760px;
+  width: 100%;
+  padding: 0 24px;
+  font-size: 13px;
+  color: var(--mag-wine);
+}
+.cor-attach {
+  max-width: 760px;
+  width: 100%;
+  margin: 8px auto 0;
+  padding: 0 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.cor-figure-pending img { max-height: 90px; }
+.cor-attach-remove {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--mag-muted);
+  padding: 4px 8px;
+  min-height: 44px;
+}
+.cor-attach-remove:hover { color: var(--mag-wine); }
+
+/* 页脚 composer */
+.cor-composer {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 18px 24px 6px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+}
+.cor-joindre {
+  background: transparent;
+  border: none;
+  padding: 0 0 10px;
+  cursor: pointer;
+  font-family: "Bodoni Moda", serif;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mag-muted);
+  white-space: nowrap;
+  transition: color 0.2s ease;
+}
+.cor-joindre:hover:not(:disabled) { color: var(--mag-wine-hover); }
+.cor-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(34, 29, 24, 0.28);
+  border-radius: 0;
+  padding: 8px 2px;
+  font-family: "Cormorant Garamond", "Songti SC", "SimSun", serif;
+  font-size: 16px;
+  color: var(--mag-ink-2);
+  outline: none;
+  resize: none;
+  line-height: 1.5;
+}
+.cor-input:focus { border-bottom-color: var(--mag-wine); }
+.cor-envoyer {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: "Bodoni Moda", serif;
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--mag-ink-2);
+  padding: 0 0 10px;
+  box-shadow: inset 0 -1px 0 rgba(34, 29, 24, 0.35);
+  transition: color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 44px;
+}
+.cor-envoyer:hover:not(:disabled) { color: var(--mag-wine-hover); box-shadow: inset 0 -1px 0 var(--mag-wine-hover); }
+.cor-envoyer:disabled { opacity: 0.4; cursor: default; }
+.cor-foot {
+  margin: 0 auto;
+  max-width: 760px;
+  width: 100%;
+  padding: 4px 24px 16px;
+  font-size: 11px;
+  color: rgba(111, 103, 94, 0.7);
+}
+
+@media (max-width: 640px) {
+  .cor-turn { grid-template-columns: 38px 1fr; column-gap: 12px; }
+  .cor-composer { gap: 12px; padding: 12px 18px 4px; }
+  .cor-thread-inner { padding: 24px 18px 10px; }
+  .cor-foot { padding: 4px 18px 12px; }
+}
+
+/* 主题下拉:同发丝线语言的原生 select */
+.vpl-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(34, 29, 24, 0.28);
+  border-radius: 0;
+  padding: 2px 18px 4px 2px;
+  font-family: "Bodoni Moda", serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mag-ink);
+  cursor: pointer;
+  outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='6'%3E%3Cpath d='M0 0h8L4 6z' fill='%236f675e'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+}
+.vpl-select:focus { border-bottom-color: var(--mag-wine); }
+
+/* 回信里的轻量 markdown 映射 */
+.cor-h {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: "Bodoni Moda", serif;
+  font-weight: 500;
+  font-size: 0.82em;
+  letter-spacing: 0.12em;
+}
+.cor-hr {
+  display: block;
+  width: 40px;
+  height: 1px;
+  margin: 10px 0;
+  background: rgba(34, 29, 24, 0.22);
+}
+
+/* ══ /login Connexion 视觉(宪法 §5.5;逻辑与流程全保留) ══ */
+
+.lgn {
+  max-width: 420px;
+  text-align: center;
+  padding-top: 24px;
+}
+.lgn-masthead { margin-bottom: 30px; }
+.lgn-back,
+.lgn-back:visited {
+  display: inline-block;
+  margin-bottom: 26px;
+  border-bottom: none;
+  color: var(--mag-muted);
+  font-family: "Bodoni Moda", serif;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.lgn-back:hover { color: #2a211c; }
+.lgn-title {
+  margin: 0 0 10px;
+  font-family: "Bodoni Moda", serif;
+  font-size: 44px;
+  font-weight: 400;
+  font-style: italic;
+  font-optical-sizing: auto;
+  font-variation-settings: "opsz" 96;
+  color: var(--mag-ink);
+}
+.lgn-summary { margin: 0; font-size: 15px; color: var(--mag-muted); }
+.lgn-dest { display: flex; justify-content: center; gap: 34px; margin-top: 10px; }
+
+/* 模式/方式切换:发丝线 chips */
+.lgn .login-tabs {
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+.lgn .login-tabs .text-button {
+  background: transparent;
+  border: none;
+  padding: 0 0 3px;
+  cursor: pointer;
+  color: var(--mag-muted);
+  font-family: "Bodoni Moda", serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: color 0.15s ease, box-shadow 0.15s ease;
+}
+.lgn .login-tabs .text-button:hover { color: var(--mag-ink); }
+.lgn .login-tabs .text-button.active { color: var(--mag-ink); box-shadow: inset 0 -1px 0 var(--mag-wine); }
+
+/* 表单:小型 Bodoni 眉头标签 + 居中发丝线输入框 */
+.lgn .login-form { display: flex; flex-direction: column; gap: 26px; margin-top: 26px; }
+.lgn .login-form label { display: flex; flex-direction: column; gap: 6px; }
+.lgn .login-form label > span,
+.lgn .password-field > span {
+  font-family: "Bodoni Moda", serif;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--mag-muted);
+}
+.lgn .login-form input {
+  width: 100%;
+  padding: 10px 2px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(34, 29, 24, 0.28);
+  border-radius: 0;
+  font-family: "Cormorant Garamond", "Songti SC", "SimSun", serif;
+  font-size: 16px;
+  color: var(--mag-ink-2);
+  outline: none;
+  text-align: center;
+}
+.lgn .login-form input:focus { border-bottom-color: var(--mag-wine); outline: none; }
+.lgn .password-field-control { position: relative; display: block; }
+.lgn .password-field-control input { padding-right: 44px; }
+.lgn .password-toggle {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--mag-muted);
+  font-size: 11px;
+  padding: 6px 2px;
+}
+.lgn .password-toggle:hover { color: var(--mag-ink); }
+.lgn .editorial-actions { display: flex; justify-content: center; gap: 20px; }
+.lgn .login-submit { margin-top: 4px; }
+.lgn .lgn-submit { font-size: 12px; }
+.lgn .status-line { margin: 4px 0 0; font-size: 13px; }
+.lgn .status-line.is-error { color: var(--mag-wine); }
+.lgn .status-line.is-success { color: var(--ok); }

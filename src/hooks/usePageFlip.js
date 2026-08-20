@@ -32,6 +32,7 @@ export function usePageFlip({ count, sides = [], durationMs = 900, enabled = tru
   const [page, setPage] = useState(0)
   const pagesRef = useRef([])
   const pageStateRef = useRef(0)
+  const appliedPageRef = useRef(-1)
   const instantRef = useRef(true)
   const wheelLockRef = useRef(0)
   const touchRef = useRef(null)
@@ -44,13 +45,17 @@ export function usePageFlip({ count, sides = [], durationMs = 900, enabled = tru
 
   const apply = useCallback((cur, instant) => {
     const reduced = prefersReducedMotion()
+    // 数据加载等原因导致的重跑不算翻页:只有页码真变才重播进场编排。
+    const changed = appliedPageRef.current !== cur
+    appliedPageRef.current = cur
     pagesRef.current.forEach((el, i) => {
       if (!el) return
       const side = sides[i] || 'right'
       el.style.zIndex = String(10 + i)
       el.style.pointerEvents = i === cur ? 'auto' : 'none'
       el.style.transformOrigin = '50% 100%'
-      el.style.boxShadow = SHADOW[side] || SHADOW.none
+      // 停靠在场外的页不带投影——多页叠停时投影会在页缘穿帮。
+      el.style.boxShadow = i <= cur ? (SHADOW[side] || SHADOW.none) : 'none'
       if (reduced) {
         el.style.transition = instant ? 'none' : 'opacity 0.3s ease'
         el.style.transform = 'none'
@@ -64,18 +69,26 @@ export function usePageFlip({ count, sides = [], durationMs = 900, enabled = tru
       }
       // 进场编排:刚成为当前页的内容逐件错开淡入(0.7s,起点 0.35s,步进 0.12s)。
       const items = el.querySelectorAll('[data-animate]')
-      if (i === cur && !instant && !reduced) {
-        items.forEach((it, k) => {
-          it.style.animation = 'none'
-          it.style.opacity = '0'
-          requestAnimationFrame(() => {
-            it.style.animation = `magFadeIn 0.7s ${0.35 + k * 0.12}s cubic-bezier(0.22, 1, 0.36, 1) both`
+      if (i === cur) {
+        if (!changed) return // 页码没变的重跑:别打断正在播/已播完的进场
+        if (instant || reduced) {
+          items.forEach((it) => {
+            it.style.animation = 'none'
+            it.style.opacity = '1'
           })
-        })
+        } else {
+          items.forEach((it, k) => {
+            it.style.animation = 'none'
+            it.style.opacity = '0'
+            requestAnimationFrame(() => {
+              it.style.animation = `magFadeIn 0.7s ${0.35 + k * 0.12}s cubic-bezier(0.22, 1, 0.36, 1) both`
+            })
+          })
+        }
       } else {
         items.forEach((it) => {
           it.style.animation = 'none'
-          it.style.opacity = i <= cur ? '1' : '0'
+          it.style.opacity = i < cur ? '1' : '0'
         })
       }
     })

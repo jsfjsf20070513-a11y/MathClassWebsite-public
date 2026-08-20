@@ -71,6 +71,11 @@ Claude Design 交接包(`docs/handoff-2026-08-20/`)+ 用户三轮口头拍板 + 
 
 ## 5. 页面契约
 
+三个内页(/vocabulary /resources /assistant)与 `/` 同属一本书:**不渲染 Layout
+页眉页脚**,各自带一条细导航(← Accueil / 刊名 / 状态小字,Bodoni 10px 大写,
+底衬发丝线),这取代了 DESIGN.md §1 的"内页暂保留现有 Layout"。
+/login、/reset-password、/resources/curate、404 仍走 Layout。
+
 ### 5.1 Home(按 Home-B-Galerie 稿原样)
 
 五页横翻 + Connexion 屏,100svh 无纵向滚动。要点照抄稿与 DESIGN.md §4–§7:

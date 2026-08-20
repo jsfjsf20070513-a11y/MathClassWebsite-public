@@ -13,8 +13,13 @@ export default function Layout() {
   const { user, signOut, isAuthEnabled } = useAuth()
   const displayName = user?.user_metadata?.nickname || user?.user_metadata?.real_name || user?.email || ''
 
-  // `/` 是杂志刊(100svh 自带角落导航与 folio),不渲染页眉页脚(宪法 §5.1)。
-  if (location.pathname === '/') {
+  // 杂志刊页面自带角落导航/细导航条,不渲染站点页眉页脚(宪法 §5)。
+  // `/` 是 100svh 翻页刊;三个内页(背词/书目/答疑)是它的内页,同属一本书。
+  const isMagazinePage = location.pathname === '/'
+    || location.pathname === '/vocabulary'
+    || location.pathname === '/resources'
+    || location.pathname === '/assistant'
+  if (isMagazinePage) {
     return <Outlet />
   }
 
@@ -62,21 +67,17 @@ export default function Layout() {
 
       <footer className="site-footer">
         <p className="site-footer-secondary">Pour la classe.</p>
-        <p className="site-footer-link">
-          <Link to="/resources"><span className="site-nav-fr" lang="fr">Bibliothèque</span> · 资源与书目</Link>
-        </p>
-        {/* 登录是页脚的功能小字,不参与页眉构图(背词页自身另有登录门)。 */}
+        {/* Bibliothèque / Connexion 链接已被杂志第 4/5 页吸收(宪法 §8);
+            此页脚只在 /login、/reset-password 等非杂志页出现,保留登录状态小字。 */}
         <p className="site-footer-auth">
           {user ? (
             <>
               <span className="site-auth-note">已登录 · {displayName}</span>
               <button type="button" className="site-auth-link" onClick={() => signOut()}>退出</button>
             </>
-          ) : isAuthEnabled ? (
-            <Link to="/login" className="site-auth-link"><span className="site-nav-fr" lang="fr">Connexion</span> · 登录</Link>
-          ) : (
+          ) : !isAuthEnabled ? (
             <span className="site-auth-note">登录未启用</span>
-          )}
+          ) : null}
         </p>
       </footer>
     </div>

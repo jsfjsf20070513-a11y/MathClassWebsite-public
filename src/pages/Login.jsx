@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import DailyMeditation from '../components/DailyMeditation'
 import PasswordField from '../components/PasswordField'
 import { supabase, isSupabaseConfigured, SUPABASE_MISSING_MESSAGE } from '../lib/supabase'
 
@@ -227,42 +226,27 @@ export default function Login() {
   // ── after a successful sign-in: where to? ──
   if (signedIn) {
     return (
-      <article className="page-column login-page">
-        <header className="login-masthead">
-          <p className="login-eyebrow">Connecté · 已登录</p>
-          <h1 className="login-title">欢迎回来</h1>
-          <p className="login-summary">接下来去哪儿?</p>
+      <article className="page-column login-page lgn">
+        <header className="lgn-masthead">
+          <p className="vpl-kicker" lang="fr">Connecté · 已登录</p>
+          <h1 className="lgn-title" lang="fr">Bienvenue</h1>
+          <p className="lgn-summary">接下来去哪儿?</p>
         </header>
-        <div className="login-dest">
-          <Link to="/vocabulary" className="vocab-verify">去背词 →</Link>
-          <Link to="/" className="vocab-verify">回扉页 →</Link>
+        <div className="lgn-dest">
+          <Link to="/vocabulary" className="mag-enter" lang="fr">Vocabulaire&nbsp;&nbsp;→</Link>
+          <Link to="/" className="mag-enter" lang="fr">Accueil&nbsp;&nbsp;→</Link>
         </div>
-        <section className="home-meditation"><DailyMeditation offset={7} /></section>
       </article>
     )
   }
 
   return (
-    <article className="page-column login-page">
-      <header className="login-masthead">
-        <Link to="/" className="login-back">返回扉页 · Retour</Link>
-        <p className="login-eyebrow">Authentification</p>
-        <h1 className="login-title">{copy.title}</h1>
-        <p className="login-summary">{copy.summary}</p>
+    <article className="page-column login-page lgn">
+      <header className="lgn-masthead">
+        <Link to="/" className="lgn-back" lang="fr">← Accueil</Link>
+        <h1 className="lgn-title" lang="fr">Connexion</h1>
+        <p className="lgn-summary">{copy.summary}</p>
       </header>
-
-      {mode === 'login' ? (
-        <ul className="login-values">
-          <li>
-            <span className="login-value-mark" aria-hidden="true">◆</span>
-            <span className="login-value-text">背词进度跨设备同步 —— 手机上背的,电脑上接着背。</span>
-          </li>
-          <li>
-            <span className="login-value-mark" aria-hidden="true">◆</span>
-            <span className="login-value-text">班级 AI 助手 —— 双语数学答疑、可拍题问图,登录后即用。</span>
-          </li>
-        </ul>
-      ) : null}
 
       <section className="login-section">
         <div className="editorial-actions tabs login-tabs">
@@ -359,13 +343,12 @@ export default function Login() {
           ) : null}
 
           <div className="editorial-actions login-submit">
-            <button type="submit" className="vocab-verify" disabled={loading}>
+            <button type="submit" className="mag-enter lgn-submit" disabled={loading}>
               {submitLabel}
             </button>
           </div>
           {message ? <p className={`status-line ${message.type === 'error' ? 'is-error' : 'is-success'}`}>{message.text}</p> : null}
         </form>
-        <section className="home-meditation"><DailyMeditation offset={7} /></section>
       </section>
     </article>
   )
