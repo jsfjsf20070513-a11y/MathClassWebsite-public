@@ -157,7 +157,13 @@ export default function Assistant() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body),
         })
-        if (!res.ok) throw new Error(`服务返回 ${res.status}`)
+        if (!res.ok) {
+          let detail = ''
+          try {
+            detail = (await res.json())?.error || ''
+          } catch { /* 非 JSON 响应 */ }
+          throw new Error(detail || `服务返回 ${res.status}`)
+        }
         const data = await res.json()
         const reply = `${data?.text || ''}`.trim()
         if (!reply) throw new Error('空回复')

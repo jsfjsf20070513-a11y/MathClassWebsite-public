@@ -15,7 +15,17 @@ const ALLOWED_ORIGINS = new Set([
   'http://localhost:5173',
 ])
 
-const CHAT_MODEL = 'gemini-flash-latest'
+// 免费层配额按模型分开计:一个打满自动降级到下一个,把全家额度榨干。
+// 顺序 = 质量/速度权衡;Gemma 收尾兜底(不支持 systemInstruction,请求侧适配)。
+const CHAT_MODELS = [
+  'gemini-flash-latest',
+  'gemini-2.5-pro',
+  'gemini-2.5-flash-lite',
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite',
+  'gemma-3-27b-it',
+  'gemma-3-12b-it',
+]
 const MAX_MESSAGES = 20
 const MAX_CHARS = 4000
 // 图片问答(多模态):只收常见图片类型,base64 体积设上限防刷配额。
@@ -87,29 +97,58 @@ async function handleChat(request, env, origin) {
     }
   }
 
-  let upstream
-  try {
-    upstream = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${CHAT_MODEL}:generateContent`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-goog-api-key': env.GEMINI_API_KEY },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents,
-          generationConfig: { temperature: 0.5, maxOutputTokens: 8192 },
-        }),
-      },
-    )
-  } catch {
-    return json({ error: 'Upstream unreachable' }, 502, origin)
+  // 沿降级链逐个试:任何失败(配额 429、过载 5xx、能力不符 4xx)都换下一个,
+  // 整条链打光才认输——目标是把免费层每个模型的独立配额都榨干。
+  const buildBody = (model) => {
+    if (model.startsWith('gemma')) {
+      // Gemma 不支持 systemInstruction:把系统提示折进第一条 user 消息。
+      const folded = contents.map((c, k) => (k === 0 && c.role === 'user'
+        ? { ...c, parts: [{ text: `${SYSTEM_PROMPT}\n\n---\n\n` }, ...c.parts] }
+        : c))
+      return JSON.stringify({ contents: folded, generationConfig: { temperature: 0.5, maxOutputTokens: 8192 } })
+    }
+    return JSON.stringify({
+      systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+      contents,
+      generationConfig: { temperature: 0.5, maxOutputTokens: 8192 },
+    })
   }
-  if (!upstream.ok) return json({ error: 'Upstream error', status: upstream.status }, 502, origin)
 
-  const data = await upstream.json()
-  const parts = (((data.candidates || [])[0] || {}).content || {}).parts || []
-  const text = parts.map((p) => p.text).filter(Boolean).join('')
-  return json({ text }, 200, origin)
+  let lastStatus = 0
+  for (const model of CHAT_MODELS) {
+    let upstream
+    try {
+      upstream = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-goog-api-key': env.GEMINI_API_KEY },
+          body: buildBody(model),
+        },
+      )
+    } catch {
+      lastStatus = 502
+      continue
+    }
+    if (!upstream.ok) {
+      lastStatus = upstream.status
+      continue
+    }
+    const data = await upstream.json()
+    const parts = (((data.candidates || [])[0] || {}).content || {}).parts || []
+    const text = parts.map((p) => p.text).filter(Boolean).join('')
+    if (!text.trim()) {
+      lastStatus = 502
+      continue
+    }
+    return json({ text, model }, 200, origin)
+  }
+  // 整条链都打光
+  return json(
+    { error: '今日 AI 免费额度已用完,明天再来。 · Quota du jour épuisé — reviens demain.', status: lastStatus },
+    429,
+    origin,
+  )
 }
 
 // base64 → Uint8Array(Worker 有全局 atob)。

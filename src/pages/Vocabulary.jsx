@@ -41,6 +41,34 @@ const SPEAK_ENDPOINT = 'https://rucmathclass.com/api/speak'
 const USE_WORKER_VOICE = false
 
 const VALID_DECK = cleanFrenchDeck(frenchVocabulary).valid
+const DECK_BY_ID = new Map(VALID_DECK.map((w) => [w.id, w]))
+// 会话快照:手机切屏/刷新会清掉 React 状态,SRS 评分虽已逐题入云,
+// 但"这一轮做到第几题"会丢——存 localStorage,当日同账号自动原地续。
+const SESSION_KEY = 'mcw_vocab_session_v1'
+
+function shanghaiDayStamp() {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit',
+  }).format(new Date())
+}
+
+function readSessionSnapshot(userId) {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(SESSION_KEY) || 'null')
+    if (!saved || saved.v !== 1 || saved.userId !== userId) return null
+    if (saved.day !== shanghaiDayStamp()) return null
+    if (saved.status !== 'study' && saved.status !== 'ready') return null
+    if (!Array.isArray(saved.queue) || !saved.queue.length) return null
+    if (!saved.queue.every((q) => q && DECK_BY_ID.has(q.id))) return null
+    return saved
+  } catch {
+    return null
+  }
+}
+
+function clearSessionSnapshot() {
+  try { window.localStorage.removeItem(SESSION_KEY) } catch { /* ignore */ }
+}
 // CEFR ladder A1→C2; only the levels actually present in the deck are offered.
 const LEVEL_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
 const DECK_LEVELS = ['all', ...LEVEL_ORDER.filter((l) => VALID_DECK.some((w) => w.level === l))]
@@ -125,6 +153,7 @@ export default function Vocabulary() {
   const [arrive] = useState(() => wasFlipNav())
   const inputRef = useRef(null)
   const audioRef = useRef(null)
+  const sessionQueueRef = useRef([])
   const voiceRef = useRef(null)
   const spokenRef = useRef(-1)
 
@@ -225,6 +254,42 @@ export default function Vocabulary() {
       if (mode === 'disabled') return setStatus('disabled')
       if (mode === 'compat') return setStatus('compat')
       const now = new Date().toISOString()
+
+      // ── 恢复当日未完的会话(切屏/刷新回来原地续) ──
+      const saved = readSessionSnapshot(user.id)
+      if (saved) {
+        const lvl = saved.level || 'all'
+        const savedDeck = selectDeck(lvl)
+        const queue = saved.queue.map((q) => ({ word: DECK_BY_ID.get(q.id), state: q.state, isNew: !!q.isNew }))
+        const built = buildSession(queue, savedDeck)
+        const idx = Math.min(Math.max(saved.i || 0, 0), built.length)
+        if (idx < built.length) {
+          if (lvl !== level) setLevel(lvl) // 触发的二次 load 走同一恢复路径,幂等
+          sessionQueueRef.current = queue
+          setDeckStats({
+            ...computeDeckStats({ deck: savedDeck, stateMap: states, now }),
+            streak: computeStudyStreak(Object.values(states), now),
+          })
+          setSteps(built)
+          setStudyList(queue.map((q) => ({ word: q.word, state: q.state, isNew: q.isNew })))
+          setStudyIdx(Math.min(saved.studyIdx || 0, queue.length - 1))
+          setI(idx)
+          setPhase('answer')
+          setPicked(null)
+          setInput('')
+          setChosen([])
+          setMatch({ sel: null, done: [], wrong: [] })
+          setStats(saved.stats || { correct: 0, attempts: 0, combo: 0, maxCombo: 0 })
+          setWrong((saved.wrongIds || [])
+            .map((id) => ({ word: DECK_BY_ID.get(id), state: null }))
+            .filter((x) => x.word))
+          spokenRef.current = -1
+          setStatus(saved.status)
+          return undefined
+        }
+        clearSessionSnapshot() // 快照已答完/失效:清掉走全新
+      }
+
       const deck = selectDeck(level)
       setDeckStats({
         ...computeDeckStats({ deck, stateMap: states, now }),
@@ -232,6 +297,7 @@ export default function Vocabulary() {
       })
       const queue = buildStudyQueue({ deck, stateMap: states, now, maxNew: MAX_NEW, maxReview: MAX_REVIEW })
       const built = buildSession(queue, deck)
+      sessionQueueRef.current = queue
       setSteps(built)
       setStudyList(queue.map((q) => ({ word: q.word, state: q.state, isNew: q.isNew })))
       setStudyIdx(0)
@@ -364,7 +430,9 @@ export default function Vocabulary() {
   const retryWrong = useCallback(() => {
     if (!wrong.length) return
     const deck = selectDeck(level)
-    const built = buildSession(wrong.map((x) => ({ word: x.word, state: x.state })), deck)
+    const retryQueue = wrong.map((x) => ({ word: x.word, state: x.state }))
+    const built = buildSession(retryQueue, deck)
+    sessionQueueRef.current = retryQueue
     setSteps(built)
     setI(0)
     setPhase('answer')
@@ -386,6 +454,33 @@ export default function Vocabulary() {
     })
   }, [studyList.length])
   const skipStudy = useCallback(() => setStatus('ready'), [])
+
+  // 会话快照:答题/预习期间每步落盘;i 记"下一道未答题"
+  // (feedback 阶段该题已评分入云,恢复时直接跳下一道,避免重复计分)。
+  useEffect(() => {
+    if (!user || (status !== 'study' && status !== 'ready')) return
+    const queue = sessionQueueRef.current
+    if (!queue.length) return
+    const answeredThrough = phase === 'feedback' ? i + 1 : i
+    try {
+      window.localStorage.setItem(SESSION_KEY, JSON.stringify({
+        v: 1,
+        userId: user.id,
+        day: shanghaiDayStamp(),
+        level,
+        status,
+        i: answeredThrough,
+        studyIdx,
+        stats,
+        wrongIds: wrong.map((x) => x.word.id),
+        queue: queue.map((q) => ({ id: q.word.id, state: q.state, isNew: !!q.isNew })),
+      }))
+    } catch { /* storage 不可用时静默 */ }
+  }, [user, status, i, phase, studyIdx, stats, wrong, level])
+
+  useEffect(() => {
+    if (status === 'done') clearSessionSnapshot()
+  }, [status])
 
   // speak the listen prompt when its step appears; autofocus the spelling input
   useEffect(() => {
