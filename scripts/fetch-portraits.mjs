@@ -1,0 +1,41 @@
+#!/usr/bin/env node
+// Batch-download the 60 mathematician portraits (all public domain / freely licensed)
+// into public/portraits/{slug}.jpg at width<=480. Sequential + polite delay to avoid
+// Wikimedia rate limits; retries 429/5xx with backoff. Idempotent (skips existing files).
+// Usage: node scripts/fetch-portraits.mjs   (run from repo root; portraits.json alongside)
+import { readFile, writeFile, mkdir, access } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const here = dirname(fileURLToPath(import.meta.url));
+const list = JSON.parse(await readFile(join(here, 'portraits.json'), 'utf8'));
+const outDir = join(here, '..', 'public', 'portraits');
+await mkdir(outDir, { recursive: true });
+const UA = 'mcw-mathclass/1.0 (portrait cache build; contact: site admin)';
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+let ok = 0, skipped = 0, failed = [];
+for (const p of list) {
+  const dest = join(outDir, p.slug + '.jpg');
+  try { await access(dest); skipped++; continue; } catch {}
+  const url = p.sourceUrl + '?width=480';
+  let done = false;
+  for (let attempt = 1; attempt <= 4 && !done; attempt++) {
+    try {
+      const res = await fetch(url, { headers: { 'User-Agent': UA }, redirect: 'follow' });
+      if (res.status === 429 || res.status >= 500) throw new Error('HTTP ' + res.status);
+      if (!res.ok) { failed.push(p.slug + ' HTTP ' + res.status); break; }
+      const buf = Buffer.from(await res.arrayBuffer());
+      if (buf.length < 2000) throw new Error('suspiciously small (' + buf.length + 'B)');
+      await writeFile(dest, buf);
+      console.log('ok  ' + p.slug + ' (' + Math.round(buf.length / 1024) + ' KB)');
+      ok++; done = true;
+    } catch (e) {
+      if (attempt === 4) failed.push(p.slug + ' ' + e.message);
+      else await sleep(1500 * attempt);
+    }
+  }
+  await sleep(350); // polite pacing
+}
+console.log('\ndone: ' + ok + ' downloaded, ' + skipped + ' skipped, ' + failed.length + ' failed');
+if (failed.length) { console.error(failed.join('\n')); process.exit(1); }
