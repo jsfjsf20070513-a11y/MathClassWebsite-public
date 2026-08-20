@@ -43,6 +43,8 @@ body,
 
 html {
   background: var(--paper);
+  /* 杂志刊:禁掉 Chrome 橡皮筋回弹与两指历史手势,翻页手感不被系统拽住 */
+  overscroll-behavior: none;
 }
 
 body {

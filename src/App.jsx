@@ -289,7 +289,26 @@ function RoutedExperience() {
   )
 }
 
+// 首屏空闲后预取懒路由 chunk(背词 chunk 含 3650 词词库,等点击才下载会顿)。
+function useIdlePrefetch() {
+  useEffect(() => {
+    const prefetch = () => {
+      import('./pages/Vocabulary')
+      import('./pages/Resources')
+      import('./pages/Assistant')
+      import('./pages/Login')
+    }
+    if ('requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(prefetch, { timeout: 4000 })
+      return () => window.cancelIdleCallback(id)
+    }
+    const t = window.setTimeout(prefetch, 1500)
+    return () => window.clearTimeout(t)
+  }, [])
+}
+
 function App() {
+  useIdlePrefetch()
   return (
     <>
       <BrowserRouter>

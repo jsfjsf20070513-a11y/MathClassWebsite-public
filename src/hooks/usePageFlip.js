@@ -35,6 +35,9 @@ export function usePageFlip({ count, sides = [], durationMs = 900, enabled = tru
   const appliedPageRef = useRef(-1)
   const instantRef = useRef(true)
   const wheelLockRef = useRef(0)
+  const wheelAccRef = useRef(0)
+  const wheelAtRef = useRef(0)
+  const hideTimersRef = useRef(new Map())
   const touchRef = useRef(null)
   const enabledRef = useRef(enabled)
   enabledRef.current = enabled
@@ -54,6 +57,22 @@ export function usePageFlip({ count, sides = [], durationMs = 900, enabled = tru
       el.style.zIndex = String(10 + i)
       el.style.pointerEvents = i === cur ? 'auto' : 'none'
       el.style.transformOrigin = '50% 100%'
+      // 性能:非当前页在翻页完成后移出合成器(visibility:hidden)——
+      // 封面 60 张 multiply 图层与各停靠页不再常驻参与合成;
+      // 翻页进行中所有页保持可见(入场页要看得到,回翻要露出底页)。
+      const timers = hideTimersRef.current
+      if (timers.has(i)) { window.clearTimeout(timers.get(i)); timers.delete(i) }
+      if (i === cur) {
+        el.style.visibility = 'visible'
+      } else if (instant || !changed) {
+        el.style.visibility = 'hidden'
+      } else {
+        el.style.visibility = 'visible'
+        timers.set(i, window.setTimeout(() => {
+          el.style.visibility = 'hidden'
+          timers.delete(i)
+        }, durationMs + 60))
+      }
       // 停靠在场外的页不带投影——多页叠停时投影会在页缘穿帮。
       el.style.boxShadow = i <= cur ? (SHADOW[side] || SHADOW.none) : 'none'
       if (reduced) {
@@ -120,18 +139,30 @@ export function usePageFlip({ count, sides = [], durationMs = 900, enabled = tru
     const onWheel = (e) => {
       if (!enabledRef.current) return
       const now = Date.now()
-      if (now < wheelLockRef.current) return
-      if (Math.abs(e.deltaY) < 24) return
-      // 页内滚动优先:滚到边缘才翻页。
-      const el = pagesRef.current[pageStateRef.current]
-      const scroller = el?.querySelector('[data-flip-scroll]')
-      if (scroller && scroller.scrollHeight > scroller.clientHeight + 1) {
-        const atTop = scroller.scrollTop <= 0
-        const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1
-        if ((e.deltaY > 0 && !atBottom) || (e.deltaY < 0 && !atTop)) return
+      // 翻页在飞:静默吞掉触控板惯性尾,不累积(否则松手后连翻)。
+      if (now < wheelLockRef.current) { wheelAccRef.current = 0; return }
+      // 触控板横扫是翻页的自然手势:取主导轴(|dX| vs |dY|)。
+      const horizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY)
+      const raw = horizontal ? e.deltaX : e.deltaY
+      // 纵向滚动仍尊重页内滚动优先:滚到边缘才参与翻页。
+      if (!horizontal) {
+        const el = pagesRef.current[pageStateRef.current]
+        const scroller = el?.querySelector('[data-flip-scroll]')
+        if (scroller && scroller.scrollHeight > scroller.clientHeight + 1) {
+          const atTop = scroller.scrollTop <= 0
+          const atBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1
+          if ((raw > 0 && !atBottom) || (raw < 0 && !atTop)) return
+        }
       }
-      wheelLockRef.current = now + 950
-      goTo(pageStateRef.current + (e.deltaY > 0 ? 1 : -1))
+      // 200ms 窗口内累积微小 delta:轻扫灵敏,漂移不误触。
+      if (now - wheelAtRef.current > 200) wheelAccRef.current = 0
+      wheelAtRef.current = now
+      wheelAccRef.current += raw
+      if (Math.abs(wheelAccRef.current) < 50) return
+      const dir = wheelAccRef.current > 0 ? 1 : -1
+      wheelAccRef.current = 0
+      wheelLockRef.current = now + 900
+      goTo(pageStateRef.current + dir)
     }
     const onTouchStart = (e) => {
       touchRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
@@ -149,11 +180,14 @@ export function usePageFlip({ count, sides = [], durationMs = 900, enabled = tru
     window.addEventListener('wheel', onWheel, { passive: true })
     window.addEventListener('touchstart', onTouchStart, { passive: true })
     window.addEventListener('touchend', onTouchEnd, { passive: true })
+    const timers = hideTimersRef.current
     return () => {
       window.removeEventListener('keydown', onKey)
       window.removeEventListener('wheel', onWheel)
       window.removeEventListener('touchstart', onTouchStart)
       window.removeEventListener('touchend', onTouchEnd)
+      timers.forEach((t) => window.clearTimeout(t))
+      timers.clear()
     }
   }, [goTo])
 

@@ -178,13 +178,14 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startEntrance])
 
-  // 天气粒子:weather 就绪后启动;移动端粒子数减半。
+  // 天气粒子:weather 就绪后启动;移动端粒子数减半;
+  // 只在封面页跑 rAF——翻进内页时封面已隐藏,继续画就是白烧 GPU。
   useEffect(() => {
-    if (!weather || !canvasRef.current) return undefined
+    if (!weather || !canvasRef.current || page !== 0) return undefined
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
     const particleScale = window.innerWidth < 720 ? 0.5 : 1
     return startWeatherCanvas(canvasRef.current, weather, { particleScale })
-  }, [weather])
+  }, [weather, page])
 
   // 站内衔接:立即跳转,由目标页翻入盖上来——不翻出当前页,
   // 否则会先露出底下的肖像墙再切换(用户:不利落)。
