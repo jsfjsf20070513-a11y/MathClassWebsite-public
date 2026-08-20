@@ -4,6 +4,9 @@
 
 ## 定位
 
+🔴 **改前端视觉先读 `docs/design-constitution.md`(2026-08 杂志刊宪法)+ `docs/aesthetic-profile.md`(审美档案)**——全站 = 一本书:封面杂志(/)、卡片背词(/vocabulary)、图录书目(/resources)、信笺答疑(/assistant),共用翻页物理 `src/hooks/usePageFlip.js`。
+
+
 - 线上:`https://rucmathclass.com/`(Cloudflare 代理 + Vultr Nginx);开源:GitHub `MathClassWebsite-public`(MIT)
 - 提交方向:Dev3pack 的 **Solana** 与 **ElevenLabs** 两条赛道
 - 评委 5 分钟可验证的 7 项能力见 README 顶部表

@@ -155,7 +155,6 @@ Connexion 撕开转场(clip-path 双半 ±58%),**原地渲染**对接 useAuth,
 
 ## 8. 落地后待办
 
-- [ ] 更新 math_网站/AGENTS.md 对齐契约节(`.page-column` 全站居中的口径已被本宪法取代;
-      验证方法不变);
-- [ ] Layout 页脚 Bibliothèque/Connexion 链接删除(被杂志第 4/5 页吸收);
-- [ ] DailyMeditation 组件保留(Resources coda 仍用),Home 内联渲染 Parole。
+- [x] 更新 math_网站/AGENTS.md 对齐契约节(2026-08-20 已换代为"视觉裁定与验证契约");
+- [x] Layout 页脚 Bibliothèque/Connexion 链接删除(被杂志第 4/5 页吸收);
+- [x] DailyMeditation 组件保留(Resources 末架 coda 仍用),Home 内联渲染 Parole。

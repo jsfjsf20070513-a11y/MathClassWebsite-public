@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import DailyMeditation from '../components/DailyMeditation'
 import PasswordField from '../components/PasswordField'
 import { supabase, isSupabaseConfigured, SUPABASE_MISSING_MESSAGE } from '../lib/supabase'
 
 // 重设密码 ResetPassword — design contract: centered « Réinitialisation »
 // masthead + a narrow underline-input form, with success / invalid states.
 // The real Supabase recovery-session logic is preserved.
-function Masthead({ title, summary }) {
+function Masthead({ summary }) {
   return (
-    <header className="login-masthead">
-      <Link to="/login" className="login-back">返回登录 · Connexion</Link>
-      <p className="login-eyebrow">Réinitialisation</p>
-      <h1 className="login-title">{title}</h1>
-      <p className="login-summary">{summary}</p>
+    <header className="lgn-masthead">
+      <Link to="/login" className="lgn-back" lang="fr">← Connexion</Link>
+      <h1 className="lgn-title" lang="fr">Réinitialisation</h1>
+      <p className="lgn-summary">{summary}</p>
     </header>
   )
 }
@@ -82,7 +80,7 @@ export default function ResetPassword() {
 
   if (pageState === 'loading') {
     return (
-      <article className="page-column login-page">
+      <article className="page-column login-page lgn">
         <Masthead title="验证重置链接" summary="正在检查当前链接是否仍然有效…" />
       </article>
     )
@@ -90,7 +88,7 @@ export default function ResetPassword() {
 
   if (pageState === 'invalid' || pageState === 'unavailable') {
     return (
-      <article className="page-column login-page">
+      <article className="page-column login-page lgn">
         <Masthead
           title={pageState === 'invalid' ? '链接已失效' : '功能暂不可用'}
           summary={pageState === 'invalid'
@@ -98,7 +96,7 @@ export default function ResetPassword() {
             : SUPABASE_MISSING_MESSAGE}
         />
         <div className="reset-state">
-          <p><Link to="/login" className="vocab-verify">重新申请 · 找回密码 →</Link></p>
+          <p><Link to="/login" className="mag-enter">重新申请 · 找回密码 →</Link></p>
         </div>
       </article>
     )
@@ -106,18 +104,18 @@ export default function ResetPassword() {
 
   if (pageState === 'success') {
     return (
-      <article className="page-column login-page">
+      <article className="page-column login-page lgn">
         <Masthead title="密码已更新" summary="密码已写入账户,现在可以用新密码登录了。" />
         <div className="reset-state">
           <p className="reset-ok">✓ 已更新</p>
-          <p><Link to="/login" className="vocab-verify">前往登录 · Connexion →</Link></p>
+          <p><Link to="/login" className="mag-enter">前往登录 · Connexion →</Link></p>
         </div>
       </article>
     )
   }
 
   return (
-    <article className="page-column login-page">
+    <article className="page-column login-page lgn">
       <Masthead title="设置新密码" summary="为账号设置一个新的登录密码。" />
 
       <section className="login-section">
@@ -137,13 +135,12 @@ export default function ResetPassword() {
             autoComplete="new-password"
           />
           <div className="editorial-actions login-submit">
-            <button type="submit" className="vocab-verify" disabled={submitting}>
+            <button type="submit" className="mag-enter" disabled={submitting}>
               {submitting ? '保存中…' : '保存新密码 · Enregistrer'}
             </button>
           </div>
           {message ? <p className="status-line is-error">{message}</p> : null}
         </form>
-        <section className="home-meditation"><DailyMeditation offset={3} /></section>
       </section>
     </article>
   )
