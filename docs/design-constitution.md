@@ -66,8 +66,10 @@ Claude Design 交接包(`docs/handoff-2026-08-20/`)+ 用户三轮口头拍板 + 
 - **页内滚动优先**:内容超一屏时滚轮先滚页内,滚到边缘才触发翻页;
 - 左下 folio 与底部进度线是**不翻的常驻层**;
 - `prefers-reduced-motion`:一切翻页降级为淡入淡出;
-- **跨路由衔接**:站内跳转(ENTRER →、← Accueil 等)= 出场翻页(~0.4s)→ navigate →
-  目标页入场翻页,两端同曲线;站内跳转抑制 PageLoading(首次进站保留)。
+- **跨路由衔接(2026-08-20 修订:要利落)**:站内跳转**立即 navigate**,由目标页
+  翻入盖上来(正向从右、返回从左,0.5s 同曲线)——**禁止先翻出当前页**,那会先露出
+  底下的肖像墙再切换;← Accueil 按来路落页(/vocabulary→02、/resources→04、
+  /login→05),不回封面;站内跳转抑制 PageLoading(首次进站保留)。
 
 ## 5. 页面契约
 
@@ -84,8 +86,8 @@ Connexion 视觉);/resources/curate 与 404 仍走 Layout。
 角落 ACCUEIL / SUZHOU {temp};Édition 行;02 从右、03 从左、04 从上、05 从下;
 天气四模式(雨/雷/晴昼/晴夜,cloud/snow 删除、阴雪回落 clear),Open-Meteo 苏州
 缓存 3h,入场契约(文字与天气 1.1s 同淡入,API 超 1.2s 兜底);
-03 定理页契约:kicker/题/prelude/KaTeX/note;**Démonstration 折叠证明不进杂志页**
-(2026-08-20 用户裁定"定理无需证明",双语证明数据保留在库,仅不在此渲染);05 Parole 用现有 `paroles` 池随机(作者·出处规矩不变);
+03 定理页契约(2026-08-20 用户两次裁定收敛到极简):**只有 kicker/题/KaTeX 三件**,
+prelude/note/Démonstration 一律不进杂志页(数据保留在库);05 Parole 用现有 `paroles` 池随机(作者·出处规矩不变);
 Connexion 撕开转场(clip-path 双半 ±58%),**原地渲染**对接 useAuth,
 动画完约 0.62s 后即可输入;Retour 反向合拢。`/` 路由不渲染 Layout 页眉页脚。
 

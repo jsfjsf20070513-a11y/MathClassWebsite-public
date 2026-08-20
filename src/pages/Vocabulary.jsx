@@ -506,7 +506,7 @@ export default function Vocabulary() {
   )
 
   const goHome = useCallback(() => {
-    markFlipNav()
+    markFlipNav('/vocabulary')
     navigate('/')
   }, [navigate])
 

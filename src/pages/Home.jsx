@@ -8,7 +8,7 @@ import { portraits, portraitSrc } from '../data/portraits'
 import { resourceCategories } from '../data/resourceCatalog'
 import { usePageFlip } from '../hooks/usePageFlip'
 import { startWeatherCanvas, weatherInkFor } from '../lib/weatherCanvas'
-import { markFlipNav } from '../lib/flipNav'
+import { flipNavFrom, markFlipNav } from '../lib/flipNav'
 
 // 扉页 Home — 2026-08 杂志刊(宪法 docs/design-constitution.md §5.1;
 // 设计稿 docs/handoff-2026-08-20/Home-B-Galerie.dc.html 原样执行):
@@ -21,6 +21,8 @@ const THEOREM_ROTATION_START_DAY = Math.floor(Date.UTC(2025, 8, 1) / DAY_IN_MS)
 const WEATHER_CACHE_KEY = 'mcw_weather_cache'
 const WEATHER_CACHE_MS = 3 * 3600 * 1000
 const PAGE_SIDES = ['none', 'right', 'left', 'top', 'bottom']
+// ← Accueil 按来路落页:从背词回 02、从书目回 04、从登录回 05(Parole)。
+const RETURN_PAGE = { '/vocabulary': 1, '/assistant': 1, '/resources': 3, '/login': 4 }
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
 
 function getShanghaiDaySerial(reference = new Date()) {
@@ -72,6 +74,11 @@ export default function Home() {
   const navigate = useNavigate()
   const { user, signOut, isAuthEnabled } = useAuth()
   const [weather, setWeather] = useState(() => readCachedWeather())
+  // 站内返回:按来路直落对应页,整册从左侧翻入(反向对称)。
+  const [entry] = useState(() => {
+    const from = flipNavFrom()
+    return { back: Boolean(from), page: RETURN_PAGE[from] ?? 0 }
+  })
   const [connexionOpen, setConnexionOpen] = useState(false)
 
   // Connexion 屏(原地渲染,对接 Supabase auth)
@@ -87,11 +94,12 @@ export default function Home() {
   const entranceStartedRef = useRef(false)
   const splittingRef = useRef(false)
 
-  const { page, next, prev, setPageEl, flipOut } = usePageFlip({
+  const { page, next, prev, setPageEl } = usePageFlip({
     count: 5,
     sides: PAGE_SIDES,
     durationMs: 900,
     enabled: !connexionOpen,
+    initialPage: entry.page,
   })
 
   const dailyTheorem = dailyTheoremNotes[getRotatingTheoremIndex(dailyTheoremNotes.length)]
@@ -153,13 +161,12 @@ export default function Home() {
     return startWeatherCanvas(canvasRef.current, weather, { particleScale })
   }, [weather])
 
-  // 站内衔接:当前页翻出 → navigate,目标页自播翻入(宪法 §4)。
+  // 站内衔接:立即跳转,由目标页翻入盖上来——不翻出当前页,
+  // 否则会先露出底下的肖像墙再切换(用户:不利落)。
   const flipNavigate = useCallback((to) => {
-    flipOut(() => {
-      markFlipNav()
-      navigate(to)
-    })
-  }, [flipOut, navigate])
+    markFlipNav('/')
+    navigate(to)
+  }, [navigate])
 
   // Connexion 撕开转场:克隆 Parole 两半,双半外翻露出底下的登录屏;Retour 反向合拢。
   const splitParole = useCallback((open) => {
@@ -234,7 +241,7 @@ export default function Home() {
   const folio = `0${page + 1} — 05`
 
   return (
-    <div className="mag">
+    <div className={`mag${entry.back ? ' mag-arrive-back' : ''}`}>
       {/* ── 01 封面:肖像长墙 ── */}
       <section ref={setPageEl(0)} className="mag-page mag-cover" style={{ zIndex: 10 }} aria-label="封面">
         <canvas ref={canvasRef} className="mag-weather" />
@@ -273,7 +280,7 @@ export default function Home() {
       </section>
 
       {/* ── 02 Vocabulaire(引导页,全页无汉字) ── */}
-      <section ref={setPageEl(1)} className="mag-page mag-vocab" style={{ zIndex: 11, transform: 'translateX(105%) rotate(2.2deg)' }} aria-label="Vocabulaire">
+      <section ref={setPageEl(1)} className="mag-page mag-vocab" style={{ zIndex: 11, transform: entry.page >= 1 ? 'none' : 'translateX(105%) rotate(2.2deg)' }} aria-label="Vocabulaire">
         <div className="mag-vocab-inner">
           <div className="mag-pageno" data-animate=""><p>02&nbsp;—&nbsp;05</p></div>
           <div className="mag-rule" data-animate="" />
@@ -293,24 +300,22 @@ export default function Home() {
       </section>
 
       {/* ── 03 Théorème(完整契约:kicker/题/prelude/公式/note/折叠证明) ── */}
-      <section ref={setPageEl(2)} className="mag-page mag-theorem" style={{ zIndex: 12, transform: 'translateX(-105%) rotate(-2.2deg)' }} aria-label="每日定理">
+      <section ref={setPageEl(2)} className="mag-page mag-theorem" style={{ zIndex: 12, transform: entry.page >= 2 ? 'none' : 'translateX(-105%) rotate(-2.2deg)' }} aria-label="每日定理">
         <div className="mag-scroll" data-flip-scroll="">
           <div className="mag-theorem-inner">
             <p className="mag-kicker" lang="fr" data-animate="">Rappel mathématique</p>
             <h2 className="mag-theorem-title" data-animate="">{dailyTheorem.title}</h2>
-            <p className="mag-theorem-prelude" data-animate="">{dailyTheorem.prelude}</p>
             <div
               className="mag-theorem-formula"
               data-animate=""
               dangerouslySetInnerHTML={{ __html: dailyTheorem.displayHtml || dailyTheorem.fallback }}
             />
-            <p className="mag-theorem-note" data-animate="">{dailyTheorem.note}</p>
           </div>
         </div>
       </section>
 
       {/* ── 04 Bibliothèque(真实八书架索引) ── */}
-      <section ref={setPageEl(3)} className="mag-page mag-biblio" style={{ zIndex: 13, transform: 'translateY(-105%) rotate(1.2deg)' }} aria-label="Bibliothèque">
+      <section ref={setPageEl(3)} className="mag-page mag-biblio" style={{ zIndex: 13, transform: entry.page >= 3 ? 'none' : 'translateY(-105%) rotate(1.2deg)' }} aria-label="Bibliothèque">
         <div className="mag-biblio-inner">
           <p className="mag-kicker" lang="fr" data-animate="">Bibliothèque</p>
           <p className="mag-biblio-zh" data-animate="">资源与书目</p>
@@ -343,7 +348,7 @@ export default function Home() {
       <section
         ref={(el) => { setPageEl(4)(el); paroleRef.current = el }}
         className="mag-page mag-parole"
-        style={{ zIndex: 14, transform: 'translateY(105%) rotate(-1.2deg)' }}
+        style={{ zIndex: 14, transform: entry.page >= 4 ? 'none' : 'translateY(105%) rotate(-1.2deg)' }}
         aria-label="Parole du jour"
       >
         <aside className="mag-parole-card" aria-label="Parole du jour">

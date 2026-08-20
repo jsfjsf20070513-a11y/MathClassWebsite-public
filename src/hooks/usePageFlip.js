@@ -28,10 +28,10 @@ function prefersReducedMotion() {
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-export function usePageFlip({ count, sides = [], durationMs = 900, enabled = true }) {
-  const [page, setPage] = useState(0)
+export function usePageFlip({ count, sides = [], durationMs = 900, enabled = true, initialPage = 0 }) {
+  const [page, setPage] = useState(initialPage)
   const pagesRef = useRef([])
-  const pageStateRef = useRef(0)
+  const pageStateRef = useRef(initialPage)
   const appliedPageRef = useRef(-1)
   const instantRef = useRef(true)
   const wheelLockRef = useRef(0)

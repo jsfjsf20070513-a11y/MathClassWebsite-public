@@ -69,7 +69,7 @@ export default function Resources() {
   }, [shelves.length, goTo])
 
   const goHome = useCallback(() => {
-    markFlipNav()
+    markFlipNav('/resources')
     navigate('/')
   }, [navigate])
 

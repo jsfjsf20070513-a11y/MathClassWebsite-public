@@ -198,7 +198,7 @@ export default function Assistant() {
   }, [user])
 
   const goHome = useCallback(() => {
-    markFlipNav()
+    markFlipNav('/assistant')
     navigate('/')
   }, [navigate])
 

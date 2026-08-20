@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PasswordField from '../components/PasswordField'
 import { supabase, isSupabaseConfigured, SUPABASE_MISSING_MESSAGE } from '../lib/supabase'
+import { markFlipNav } from '../lib/flipNav'
 
 const PHONE_PATTERN = /^1\d{10}$/
 const OTP_RESEND_SECONDS = 60
@@ -243,7 +244,7 @@ export default function Login() {
   return (
     <article className="page-column login-page lgn">
       <header className="lgn-masthead">
-        <Link to="/" className="lgn-back" lang="fr">← Accueil</Link>
+        <Link to="/" className="lgn-back" lang="fr" onClick={() => markFlipNav('/login')}>← Accueil</Link>
         <h1 className="lgn-title" lang="fr">Connexion</h1>
         <p className="lgn-summary">{copy.summary}</p>
       </header>
