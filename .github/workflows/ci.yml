@@ -1,7 +1,8 @@
 name: CI
 
-# Lint + unit tests + production build on every push/PR to main or the class-site
-# line branch mathclass/main. Tests cover the
+# Lint + unit tests + production build on every push/PR to mathclass/main
+# (this repo's only active line since the 2026-08-25 repo split; the Raccord
+# line now lives in the separate `raccord` repo). Tests cover the
 # pure security-critical helpers (URL sanitizing, ops-queue envelope decoding,
 # base58 signature encoding). The build runs the prebuild hooks (render-theorems,
 # generate-health) and uses the public-safe placeholder assets — no secrets or
@@ -9,9 +10,9 @@ name: CI
 
 on:
   push:
-    branches: [main, mathclass/main]
+    branches: [mathclass/main]
   pull_request:
-    branches: [main, mathclass/main]
+    branches: [mathclass/main]
 
 jobs:
   lint-and-build:
