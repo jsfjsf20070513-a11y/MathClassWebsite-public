@@ -5,7 +5,7 @@
 > 线上 `rucmathclass.com` 现役构建就来自本分支,GitHub 默认分支也是它(2026-08-25 起)。
 > Raccord 作者作品站(未首发)已于 2026-08-25 拆到**独立仓 `raccord`**(目录 `line_math/Raccord`);本仓旧 `main`
 > 分支只是拆仓前的只读引用(tag `backup/pre-split-2026-08-25`),**不要在上面动手**。
-> 两线关系与部署互斥见线级 `line_math/AGENTS.md` 与 `math线摸底_2026-08-21.md`(含 08-25 拆仓附记)。
+> 两线关系与部署互斥见线级 `line_math/CLAUDE.md`(正本);08-21 摸底现场记录已归档在本仓 `docs/archive/math线摸底_2026-08-21.md`。
 
 ## 这是什么
 

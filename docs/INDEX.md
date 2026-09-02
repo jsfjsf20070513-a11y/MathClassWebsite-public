@@ -14,7 +14,7 @@
 ## 归档(只作历史,不是契约)
 - [`archive/design-2026-06-21/`](archive/design-2026-06-21/) —— 06-21 十页设计稿(Carnet de classe 初版)
 - [`archive/design-handoff-carnet-2026-08-13.md`](archive/design-handoff-carnet-2026-08-13.md) —— 08-13 设计交接,其"居中硬约束"已被宪法推翻
+- [`archive/math线摸底_2026-08-21.md`](archive/math线摸底_2026-08-21.md) —— 08-21 全线摸底现场记录(含 08-25 拆仓、09-02 清理附记);规则已并入线级 CLAUDE.md
 
 ## 线级(仓外)
 - `line_math/CLAUDE.md` —— 两仓分工、部署互斥、共享 Supabase / Worker 边界
-- `line_math/math线摸底_2026-08-21.md` —— 全线现状正本(含 08-25 拆仓附记)
