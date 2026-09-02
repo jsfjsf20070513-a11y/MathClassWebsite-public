@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:#fdfcf8; }
+    a{ color:inherit; transition:color .15s ease, border-color .15s ease; }
+    p{ text-wrap:pretty; }
+    textarea{ font-family:'EB Garamond',serif; }
+    textarea:focus{ outline:none; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh; background:#fdfcf8; color:#1a1a1a; font-family:'EB Garamond','Noto Serif SC',serif; font-size:17px; line-height:1.6;">
+
+  <header style="border-bottom:1px solid rgba(26,26,26,.14);">
+    <div style="max-width:920px; margin:0 auto; padding:20px 24px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+        <a href="#" onClick="{{ noop }}" style="border-bottom:none; color:#1a1a1a; font-family:'EB Garamond',serif; font-size:13px; letter-spacing:.24em; text-transform:uppercase; text-decoration:none; white-space:nowrap;" style-hover="{ color:'#8b0000' }">Carnet de classe</a>
+        <a href="#" onClick="{{ noop }}" style="font-size:14px; color:#6b6b6b; text-decoration:none; border-bottom:1px solid rgba(26,26,26,.2); white-space:nowrap;" style-hover="{ color:'#1a1a1a' }">← Atelier · 协作</a>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width:680px; margin:0 auto; padding:72px 24px 32px;">
+
+    <header style="text-align:center;">
+      <p style="margin:0 0 10px; color:#8b0000; font-size:14px; letter-spacing:.12em; text-transform:uppercase;">Pour la classe · 班级寄语</p>
+      <h1 style="margin:0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:36px; font-weight:500;">班级寄语墙</h1>
+      <p style="margin:16px auto 0; max-width:34rem; color:#1a1a1a; font-size:18px;">给这个班留下一句话 —— 一句你想被记住的话。写下后它就一直留在这里,谁也改不了、谁也删不掉。</p>
+    </header>
+
+    <!-- qualities -->
+    <section style="margin-top:44px; padding:18px 0; border-top:1px solid rgba(26,26,26,.14); border-bottom:1px solid rgba(26,26,26,.14);">
+      <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:14px 0;">
+        <div style="flex:1 1 33%; min-width:160px; text-align:center; padding:6px 12px;">
+          <p style="margin:0; font-family:'Noto Serif SC',serif; font-size:19px; color:#1a1a1a;">永久保存</p>
+          <p style="margin:5px 0 0; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#6b6b6b;">Permanent</p>
+        </div>
+        <div style="flex:1 1 33%; min-width:160px; text-align:center; padding:6px 12px;">
+          <p style="margin:0; font-family:'Noto Serif SC',serif; font-size:19px; color:#1a1a1a;">公开可见</p>
+          <p style="margin:5px 0 0; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#6b6b6b;">Public</p>
+        </div>
+        <div style="flex:1 1 33%; min-width:160px; text-align:center; padding:6px 12px;">
+          <p style="margin:0; font-family:'Noto Serif SC',serif; font-size:19px; color:#1a1a1a;">不可篡改</p>
+          <p style="margin:5px 0 0; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#6b6b6b;">Inaltérable</p>
+        </div>
+      </div>
+      <p style="margin:16px 0 0; text-align:center; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.06em; color:#9a9a9a;">由 Solana 区块链承载 · 程序 Cmv8pnx…BC4fu · MIT 开源</p>
+    </section>
+
+    <!-- 01 Connect -->
+    <section style="margin-top:64px; text-align:center;">
+      <div style="display:flex; align-items:baseline; gap:12px; justify-content:center;"><span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#8b0000;">01</span><h2 style="margin:0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:24px; font-weight:500;">先连接你的钱包</h2></div>
+      <p style="margin:14px auto 0; max-width:32rem; color:#6b6b6b; font-size:15px; line-height:1.7;">钱包就像你的署名 —— 用来证明这句话是你留的。点一下连接即可,全程不花一分钱。</p>
+      <div style="margin-top:20px;">
+        <sc-if value="{{ notConnected }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ connect }}" style="display:inline-block; padding:10px 22px; border:1px solid #8b0000; background:#8b0000; color:#fdfcf8; cursor:pointer; font-family:inherit; font-size:16px;" style-hover="{ background:'#6f0000' }">连接钱包 · Phantom</button>
+          <p style="margin:12px 0 0; color:#6b6b6b; font-size:13px;">没有钱包?<a href="https://phantom.app/" target="_blank" rel="noopener noreferrer" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">两分钟装好 Phantom</a> —— 一个免费的浏览器插件,装完回来即可。</p>
+        </sc-if>
+        <sc-if value="{{ connected }}" hint-placeholder-val="">
+          <span style="display:inline-flex; align-items:center; gap:10px; padding:10px 22px; border:1px solid rgba(26,26,26,.2); color:#6b6b6b; font-family:'JetBrains Mono',monospace; font-size:14px; white-space:nowrap;">● 已连接 · {{ walletShort }}</span>
+        </sc-if>
+      </div>
+    </section>
+
+    <!-- 02 Anchor -->
+    <section style="margin-top:56px; text-align:center;">
+      <div style="display:flex; align-items:baseline; gap:12px; justify-content:center;"><span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#8b0000;">02</span><h2 style="margin:0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:24px; font-weight:500;">写下你的寄语</h2></div>
+      <div style="margin-top:18px; max-width:440px; margin-left:auto; margin-right:auto;">
+        <label style="display:block;">
+          <span style="display:block; margin-bottom:8px; color:#6b6b6b; font-size:14px;">你的话 · 最多 80 字</span>
+          <textarea rows="4" value="{{ statement }}" onInput="{{ onType }}" placeholder="2026 春季数学课,某个让我开窍的瞬间。" style="width:100%; padding:12px 0; border:none; border-bottom:1px solid rgba(26,26,26,.3); background:transparent; font-size:18px; color:#1a1a1a; resize:vertical; line-height:1.6; text-align:center;" style-focus="{ borderBottomColor:'#8b0000' }"></textarea>
+        </label>
+        <p style="margin:8px 0 0; font-family:'JetBrains Mono',monospace; font-size:12px; color:#6b6b6b;">{{ remainingLabel }}</p>
+        <div style="margin-top:18px;">
+          <button onClick="{{ anchor }}" style="{{ anchorBtnStyle }}" style-hover="{ background:'#6f0000' }">{{ anchorLabel }}</button>
+        </div>
+        <sc-if value="{{ showReceipt }}" hint-placeholder-val="">
+          <div style="margin-top:24px; padding-top:18px; border-top:1px solid rgba(26,26,26,.14); text-align:left;">
+            <div style="display:grid; grid-template-columns:88px 1fr; gap:10px 18px;">
+              <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#6b6b6b;">状态</span><span style="color:#3f7a4e; font-size:15px;">✓ 已永久保存</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#6b6b6b;">凭证</span><span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#6b6b6b; word-break:break-all;">3t33ioCp…umgVXgo</span>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#6b6b6b;">核验</span><span style="font-size:15px;"><a href="#" onClick="{{ noop }}" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">在 Solscan 上查看 ↗</a></span>
+            </div>
+          </div>
+        </sc-if>
+        <p style="margin:20px 0 0; color:#6b6b6b; font-size:13px; font-style:italic;">一旦留下就永久保存，谁也删不掉 —— 包括你自己。</p>
+      </div>
+    </section>
+
+    <!-- 03 History -->
+    <section style="margin-top:56px; text-align:center;">
+      <div style="display:flex; align-items:baseline; gap:12px; justify-content:center;"><span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#8b0000;">03</span><h2 style="margin:0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:24px; font-weight:500;">已经留下的话</h2></div>
+      <p style="margin:14px auto 0; max-width:32rem; color:#6b6b6b; font-size:14px; line-height:1.7;">已有 {{ historyCount }} —— 下面每一句都永久保存,点「核验」可查看原始记录。</p>
+      <ol style="list-style:none; margin:18px auto 0; padding:0; max-width:440px;">
+        <sc-for list="{{ history }}" as="h" hint-placeholder-count="3">
+          <li style="padding:18px 0; border-top:1px solid rgba(26,26,26,.14);">
+            <p style="margin:0; font-size:18px; color:#1a1a1a; line-height:1.6;">{{ h.statement }}</p>
+            <p style="margin:8px 0 0; font-family:'JetBrains Mono',monospace; font-size:11px; color:#6b6b6b;">{{ h.time }} · <a href="#" onClick="{{ noop }}" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">核验 ↗</a></p>
+          </li>
+        </sc-for>
+      </ol>
+    </section>
+
+    <!-- coda -->
+    <section style="margin-top:64px; padding-top:18px; border-top:1px solid rgba(26,26,26,.14); text-align:center;">
+      <p style="margin:0 auto; max-width:34rem; font-style:italic; font-size:18px; line-height:1.55; color:#1a1a1a;" lang="fr">Ce qu'on écrit ici reste — une parole rendue à la classe, et gardée pour toujours.</p>
+      <p style="margin:10px auto 0; max-width:30rem; color:#6b6b6b; font-size:15px;">写在这里的话会留下来 —— 交给这个班,永久保存。</p>
+    </section>
+
+  </main>
+
+  <footer style="max-width:680px; margin:0 auto; padding:24px 24px 72px; text-align:center;">
+    <p style="margin:0 0 16px; color:#6b6b6b; letter-spacing:.16em;" aria-hidden="true">─────</p>
+    <p style="margin:0; color:#6b6b6b; font-size:14px; font-style:italic;">Pour la classe · MIT</p>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8b0000&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  MAX = 200;
+  state = { connected:false, statement:'', anchoring:false, receipt:false, history:[
+    { time:'2026-06-17 21:40', nonce:'02', statement:'数学分析第一次证明出 ε–δ,那一刻很安静。', pdaShort:'PDA: 65RxSkm4…aC2G8' },
+    { time:'2026-06-12 16:05', nonce:'01', statement:'Spring 2026 — the theorem finally clicked.', pdaShort:'PDA: 4Qw7nBv21…9kZ3a' }
+  ]};
+
+  connect = () => this.setState({ connected:true });
+  onType = (e) => this.setState({ statement: e.target.value });
+  anchor = () => {
+    if (!this.state.connected || this.state.anchoring) return;
+    const text = this.state.statement.trim();
+    if (!text || this.byteLen(text) > this.MAX) return;
+    this.setState({ anchoring:true });
+    setTimeout(() => {
+      const entry = { time:'2026-06-20 12:00', nonce:'03', statement:text, pdaShort:'PDA: 7nQ2xRf8…m9vX0' };
+      this.setState((s) => ({ anchoring:false, receipt:true, statement:'', history:[entry, ...s.history] }));
+    }, 1100);
+  };
+  byteLen(s){ return new TextEncoder().encode(s).length; }
+
+  renderVals() {
+    const accent = this.props.accentColor ?? '#8b0000';
+    const s = this.state;
+    const used = [...s.statement.trim()].length;
+    const CHARS = 80;
+    const remaining = CHARS - used;
+    const canAnchor = s.connected && s.statement.trim() && remaining >= 0 && !s.anchoring;
+    const anchorBtnStyle = {
+      display:'inline-block', padding:'10px 22px', fontFamily:"'EB Garamond',serif", fontSize:'16px',
+      border:'1px solid '+accent, cursor: canAnchor ? 'pointer' : 'not-allowed',
+      background: canAnchor ? accent : 'transparent', color: canAnchor ? '#fdfcf8' : 'rgba(26,26,26,.35)',
+      borderColor: canAnchor ? accent : 'rgba(26,26,26,.2)'
+    };
+    return {
+      notConnected: !s.connected, connected: s.connected, walletShort: '8xKp…2vQ9',
+      statement: s.statement,
+      remainingLabel: remaining >= 0 ? ('还能写 ' + remaining + ' 字') : ('超出 ' + (-remaining) + ' 字'),
+      anchorBtnStyle, anchorLabel: s.anchoring ? '保存中…' : '留下这句话',
+      showReceipt: s.receipt,
+      historyCount: (s.history.length) + ' 条',
+      history: s.history,
+      connect:this.connect, onType:this.onType, anchor:this.anchor,
+      noop: (e) => { e && e.preventDefault && e.preventDefault(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

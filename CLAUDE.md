@@ -14,7 +14,7 @@
 
 - **扉页 /**:每日定理(48 条,对齐大二上四门课,双语证明,KaTeX 构建期预渲)+ Parole du jour(38 条真实引语)
 - **资源书架 /resources**:静态目录 + Supabase `resources` 增补,外链全部经 sanitizeStoredUrl 消毒
-- **SRS 背词 /vocabulary**:3652 词艾宾浩斯(纯核心 `src/lib/srsScheduler.js` 已单测),进度存 `review_states`(per-user RLS)
+- **SRS 背词 /vocabulary**:3652 词艾宾浩斯(纯核心 `src/lib/srsScheduler.js` 已单测),进度存 `review_states`(per-user RLS)。词库真相源是 `scripts/vocab-source.json`(`npm run vocab:import` 生成 `frenchVocabulary.js`,不手改生成物);词条 `id` 绑用户复习进度,不可改动
 - **AI 助手 /assistant(杂志第 05 页,登录后)**:经 Worker `/api/chat` 调 Gemini(降级链动态发现),云端历史 `ai_messages`
 - **寄语墙 /witness**:仅存的 Web3 界面,Anchor 程序在 Solana **devnet**(注意:devnet 会周期性 reset)
 

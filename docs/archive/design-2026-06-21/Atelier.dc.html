@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:#fdfcf8; }
+    a{ color:inherit; transition:color .15s ease, border-color .15s ease; }
+    p{ text-wrap:pretty; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh; background:#fdfcf8; color:#1a1a1a; font-family:'EB Garamond','Noto Serif SC',serif; font-size:17px; line-height:1.6;">
+
+  <header style="border-bottom:1px solid rgba(26,26,26,.14);">
+    <div style="max-width:920px; margin:0 auto; padding:20px 24px 0;">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+        <a href="#" onClick="{{ noop }}" style="border-bottom:none; color:#1a1a1a; font-family:'EB Garamond',serif; font-size:13px; letter-spacing:.24em; text-transform:uppercase; text-decoration:none; white-space:nowrap;" style-hover="{ color:'#8b0000' }">Carnet de classe</a>
+        <a href="#" onClick="{{ noop }}" style="font-size:14px; color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor; white-space:nowrap;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">Sign in · 登录</a>
+      </div>
+      <nav style="display:flex; align-items:baseline; gap:6px 26px; flex-wrap:wrap; margin-top:16px; padding-bottom:14px; font-size:16px;">
+        <a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; white-space:nowrap;" style-hover="{ color:'#1a1a1a' }">Accueil · 扉页</a>
+        <a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; white-space:nowrap;" style-hover="{ color:'#1a1a1a' }">Ressources · 资源</a>
+        <a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; white-space:nowrap;" style-hover="{ color:'#1a1a1a' }">Vocabulaire · 背词</a>
+        <a href="#" onClick="{{ noop }}" aria-current="page" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor; padding-bottom:2px; white-space:nowrap;">Atelier · 协作</a>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width:680px; margin:0 auto; padding:72px 24px 32px;">
+
+    <header style="text-align:center;">
+      <p style="margin:0 0 10px; color:#8b0000; font-size:14px; letter-spacing:.12em; text-transform:uppercase;">Participer · 共建</p>
+      <h1 style="margin:0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:36px; font-weight:500; line-height:1.2;">在这本册子里留下点什么</h1>
+      <p style="margin:16px auto 0; max-width:34rem; color:#6b6b6b; font-size:17px; font-style:italic;" lang="fr">Tenir le carnet à plusieurs mains, sans en troubler la page.</p>
+      <p style="margin:6px auto 0; max-width:30rem; color:#6b6b6b; font-size:15px;">众手同修一册,而不扰其页。</p>
+    </header>
+
+    <!-- two doorways -->
+    <section style="margin-top:56px;">
+      <a href="#" onClick="{{ noop }}" style="display:grid; grid-template-columns:40px 1fr auto; gap:0 16px; align-items:baseline; padding:20px 0; border-top:1px solid rgba(26,26,26,.14); text-decoration:none; color:#1a1a1a;" style-hover="{ color:'#8b0000' }">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#8b0000;">I</span>
+        <span><span style="font-size:20px;">Mur de la classe</span><span style="color:#6b6b6b;"> · 班级寄语墙</span><span style="display:block; margin-top:4px; color:#6b6b6b; font-size:15px; line-height:1.65;">给这个班留下一句话 —— 永久保存、公开可见、谁都改不了。</span></span>
+        <span style="color:#8b0000;">→</span>
+      </a>
+      <a href="#" onClick="{{ noop }}" style="display:grid; grid-template-columns:40px 1fr auto; gap:0 16px; align-items:baseline; padding:20px 0; border-top:1px solid rgba(26,26,26,.14); border-bottom:1px solid rgba(26,26,26,.14); text-decoration:none; color:#1a1a1a;" style-hover="{ color:'#8b0000' }">
+        <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#8b0000;">II</span>
+        <span><span style="font-size:20px;">Curation de ressources</span><span style="color:#6b6b6b;"> · 资源增补</span><span style="display:block; margin-top:4px; color:#6b6b6b; font-size:15px; line-height:1.65;">推荐一条书目或课程链接,审阅后并入「资源」页的公开书架。</span></span>
+        <span style="color:#8b0000;">→</span>
+      </a>
+    </section>
+
+    <!-- AI assistant — coming, login-gated -->
+    <section style="margin-top:56px; padding-top:18px; border-top:1px solid rgba(26,26,26,.14);">
+      <p style="margin:0 0 4px; color:#8b0000; font-size:14px; font-style:italic;">À venir · 即将</p>
+      <div style="display:flex; align-items:baseline; justify-content:space-between; gap:14px;">
+        <h2 style="margin:0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:22px; font-weight:500;">班级 AI 助手</h2>
+        <span style="flex:none; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:#6b6b6b;">登录可用</span>
+      </div>
+      <p style="margin:8px 0 0; color:#6b6b6b; font-size:15px; line-height:1.8;">一个中法双语数学答疑助手,可就任意定理或法语词条提问 —— 登录后即可使用。<a href="#" onClick="{{ noop }}" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">登录 →</a></p>
+    </section>
+
+  </main>
+
+  <footer style="max-width:680px; margin:0 auto; padding:24px 24px 72px; text-align:center;">
+    <p style="margin:0 0 16px; color:#6b6b6b; letter-spacing:.16em;" aria-hidden="true">─────</p>
+    <p style="margin:0; color:#6b6b6b; font-size:14px; font-style:italic;">Pour la classe.</p>
+    <p style="margin:12px 0 0; font-size:13px;"><a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:1px solid rgba(26,26,26,.14);" style-hover="{ color:'#8b0000', borderBottomColor:'#8b0000' }">班级寄语墙 · 给这个班留一句话 →</a></p>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8b0000&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { noop: (e) => { e && e.preventDefault && e.preventDefault(); } };
+  }
+}
+</script>
+</body>
+</html>

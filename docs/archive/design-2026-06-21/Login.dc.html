@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:#fdfcf8; }
+    a{ color:inherit; transition:color .15s ease, border-color .15s ease; }
+    p{ text-wrap:pretty; }
+    input{ font-family:'EB Garamond',serif; }
+    input:focus{ outline:none; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh; background:#fdfcf8; color:#1a1a1a; font-family:'EB Garamond','Noto Serif SC',serif; font-size:17px; line-height:1.6;">
+
+  <header style="border-bottom:1px solid rgba(26,26,26,.14);">
+    <div style="max-width:920px; margin:0 auto; padding:20px 24px;">
+      <a href="#" onClick="{{ noop }}" style="border-bottom:none; color:#1a1a1a; font-family:'EB Garamond',serif; font-size:13px; letter-spacing:.24em; text-transform:uppercase; text-decoration:none; white-space:nowrap;" style-hover="{ color:'#8b0000' }">Carnet de classe</a>
+    </div>
+  </header>
+
+  <main style="max-width:480px; margin:0 auto; padding:72px 24px 32px;">
+
+    <header style="text-align:center;">
+      <p style="margin:0 0 24px;"><a href="#" onClick="{{ noop }}" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor; font-size:15px;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">← 返回扉页 · Accueil</a></p>
+      <p style="margin:0 0 10px; color:#8b0000; font-size:14px; letter-spacing:.12em; text-transform:uppercase;">Authentification</p>
+      <h1 style="margin:0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:34px; font-weight:500;">{{ copy.title }}</h1>
+      <p style="margin:14px auto 0; max-width:30rem; color:#6b6b6b; font-size:16px;">{{ copy.summary }}</p>
+    </header>
+
+    <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+      <div style="max-width:340px; margin:28px auto 0; display:flex; flex-direction:column; gap:14px;">
+        <div style="display:grid; grid-template-columns:18px 1fr; gap:0 12px; align-items:baseline;">
+          <span style="color:#8b0000; font-size:14px;">◆</span>
+          <span style="color:#1a1a1a; font-size:15px;">背词进度跨设备同步 —— 手机上背的,电脑上接着背。</span>
+        </div>
+        <div style="display:grid; grid-template-columns:18px 1fr; gap:0 12px; align-items:baseline;">
+          <span style="color:#8b0000; font-size:14px;">◆</span>
+          <span style="color:#1a1a1a; font-size:15px;">班级 AI 助手 —— 双语数学答疑,登录后可用<span style="color:#6b6b6b;">(即将开放)</span>。</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- mode tabs -->
+    <div style="display:flex; justify-content:center; gap:22px; flex-wrap:wrap; margin-top:40px;">
+      <sc-for list="{{ modeTabs }}" as="t" hint-placeholder-count="4">
+        <button onClick="{{ t.on }}" style="{{ t.style }}" style-hover="{ color:'#1a1a1a' }">{{ t.label }}</button>
+      </sc-for>
+    </div>
+    <div style="height:1px; background:rgba(26,26,26,.14); margin:18px 0 0;"></div>
+
+    <!-- method tabs (login/signup only) -->
+    <sc-if value="{{ showMethod }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; justify-content:center; gap:22px; margin-top:22px;">
+        <sc-for list="{{ methodTabs }}" as="t" hint-placeholder-count="2">
+          <button onClick="{{ t.on }}" style="{{ t.style }}" style-hover="{ color:'#1a1a1a' }">{{ t.label }}</button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- form -->
+    <div style="margin-top:34px; display:flex; flex-direction:column; align-items:center; gap:22px;">
+
+      <sc-if value="{{ isSignup }}" hint-placeholder-val="">
+        <label style="display:block; width:300px; text-align:center;">
+          <span style="display:block; margin-bottom:7px; color:#6b6b6b; font-size:14px;">真实姓名 · Nom</span>
+          <input type="text" style="width:100%; padding:8px 0; border:none; border-bottom:1px solid rgba(26,26,26,.3); background:transparent; font-size:18px; color:#1a1a1a; text-align:center;" style-focus="{ borderBottomColor:'#8b0000' }">
+        </label>
+        <label style="display:block; width:300px; text-align:center;">
+          <span style="display:block; margin-bottom:7px; color:#6b6b6b; font-size:14px;">昵称 · Pseudo</span>
+          <input type="text" style="width:100%; padding:8px 0; border:none; border-bottom:1px solid rgba(26,26,26,.3); background:transparent; font-size:18px; color:#1a1a1a; text-align:center;" style-focus="{ borderBottomColor:'#8b0000' }">
+        </label>
+      </sc-if>
+
+      <sc-if value="{{ showEmail }}" hint-placeholder-val="{{ true }}">
+        <label style="display:block; width:300px; text-align:center;">
+          <span style="display:block; margin-bottom:7px; color:#6b6b6b; font-size:14px;">邮箱 · E-mail</span>
+          <input type="email" style="width:100%; padding:8px 0; border:none; border-bottom:1px solid rgba(26,26,26,.3); background:transparent; font-size:18px; color:#1a1a1a; text-align:center;" style-focus="{ borderBottomColor:'#8b0000' }">
+        </label>
+      </sc-if>
+      <sc-if value="{{ showPhone }}" hint-placeholder-val="">
+        <label style="display:block; width:300px; text-align:center;">
+          <span style="display:block; margin-bottom:7px; color:#6b6b6b; font-size:14px;">手机号 · Téléphone</span>
+          <input type="text" inputmode="numeric" style="width:100%; padding:8px 0; border:none; border-bottom:1px solid rgba(26,26,26,.3); background:transparent; font-size:18px; color:#1a1a1a; text-align:center;" style-focus="{ borderBottomColor:'#8b0000' }">
+        </label>
+      </sc-if>
+
+      <sc-if value="{{ showPassword }}" hint-placeholder-val="">
+        <label style="display:block; width:300px; text-align:center;">
+          <span style="display:block; margin-bottom:7px; color:#6b6b6b; font-size:14px;">密码 · Mot de passe</span>
+          <input type="password" style="width:100%; padding:8px 0; border:none; border-bottom:1px solid rgba(26,26,26,.3); background:transparent; font-size:18px; color:#1a1a1a; text-align:center;" style-focus="{ borderBottomColor:'#8b0000' }">
+        </label>
+      </sc-if>
+      <sc-if value="{{ isSignup }}" hint-placeholder-val="">
+        <label style="display:block; width:300px; text-align:center;">
+          <span style="display:block; margin-bottom:7px; color:#6b6b6b; font-size:14px;">确认密码 · Confirmer</span>
+          <input type="password" style="width:100%; padding:8px 0; border:none; border-bottom:1px solid rgba(26,26,26,.3); background:transparent; font-size:18px; color:#1a1a1a; text-align:center;" style-focus="{ borderBottomColor:'#8b0000' }">
+        </label>
+      </sc-if>
+
+      <sc-if value="{{ showOtpCode }}" hint-placeholder-val="">
+        <label style="display:block; width:300px; text-align:center;">
+          <span style="display:block; margin-bottom:7px; color:#6b6b6b; font-size:14px;">验证码 · Code</span>
+          <input type="text" inputmode="numeric" placeholder="6 位验证码" style="width:100%; padding:8px 0; border:none; border-bottom:1px solid rgba(26,26,26,.3); background:transparent; font-size:18px; color:#1a1a1a; letter-spacing:.3em; text-align:center;" style-focus="{ borderBottomColor:'#8b0000' }">
+          <span style="display:block; margin-top:10px;"><button onClick="{{ noop }}" style="padding:0; border:none; border-bottom:1px solid currentColor; background:transparent; color:#6b6b6b; cursor:pointer; font-family:inherit; font-size:15px;" style-hover="{ color:'#1a1a1a' }">重新发送 · Renvoyer</button></span>
+        </label>
+      </sc-if>
+
+      <div style="display:flex; align-items:center; justify-content:center; gap:24px; flex-wrap:wrap; margin-top:6px;">
+        <button onClick="{{ noop }}" style="padding:0; border:none; border-bottom:1px solid currentColor; background:transparent; color:#8b0000; cursor:pointer; font-family:inherit; font-size:18px;" style-hover="{ color:'#1a1a1a' }">{{ copy.submit }}</button>
+        <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}"><a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:1px solid rgba(26,26,26,.2); font-size:16px;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">进入背词 · Vocabulaire</a></sc-if>
+      </div>
+
+      <sc-if value="{{ showHint }}" hint-placeholder-val="">
+        <p style="margin:6px auto 0; max-width:300px; text-align:center; color:#6b6b6b; font-size:14px; font-style:italic;">{{ hintText }}</p>
+      </sc-if>
+    </div>
+
+    <!-- meditation coda -->
+    <div style="margin-top:64px; padding-top:18px; border-top:1px solid rgba(26,26,26,.14); text-align:center;">
+      <p style="margin:0 auto; max-width:28rem; font-style:italic; font-size:17px; line-height:1.55; color:#6b6b6b;" lang="fr">Une porte n'est qu'un seuil ; ce qui compte est la pièce où l'on entre.</p>
+      <p style="margin:10px auto 0; max-width:26rem; color:#6b6b6b; font-size:14px;">门只是门槛 —— 真正要紧的,是你走进的那间屋子。</p>
+    </div>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8b0000&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  copyMap = {
+    login:  { title:'登录 · Connexion', summary:'登录以跨设备同步背词进度,并使用班级 AI 助手(即将开放)。', submit:'登录 · Connexion' },
+    signup: { title:'注册 · Créer un compte', summary:'创建一个仅限本班网站的账号。', submit:'注册 · Créer un compte' },
+    otp:    { title:'验证码登录 · Code', summary:'用邮箱收到的一次性验证码登录已有账号。', submit:'发送验证码 · Envoyer le code' },
+    forgot: { title:'找回密码 · Mot de passe oublié', summary:'通过邮箱接收密码重置链接。', submit:'发送重置链接 · Envoyer le lien' }
+  };
+  state = { mode: 'login', method: 'email', otpSent: false };
+
+  renderVals() {
+    const accent = this.props.accentColor ?? '#8b0000';
+    const { mode, method, otpSent } = this.state;
+
+    const tb = { background:'none', border:'none', padding:'0 0 4px', cursor:'pointer', fontFamily:"'EB Garamond',serif", fontSize:'16px' };
+    const modes = [['login','登录'],['signup','注册'],['otp','验证码'],['forgot','找回密码']];
+    const modeTabs = modes.map(([k,label]) => ({ label, on: () => this.setState({ mode:k, otpSent:false }), style: { ...tb, color: mode===k?accent:'#6b6b6b', borderBottom: mode===k?'1px solid '+accent:'1px solid transparent' } }));
+    const methods = [['email','邮箱'],['phone','手机']];
+    const methodTabs = methods.map(([k,label]) => ({ label, on: () => this.setState({ method:k }), style: { ...tb, fontSize:'15px', color: method===k?accent:'#6b6b6b', borderBottom: method===k?'1px solid '+accent:'1px solid transparent' } }));
+
+    const isLogin = mode==='login', isSignup = mode==='signup', isOtp = mode==='otp', isForgot = mode==='forgot';
+    return {
+      copy: this.copyMap[mode], modeTabs, methodTabs,
+      showMethod: isLogin || isSignup,
+      isLogin, isSignup,
+      showEmail: isForgot || isOtp || ((isLogin||isSignup) && method==='email'),
+      showPhone: (isLogin||isSignup) && method==='phone',
+      showPassword: isLogin || isSignup,
+      showOtpCode: isOtp && otpSent,
+      showHint: isForgot || isOtp,
+      hintText: isForgot ? '我们会把重置链接发到这个邮箱。' : '验证码登录仅适用于已有账号;新账号请走注册。',
+      noop: (e) => { e && e.preventDefault && e.preventDefault(); if (this.state.mode==='otp' && !this.state.otpSent) this.setState({ otpSent:true }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

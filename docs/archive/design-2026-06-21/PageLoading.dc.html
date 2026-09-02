@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:#fdfcf8; }
+    @keyframes pl-fade{ from{ opacity:0; } to{ opacity:1; } }
+    @keyframes pl-sweep{ 0%{ transform:translateX(-100%); } 100%{ transform:translateX(320%); } }
+  </style>
+</helmet>
+
+<div style="min-height:100vh; background:#fdfcf8; color:#1a1a1a; font-family:'EB Garamond','Noto Serif SC',serif; display:flex; align-items:center; justify-content:center; padding:48px 24px;">
+  <div style="max-width:440px; width:100%; text-align:center;">
+
+    <p style="margin:0; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:#8b0000;">{{ eyebrow }}</p>
+
+    <div style="min-height:128px; display:flex; flex-direction:column; justify-content:center; margin-top:34px;">
+      <p key="{{ frKey }}" style="margin:0; font-style:italic; font-size:19px; line-height:1.5; color:#8b0000; animation:pl-fade .5s ease both;" lang="fr">{{ frase }}</p>
+      <p key="{{ quoteKey }}" style="margin:12px 0 0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:22px; line-height:1.5; color:#1a1a1a; animation:pl-fade .5s ease both;">{{ phrase }}</p>
+      <p key="{{ noteKey }}" style="margin:14px 0 0; color:#6b6b6b; font-size:13px; animation:pl-fade .5s ease both;">{{ note }}</p>
+    </div>
+
+    <div style="margin-top:40px; display:flex; align-items:center; gap:16px; justify-content:center;">
+      <div style="position:relative; width:140px; height:2px; background:rgba(26,26,26,.1); overflow:hidden;">
+        <div style="position:absolute; top:0; left:0; height:2px; width:30%; background:#8b0000; animation:pl-sweep 1.2s ease-in-out infinite;"></div>
+      </div>
+      <p style="margin:0; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.06em; color:#6b6b6b; white-space:nowrap;">{{ indexLabel }}</p>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8b0000&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  themes = {
+    home:    { eyebrow:'扉页 · Accueil', phrases:[
+      { fr:'Chaque commencement repose le monde sur la page.', text:'每一次开始,都像在纸页上重新安放世界。', note:'扉页正在展开,请稍候片刻。' },
+      { fr:'Le vrai début ne fait pas de bruit ; il apporte l’ordre, lentement.', text:'真正的开端并不喧哗,它只缓慢地把秩序带来。', note:'页面正在载入。' },
+      { fr:'La page de garde n’est pas une réponse, mais une invitation.', text:'扉页不是答案,它只是邀请你走进仍在生长的问题。', note:'首页即将展开。' }
+    ]},
+    vocabulary: { eyebrow:'背词 · Vocabulaire', phrases:[
+      { fr:'Un mot bien retenu, c’est un lieu de plus que l’on peut nommer.', text:'一个词被准确记住,世界就多了一处可以命名的地方。', note:'正在取出今天要背的词。' },
+      { fr:'La mémoire n’est pas un entrepôt, mais un sentier à reparcourir.', text:'记忆不是仓库,而是一条需要反复走过的小径。', note:'正在排布你的复习队列。' }
+    ]},
+    resources: { eyebrow:'资源 · Ressources', phrases:[
+      { fr:'Classer, ce n’est pas clore ; c’est garder les chemins lisibles.', text:'编目不是封存,而是让路径仍可辨认。', note:'正在整理书架。' },
+      { fr:'Une bonne bibliographie est une carte de ce qu’on n’a pas encore atteint.', text:'好的书目像一张地图,标出你尚未抵达的地方。', note:'资源正在载入。' }
+    ]}
+  };
+
+  order = ['home','vocabulary','resources'];
+  state = { themeKey:'home', index:0 };
+
+  componentDidMount() {
+    this._t = window.setInterval(() => {
+      this.setState((s) => {
+        const ph = this.themes[s.themeKey].phrases;
+        const next = s.index + 1;
+        if (next >= ph.length) {
+          const ti = (this.order.indexOf(s.themeKey) + 1) % this.order.length;
+          return { themeKey: this.order[ti], index:0 };
+        }
+        return { index: next };
+      });
+    }, 2200);
+  }
+  componentWillUnmount() { window.clearInterval(this._t); }
+
+  renderVals() {
+    const t = this.themes[this.state.themeKey];
+    const ph = t.phrases[this.state.index] || t.phrases[0];
+    const total = t.phrases.length;
+    return {
+      eyebrow: t.eyebrow,
+      frase: ph.fr, phrase: ph.text, note: ph.note,
+      frKey: 'f-' + this.state.themeKey + '-' + this.state.index,
+      quoteKey: this.state.themeKey + '-' + this.state.index,
+      noteKey: 'n-' + this.state.themeKey + '-' + this.state.index,
+      indexLabel: String(this.state.index + 1).padStart(2,'0') + ' / ' + String(total).padStart(2,'0')
+    };
+  }
+}
+</script>
+</body>
+</html>

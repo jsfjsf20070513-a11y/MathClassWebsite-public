@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:#fdfcf8; }
+    a{ color:inherit; transition:color .15s ease, border-color .15s ease; }
+    p{ text-wrap:pretty; }
+    details > summary{ list-style:none; cursor:pointer; }
+    details > summary::-webkit-details-marker{ display:none; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh; background:#fdfcf8; color:#1a1a1a; font-family:'EB Garamond','Noto Serif SC',serif; font-size:17px; line-height:1.6;">
+
+  <!-- ── Complete header: whole map visible at once ── -->
+  <header style="border-bottom:1px solid rgba(26,26,26,.14);">
+    <div style="max-width:920px; margin:0 auto; padding:20px 24px 0;">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+        <a href="#" onClick="{{ noop }}" style="border-bottom:none; color:#1a1a1a; font-family:'EB Garamond',serif; font-size:13px; letter-spacing:.24em; text-transform:uppercase; text-decoration:none; white-space:nowrap;" style-hover="{ color:'#8b0000' }">Carnet de classe</a>
+        <div style="font-size:14px; color:#6b6b6b;">
+          <sc-if value="{{ signedIn }}" hint-placeholder-val="">
+            <span>已登录 · 林同学 &nbsp; <a href="#" onClick="{{ noop }}" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">退出</a></span>
+          </sc-if>
+          <sc-if value="{{ signedOut }}" hint-placeholder-val="{{ true }}">
+            <a href="#" onClick="{{ noop }}" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor; white-space:nowrap;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">Sign in · 登录</a>
+          </sc-if>
+        </div>
+      </div>
+      <nav aria-label="Site map · 全站导航" style="display:flex; align-items:baseline; gap:6px 26px; flex-wrap:wrap; margin-top:16px; padding-bottom:14px; font-size:16px;">
+        <a href="#" onClick="{{ noop }}" aria-current="page" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor; padding-bottom:2px; white-space:nowrap;">Accueil · 扉页</a>
+        <a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:none; white-space:nowrap;" style-hover="{ color:'#1a1a1a' }">Ressources · 资源</a>
+        <a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:none; white-space:nowrap;" style-hover="{ color:'#1a1a1a' }">Vocabulaire · 背词</a>
+        <a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:none; white-space:nowrap;" style-hover="{ color:'#1a1a1a' }">Atelier · 协作</a>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width:680px; margin:0 auto; padding:72px 24px 32px;">
+
+    <!-- ── Cover (carnet-first; no hackathon links crowding the top) ── -->
+    <header style="text-align:center;">
+      <p style="margin:0 0 10px; color:#8b0000; font-size:14px; letter-spacing:.12em; text-transform:uppercase;">中国人民大学中法学院</p>
+      <h1 style="margin:0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:40px; font-weight:500; line-height:1.18;">2025 级数学班</h1>
+      <p style="margin:16px 0 0; color:#6b6b6b; font-size:21px; font-style:italic;">Trente mathématiciens, une classe.</p>
+      <p style="margin:22px 0 0; color:#6b6b6b; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:.08em;">Édition du 20 juin 2026</p>
+    </header>
+
+    <!-- ── Daily theorem ritual — the one piece of living content on the home ── -->
+    <section id="theoreme" style="margin-top:80px; padding-top:18px; border-top:1px solid rgba(26,26,26,.14); text-align:center;">
+      <p style="margin:0 0 8px; color:#8b0000; font-size:14px; font-style:italic;">Rappel mathématique · 每日定理</p>
+      <h2 style="margin:0 0 8px; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:24px; font-weight:500;">Bolzano–Weierstrass</h2>
+      <p style="margin:0 0 14px; color:#1a1a1a;">有界实数列必有收敛子列。</p>
+      <p id="bw-formula" style="margin:8px 0 18px; text-align:center; color:#1a1a1a;">有界数列 ⟹ 存在收敛子列</p>
+      <p style="margin:0; color:#6b6b6b; font-size:15px;">此处写的是实数列版本;有限维欧氏空间中有对应表述。</p>
+      <details style="margin:18px 0 0; padding-top:14px; border-top:1px solid rgba(26,26,26,.14);">
+        <summary style="display:inline-flex; align-items:baseline; gap:8px; color:#8b0000; font-size:15px; font-style:italic; letter-spacing:.02em;"><span style="font-style:normal;">→</span><span style="white-space:nowrap;">Voir la preuve · 查看证明思路</span></summary>
+        <div style="margin:14px 0 0; display:grid; gap:18px;">
+          <div>
+            <p style="margin:0 0 4px; color:#6b6b6b; font-size:11px; letter-spacing:.18em; text-transform:uppercase;">中文</p>
+            <div style="max-width:34rem; margin:0 auto; display:flex; flex-direction:column; gap:11px;">
+              <p style="margin:0; color:#1a1a1a; font-size:16px; line-height:1.8;"><span style="color:#8b0000;">①</span> 整列都被关在区间 <span style="font-family:'JetBrains Mono',monospace; font-size:14px;">[−M, M]</span> 里;从中点切成两半,至少有一半装着无穷多项,留下它。</p>
+              <p style="margin:0; color:#1a1a1a; font-size:16px; line-height:1.8;"><span style="color:#8b0000;">②</span> 对这一半再从中点切开,仍保留装无穷多项的那一半;每切一次区间长度减半,趋于 0。</p>
+              <p style="margin:0; color:#1a1a1a; font-size:16px; line-height:1.8;"><span style="color:#8b0000;">③</span> 这串越套越紧的闭区间收缩到唯一一点 <span style="font-style:italic;">x</span>(闭区间套定理)。</p>
+              <p style="margin:0; color:#1a1a1a; font-size:16px; line-height:1.8;"><span style="color:#8b0000;">④</span> 在第 k 层各挑一项、下标 <span style="font-style:italic;">n₁&lt;n₂&lt;⋯</span> 递增,得到的子列被夹在收紧的区间里,收敛到 <span style="font-style:italic;">x</span>。</p>
+            </div>
+          </div>
+          <div>
+            <p style="margin:0 0 4px; color:#6b6b6b; font-size:11px; letter-spacing:.18em; text-transform:uppercase;">Français</p>
+            <div style="max-width:34rem; margin:0 auto; display:flex; flex-direction:column; gap:11px;" lang="fr">
+              <p style="margin:0; color:#1a1a1a; font-size:16px; line-height:1.8;"><span style="color:#8b0000;">①</span> Toute la suite est enfermée dans <span style="font-family:'JetBrains Mono',monospace; font-size:14px;">[−M, M]</span> ; on coupe en deux et on garde la moitié aux infinis termes.</p>
+              <p style="margin:0; color:#1a1a1a; font-size:16px; line-height:1.8;"><span style="color:#8b0000;">②</span> On recoupe cette moitié de la même façon ; à chaque coupe la longueur est divisée par deux et tend vers 0.</p>
+              <p style="margin:0; color:#1a1a1a; font-size:16px; line-height:1.8;"><span style="color:#8b0000;">③</span> Ces intervalles emboîtés se resserrent vers un unique point <span style="font-style:italic;">x</span>.</p>
+              <p style="margin:0; color:#1a1a1a; font-size:16px; line-height:1.8;"><span style="color:#8b0000;">④</span> On choisit un terme dans le k-ième intervalle, avec <span style="font-style:italic;">n₁&lt;n₂&lt;⋯</span> croissants : prise en étau, la sous-suite converge vers <span style="font-style:italic;">x</span>.</p>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ── One meditation, consolidated ── -->
+    <section style="margin-top:80px; padding-top:18px; border-top:1px solid rgba(26,26,26,.14); text-align:center;">
+      <p style="margin:0 0 12px; color:#6b6b6b; font-size:11px; letter-spacing:.18em; text-transform:uppercase;">Méditation du jour · 冥想</p>
+      <p style="margin:0 auto; max-width:34rem; font-style:italic; font-size:19px; line-height:1.55;" lang="fr">Ce que l'on nomme avec justesse commence déjà à devenir pensable.</p>
+      <p style="margin:10px auto 0; max-width:30rem; color:#6b6b6b; font-size:15px;">一件事一旦被准确命名,也就开始变得可以思考。</p>
+    </section>
+
+  </main>
+
+  <!-- ── Slim footer ── -->
+  <footer style="max-width:680px; margin:0 auto; padding:24px 24px 72px; text-align:center;">
+    <p style="margin:0 0 16px; color:#6b6b6b; letter-spacing:.16em;" aria-hidden="true">─────</p>
+    <p style="margin:0; color:#6b6b6b; font-size:14px; font-style:italic;">Pour la classe.</p>
+    <p style="margin:12px 0 0; font-size:13px;"><a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:1px solid rgba(26,26,26,.14);" style-hover="{ color:'#8b0000', borderBottomColor:'#8b0000' }">班级寄语墙 · 给这个班留一句话 →</a></p>
+
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8b0000&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;authState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;out&quot;,&quot;in&quot;],&quot;default&quot;:&quot;out&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() {
+    const expr = '(\\exists\\,M>0\\ \\ \\forall n\\in\\mathbb{N},\\ |x_n|\\le M)\\ \\Longrightarrow\\ \\exists\\,x\\in\\mathbb{R},\\ \\exists\\,n_1<n_2<\\cdots,\\ x_{n_k}\\to x';
+    const render = () => {
+      const el = document.getElementById('bw-formula');
+      if (window.katex && el) {
+        try { window.katex.render(expr, el, { displayMode: true, throwOnError: false }); } catch (e) {}
+      } else if (!window.katex) {
+        setTimeout(render, 80);
+      }
+    };
+    render();
+  }
+
+  renderVals() {
+    const auth = this.props.authState ?? 'out';
+    return {
+      signedIn: auth === 'in',
+      signedOut: auth !== 'in',
+      noop: (e) => { e && e.preventDefault && e.preventDefault(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

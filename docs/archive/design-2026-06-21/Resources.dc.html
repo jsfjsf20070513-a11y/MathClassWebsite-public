@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:#fdfcf8; }
+    a{ color:inherit; transition:color .15s ease, border-color .15s ease; }
+    p{ text-wrap:pretty; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh; background:#fdfcf8; color:#1a1a1a; font-family:'EB Garamond','Noto Serif SC',serif; font-size:17px; line-height:1.6;">
+
+  <header style="border-bottom:1px solid rgba(26,26,26,.14);">
+    <div style="max-width:920px; margin:0 auto; padding:20px 24px 0;">
+      <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap;">
+        <a href="#" onClick="{{ noop }}" style="border-bottom:none; color:#1a1a1a; font-family:'EB Garamond',serif; font-size:13px; letter-spacing:.24em; text-transform:uppercase; text-decoration:none; white-space:nowrap;" style-hover="{ color:'#8b0000' }">Carnet de classe</a>
+        <a href="#" onClick="{{ noop }}" style="font-size:14px; color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor; white-space:nowrap;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">Sign in · 登录</a>
+      </div>
+      <nav aria-label="Site map · 全站导航" style="display:flex; align-items:baseline; gap:6px 26px; flex-wrap:wrap; margin-top:16px; padding-bottom:14px; font-size:16px;">
+        <a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:none; white-space:nowrap;" style-hover="{ color:'#1a1a1a' }">Accueil · 扉页</a>
+        <a href="#" onClick="{{ noop }}" aria-current="page" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor; padding-bottom:2px; white-space:nowrap;">Ressources · 资源</a>
+        <a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:none; white-space:nowrap;" style-hover="{ color:'#1a1a1a' }">Vocabulaire · 背词</a>
+        <a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:none; white-space:nowrap;" style-hover="{ color:'#1a1a1a' }">Atelier · 协作</a>
+      </nav>
+      <!-- hackathon nav removed -->
+    </div>
+  </header>
+
+  <main style="max-width:680px; margin:0 auto; padding:72px 24px 32px;">
+
+    <!-- masthead -->
+    <header style="text-align:center;">
+      <p style="margin:0 0 10px; color:#8b0000; font-size:14px; letter-spacing:.12em; text-transform:uppercase;">Bibliothèque</p>
+      <h1 style="margin:0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:36px; font-weight:500; line-height:1.2;">资源与书目</h1>
+      <p style="margin:16px auto 0; max-width:34rem; color:#6b6b6b; font-size:17px; font-style:italic;" lang="fr">Classer n'est pas clore ; c'est laisser les chemins demeurer lisibles.</p>
+      <p style="margin:6px auto 0; max-width:30rem; color:#6b6b6b; font-size:15px;">编目不是封存,而是让路径仍可辨认。</p>
+    </header>
+
+    <!-- shelf index -->
+    <section aria-label="书架索引" style="margin-top:56px;">
+      <sc-for list="{{ shelfIndex }}" as="s" hint-placeholder-count="8">
+        <a href="{{ s.href }}" style="display:grid; grid-template-columns:40px 1fr auto; gap:0 16px; align-items:baseline; padding:13px 0; border-top:1px solid rgba(26,26,26,.14); text-decoration:none; color:#1a1a1a;" style-hover="{ color:'#8b0000' }">
+          <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#8b0000;">{{ s.roman }}</span>
+          <span style="font-size:18px;">{{ s.label }}</span>
+          <span style="font-family:'JetBrains Mono',monospace; font-size:12px; color:#6b6b6b; white-space:nowrap;">{{ s.count }}</span>
+        </a>
+      </sc-for>
+    </section>
+
+    <!-- shelves -->
+    <sc-for list="{{ shelves }}" as="shelf" hint-placeholder-count="8">
+      <section id="{{ shelf.anchor }}" style="margin-top:72px;">
+        <div style="display:flex; align-items:baseline; gap:12px;">
+          <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:#8b0000;">{{ shelf.roman }}</span>
+          <h2 style="margin:0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:26px; font-weight:500;">{{ shelf.label }}</h2>
+        </div>
+        <ol style="list-style:none; margin:18px 0 0; padding:0;">
+          <sc-for list="{{ shelf.items }}" as="item" hint-placeholder-count="6">
+            <li style="padding:15px 0; border-top:1px solid rgba(26,26,26,.14);">
+              <div style="display:flex; align-items:baseline; justify-content:space-between; gap:14px;">
+                <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer" style="font-size:18px; color:#1a1a1a; text-decoration:none; border-bottom:1px solid rgba(139,0,0,.35);" style-hover="{ color:'#8b0000', borderBottomColor:'#8b0000' }">{{ item.title }}</a>
+                <span style="flex:none; font-family:'JetBrains Mono',monospace; font-size:11px; color:#8b0000; letter-spacing:.04em;">{{ item.tag }}</span>
+              </div>
+              <p style="margin:5px 0 0; color:#6b6b6b; font-size:15px;">{{ item.desc }}</p>
+            </li>
+          </sc-for>
+        </ol>
+      </section>
+    </sc-for>
+
+    <!-- meditation coda -->
+    <section style="margin-top:80px; padding-top:18px; border-top:1px solid rgba(26,26,26,.14); text-align:center;">
+      <p style="margin:0 0 12px; color:#6b6b6b; font-size:11px; letter-spacing:.18em; text-transform:uppercase;">Méditation du jour · 冥想</p>
+      <p style="margin:0 auto; max-width:34rem; font-style:italic; font-size:19px; line-height:1.55;" lang="fr">Ce qui oriente vraiment une lecture n'est pas l'abondance, mais la coupe juste.</p>
+      <p style="margin:10px auto 0; max-width:30rem; color:#6b6b6b; font-size:15px;">真正引导阅读的,不是丰盛本身,而是恰当的取舍。</p>
+    </section>
+
+  </main>
+
+  <footer style="max-width:680px; margin:0 auto; padding:24px 24px 72px; text-align:center;">
+    <p style="margin:0 0 16px; color:#6b6b6b; letter-spacing:.16em;" aria-hidden="true">─────</p>
+    <p style="margin:0; color:#6b6b6b; font-size:14px; font-style:italic;">Pour la classe.</p>
+    <p style="margin:12px 0 0; font-size:13px;"><a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:1px solid rgba(26,26,26,.14);" style-hover="{ color:'#8b0000', borderBottomColor:'#8b0000' }">班级寄语墙 · 给这个班留一句话 →</a></p>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8b0000&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  cats = [
+    { label:'数学分析与证明', intro:'微积分、实分析、法语分析。', items:[
+      ['MIT OCW — Single Variable Calculus','https://ocw.mit.edu/courses/18-01sc-single-variable-calculus-fall-2010/','分析','讲义、习题、试题、视频。'],
+      ['MIT OCW — Multivariable Calculus','https://ocw.mit.edu/courses/18-02sc-multivariable-calculus-fall-2010/','分析','多元、向量场、积分。'],
+      ['MIT OCW — Real Analysis','https://ocw.mit.edu/courses/18-100b-real-analysis-spring-2025/','实分析','极限、连续、可微、积分。'],
+      ['Exo7 — Analyse','http://exo7.emath.fr/','法语分析','法语课程、习题、视频、讲义。'],
+      ['Harvard PLL — Calculus Applied','https://pll.harvard.edu/course/calculus-applied','分析','微积分、建模、应用。'],
+      ['Harvard Math 112 — Real Analysis','https://people.math.harvard.edu/~wboney/112/','实分析','讲义、习题、试题。'],
+      ['OpenStax — Calculus Volume 1','https://openstax.org/details/books/calculus-volume-1','分析','开放教材、例题、习题。'],
+      ["Paul's Online Math Notes",'https://tutorial.math.lamar.edu/','讲义','微积分、常微分方程、复习笔记。'],
+      ['OpenStax — Calculus Volume 2','https://openstax.org/books/calculus-volume-2/pages/preface','分析','积分、级数、参数方程、极坐标。'],
+      ['OpenStax — Calculus Volume 3','https://openstax.org/books/calculus-volume-3/pages/preface','分析','向量、多元函数、重积分、线积分。']
+    ]},
+    { label:'高等代数与线性代数', intro:'课程页、教材页、短讲、可视化。', items:[
+      ['MIT OCW — Linear Algebra','https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/','代数','讲义、作业、试题、视频。'],
+      ['MIT Mathematics — Introduction to Linear Algebra','https://math.mit.edu/~gs/linearalgebra/','代数','教材页、目录、习题。'],
+      ['MIT OCW — A 2020 Vision of Linear Algebra','https://ocw.mit.edu/courses/res-18-010-a-2020-vision-of-linear-algebra-spring-2020/','代数','专题短讲。'],
+      ['3Blue1Brown — Linear Algebra','https://www.3blue1brown.com/topics/linear-algebra','直观','向量、变换、特征值、几何。'],
+      ['OpenIntro — Linear Algebra','https://www.openintro.org/book/linalg/','代数','开放教材、习题、视频。'],
+      ['Khan Academy — Linear Algebra','https://www.khanacademy.org/math/linear-algebra','直观','向量、子空间、线性变换。'],
+      ['Georgia Tech — Interactive Linear Algebra','https://textbooks.math.gatech.edu/ila/overview.html','代数','交互教材、例题、可视化。'],
+      ['MIT OCW — Algebra I','https://ocw.mit.edu/courses/18-701-algebra-i-fall-2010/','高代','群、向量空间、线性变换。']
+    ]},
+    { label:'概率、随机过程与数理统计', intro:'概率、统计、随机过程。', items:[
+      ['MIT OCW — Introduction to Probability and Statistics','https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/','概率','概率、统计、习题、试题。'],
+      ['MIT OCW — Probabilistic Systems Analysis','https://ocw.mit.edu/courses/6-041sc-probabilistic-systems-analysis-and-applied-probability-fall-2013/','概率','概率空间、随机变量、条件期望。'],
+      ['MIT OCW — Discrete Stochastic Processes','https://ocw.mit.edu/courses/6-262-discrete-stochastic-processes-spring-2011/','随机过程','Markov chains、Poisson、renewal。'],
+      ['MIT OCW — Statistics for Applications','https://ocw.mit.edu/courses/18-650-statistics-for-applications-fall-2016/','统计','统计模型、估计、检验。'],
+      ['Cornell ORIE 6500 — Applied Stochastic Processes','https://sidbanerjee.orie.cornell.edu/courses/orie6500/','随机过程','随机过程、排队、应用模型。'],
+      ['OpenIntro Statistics','https://www.openintro.org/book/os/','统计','开放教材、数据集、配套材料。'],
+      ['Seeing Theory','https://seeing-theory.brown.edu/','直观','概率统计交互式可视化。'],
+      ['Khan Academy — Statistics and Probability','https://www.khanacademy.org/math/statistics-probability','概率','概率、统计、练习题。'],
+      ['Penn State STAT 414 — Probability Theory','https://online.stat.psu.edu/stat414/','概率','概率论在线讲义、分节习题。'],
+      ['Penn State STAT 415 — Mathematical Statistics','https://online.stat.psu.edu/stat415/','统计','估计、检验、回归、方差分析。']
+    ]},
+    { label:'法语与双语过渡', intro:'输入、新闻、词典、考试。', items:[
+      ['TV5MONDE — Apprendre le français','https://apprendre.tv5monde.com/fr','法语','听、说、读、写。'],
+      ['RFI Savoirs — Français facile','https://francaisfacile.rfi.fr/fr/','听力','新闻、听力、短文。'],
+      ['CNRTL','https://www.cnrtl.fr/','词典','词义、词源、用法。'],
+      ['Larousse — Dictionnaires de français','https://www.larousse.fr/dictionnaires/francais','词典','释义、拼写、词条。'],
+      ['France Éducation — DELF tout public','https://www.france-education-international.fr/diplome/delf-tout-public','DELF','级别、结构、官方说明。'],
+      ['Le Robert — Dico en ligne','https://dictionnaire.lerobert.com/fr/','词典','释义、发音、语法、搭配。'],
+      ['BonPatron','https://bonpatron.com/','写作','法语写作语法检查与修改建议。'],
+      ['Académie française — Dictionnaire','https://dictionnaire-academie.fr/','词典','词义、用法、变位、规范说明。'],
+      ['OQLF — Banque de dépannage linguistique','https://vitrinelinguistique.oqlf.gouv.qc.ca/banque-de-depannage-linguistique','语法','语法、搭配、写作与语言规范。']
+    ]},
+    { label:'法语数学与课程参照', intro:'法语数学、课程结构、预科入口。', items:[
+      ['Exo7','http://exo7.emath.fr/','法语数学','课程、练习、视频、讲义。'],
+      ['Bibmath','https://bibmath.net/','法语数学','专题、习题、竞赛材料。'],
+      ['Université Paris-Saclay — Licence Mathématiques','https://www.universite-paris-saclay.fr/formation/licence/mathematiques','课程参照','本科课程结构。'],
+      ['Unisciel — Présciences','https://www.unisciel.fr/presciences/','预备','预科与基础科学入口。'],
+      ['FUN MOOC — Socle en Mathématiques','https://www.fun-mooc.fr/en/cours/socle-en-mathematiques/','法语数学','函数、积分与线代基础。'],
+      ['FUN MOOC — Promenades mathématiques','https://www.fun-mooc.fr/en/cours/genius-promenades-mathematiques/','法语数学','法语数学主题漫游。'],
+      ['Université Paris Cité — Licence de mathématiques','https://licence.math.u-paris.fr/formations/math/','课程参照','课程结构、培养方向、选课信息。'],
+      ['Sorbonne Université — Licence de Mathématiques','https://sciences.sorbonne-universite.fr/formation-sciences/licences/licences-generales-l2-l3/licence-de-mathematiques','课程参照','本科培养方案、方向与课程说明。']
+    ]},
+    { label:'AI、机器学习与计算机视觉', intro:'机器学习、深度学习、视觉、文档。', items:[
+      ['Google — Machine Learning Crash Course','https://developers.google.com/machine-learning/crash-course','机器学习','视频、短文、练习。'],
+      ['Stanford CS229 — Course Materials','https://cs229.stanford.edu/materials.html-withcomments','机器学习','讲义、阅读、作业。'],
+      ['Dive into Deep Learning','https://d2l.ai/','深度学习','教材、代码、练习。'],
+      ['Stanford CS231n','https://cs231n.stanford.edu/','计算机视觉','讲义、作业、课程安排。'],
+      ['OpenCV — Tutorials','https://docs.opencv.org/4.x/d9/df8/tutorial_root.html','视觉','图像处理、视觉 API。'],
+      ['scikit-learn — User Guide','https://scikit-learn.org/stable/user_guide.html','机器学习','模型、预处理、评估。'],
+      ['PyTorch — Tutorials','https://pytorch.org/tutorials/','深度学习','张量、自动求导、训练。'],
+      ['Cornell CS4780 — Machine Learning','https://www.cs.cornell.edu/courses/cs4780/2024sp/','机器学习','notes、作业、项目。'],
+      ['Columbia COMS W4731 — Computer Vision I','https://w4731.cs.columbia.edu/','计算机视觉','notes、assignments、项目。'],
+      ['TensorFlow — Tutorials','https://www.tensorflow.org/tutorials','深度学习','Keras、数据处理、模型训练。'],
+      ['Hugging Face Course','https://huggingface.co/course','机器学习','Transformers、NLP、LLM 入门。'],
+      ['fast.ai — Practical Deep Learning','https://course.fast.ai/','深度学习','实践导向的深度学习课程。']
+    ]},
+    { label:'优化、博弈与相关方法', intro:'凸优化、博弈、求解器、公开课。', items:[
+      ['Stanford — Convex Optimization','https://stanford.edu/~boyd/cvxbook/','优化','全文、习题、附录。'],
+      ['Stanford EE364A — Convex Optimization I','https://stanford.edu/class/ee364a/','优化','syllabus、notes、assignments。'],
+      ['MIT OCW — Game Theory','https://ocw.mit.edu/courses/14-126-game-theory-spring-2024/','博弈','静态、动态、均衡、重复博弈。'],
+      ['Stanford — Game Theory Online','https://web.stanford.edu/~jacksonm/GTOC-Syllabus','博弈','视频、讲义、习题。'],
+      ['CVXPY — Documentation','https://www.cvxpy.org/','优化','安装、语法、示例。'],
+      ['Yale Open Courses — Game Theory','https://oyc.yale.edu/economics/econ-159','博弈','视频、讲义、目录。'],
+      ['Stanford — Convex Optimization Short Course','https://web.stanford.edu/~boyd/papers/cvx_short_course.html','优化','短课、讲义、习题、应用示例。'],
+      ['NEOS Guide','https://neos-guide.org/','优化','优化问题类型、算法说明、案例。'],
+      ['Cornell ORIE 6300 — Mathematical Programming I','https://people.orie.cornell.edu/dpw/orie6300/','优化','线性规划、对偶、算法、讲义。'],
+      ['Gurobi — Documentation','https://docs.gurobi.com/','求解器','建模、求解器、API 与示例。']
+    ]},
+    { label:'计算、排印与写作', intro:'Python、数组、LaTeX、Jupyter、教材。', items:[
+      ['The Python Tutorial','https://docs.python.org/3/tutorial/','Python','语法、数据结构、模块、类。'],
+      ['NumPy Quickstart','https://numpy.org/doc/stable/user/quickstart.html','计算','数组、索引、广播。'],
+      ['Overleaf Learn — LaTeX','https://www.overleaf.com/learn','排印','公式、引用、版式。'],
+      ['Mathematics for Machine Learning','https://mml-book.github.io/','教材','线代、概率、优化、机器学习。'],
+      ['JupyterLab — Documentation','https://jupyterlab.readthedocs.io/en/stable/','笔记','笔记本、终端、扩展。'],
+      ['pandas — Getting Started','https://pandas.pydata.org/docs/getting_started/intro_tutorials/','计算','表格数据处理、清洗与分析。'],
+      ['Matplotlib — Tutorials','https://matplotlib.org/stable/tutorials/index.html','计算','绘图、样式、图像与可视化。'],
+      ['Quarto — Guide','https://quarto.org/docs/guide/','写作','文档写作、排版、发布与复现。'],
+      ['SciPy User Guide','https://docs.scipy.org/doc/scipy/tutorial/','计算','科学计算、积分、线代、优化。'],
+      ['Typst Documentation','https://typst.app/docs/','排印','现代排印、公式、模板与导出。']
+    ]}
+  ];
+
+  renderVals() {
+    const R = ['I','II','III','IV','V','VI','VII','VIII','IX','X'];
+    const shelves = this.cats.map((c, i) => ({
+      roman: R[i], anchor: 'shelf-' + (i + 1), label: c.label, intro: c.intro,
+      items: c.items.map(([title, url, tag, desc]) => ({ title, url, tag, desc }))
+    }));
+    const shelfIndex = shelves.map((s) => ({ roman: s.roman, label: s.label, count: s.items.length + ' 条', href: '#' + s.anchor }));
+    return {
+      shelves, shelfIndex,
+      noop: (e) => { e && e.preventDefault && e.preventDefault(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

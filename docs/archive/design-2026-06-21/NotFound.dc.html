@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Noto+Serif+SC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{ box-sizing:border-box; }
+    html,body{ margin:0; padding:0; background:#fdfcf8; }
+    a{ color:inherit; transition:color .15s ease, border-color .15s ease; }
+    p{ text-wrap:pretty; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh; background:#fdfcf8; color:#1a1a1a; font-family:'EB Garamond','Noto Serif SC',serif; font-size:17px; line-height:1.6; display:flex; flex-direction:column;">
+
+  <header style="border-bottom:1px solid rgba(26,26,26,.14);">
+    <div style="max-width:920px; margin:0 auto; width:100%; padding:20px 24px;">
+      <a href="#" onClick="{{ noop }}" style="border-bottom:none; color:#1a1a1a; font-family:'EB Garamond',serif; font-size:13px; letter-spacing:.24em; text-transform:uppercase; text-decoration:none; white-space:nowrap;" style-hover="{ color:'#8b0000' }">Carnet de classe</a>
+    </div>
+  </header>
+
+  <main style="flex:1; display:flex; align-items:center; justify-content:center; padding:48px 24px;">
+    <div style="max-width:520px; text-align:center;">
+      <p style="margin:0; font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:.3em; color:#8b0000;">404</p>
+      <h1 style="margin:18px 0 0; font-family:'Noto Serif SC','Source Han Serif SC',serif; font-size:36px; font-weight:500;">页面未找到</h1>
+      <p style="margin:10px 0 0; color:#6b6b6b; font-size:18px;">Page not found</p>
+
+      <p style="margin:30px auto 0; max-width:34rem; color:#1a1a1a; font-style:italic; font-size:19px; line-height:1.55;" lang="fr">Comme chercher sur la droite réelle un point qui n'existe pas.</p>
+      <p style="margin:10px auto 0; max-width:30rem; color:#6b6b6b; font-size:15px;">这就像在实数轴上寻找一个并不存在的点。</p>
+
+      <div style="height:1px; width:64px; background:rgba(26,26,26,.14); margin:34px auto;"></div>
+      <p style="margin:0 auto 18px; max-width:32rem; color:#6b6b6b; font-size:16px;">你要找的页面没有对应记录,或链接已失效。也许你在找:</p>
+      <div style="display:flex; justify-content:center; gap:26px; flex-wrap:wrap;">
+        <a href="#" onClick="{{ noop }}" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor; font-size:17px; white-space:nowrap;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">资源 · 书目</a>
+        <a href="#" onClick="{{ noop }}" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor; font-size:17px;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">背词</a>
+        <a href="#" onClick="{{ noop }}" style="color:#8b0000; text-decoration:none; border-bottom:1px solid currentColor; font-size:17px;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">协作</a>
+      </div>
+      <p style="margin:30px 0 0;"><a href="#" onClick="{{ noop }}" style="color:#6b6b6b; text-decoration:none; border-bottom:1px solid rgba(26,26,26,.2); font-size:16px;" style-hover="{ color:'#1a1a1a', borderBottomColor:'#1a1a1a' }">← 回到扉页 · Accueil</a></p>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#8b0000&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    return { noop: (e) => { e && e.preventDefault && e.preventDefault(); } };
+  }
+}
+</script>
+</body>
+</html>

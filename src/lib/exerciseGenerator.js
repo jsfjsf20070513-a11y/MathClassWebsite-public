@@ -1,5 +1,6 @@
 // Pure exercise-generation + grading core for the multi-format vocabulary
-// trainer (design: Vocabulary.dc.html · HANDOFF §3).
+// trainer (original design: docs/archive/design-2026-06-21/Vocabulary.dc.html
+// + spec/Vocabulary.md · HANDOFF §3; archived, superseded by design-constitution.md).
 //
 // The SRS scheduler (srsScheduler.js) decides WHICH words are due; this module
 // turns a due word into one of several exercise formats and grades a response.
