@@ -1,17 +1,20 @@
-# MathClassWebsite-public(双语链上版)· 文档导航
+# 文档导航 · rucmathclass(班级网站线)
 
-> 2026-06-09 文档治理。-public 文档已精简,这里做导航。
+> 2026-09-02 重写。旧版是 2026-06-09 的 MathClassWebsite-public 黑客松导航,所指文件已全部删除。
 
-## 从这里开始(仓库根)
-- [`../README.md`](../README.md) — 项目总览(评委 5 分钟可验证清单在顶部)
-- [`../CLAUDE.md`](../CLAUDE.md) — 给 AI 的上下文(Solana/链上/不可逆风险)
-- [`../hackathon_application_materials.md`](../hackathon_application_materials.md) — Dev3pack 最终提交材料
-- [`../GITHUB_RELEASE_CHECKLIST.md`](../GITHUB_RELEASE_CHECKLIST.md) — 开源发布清单
+## 先读(仓库根)
+- [`../CLAUDE.md`](../CLAUDE.md) —— 给 AI 的正本:身份、红线、命令、部署入口(`AGENTS.md` 是它的软链)
+- [`../README.md`](../README.md) —— 对外总览
 
-## 活文档(docs/)
-- [`anchor-program.md`](anchor-program.md) — `class_anchor` Rust Anchor 程序(program ID + deploy)
-- [`dev3pack_submission_playbook.md`](dev3pack_submission_playbook.md) — Dev3pack 提交手册
-- [`demo_video_script.md`](demo_video_script.md) — Demo 视频脚本
-- [`cn-global-delivery.md`](cn-global-delivery.md) — 国内/全球访问交付
+## 现行文档
+- [`design-constitution.md`](design-constitution.md) + [`aesthetic-profile.md`](aesthetic-profile.md) —— 视觉最高裁定(2026-08-20 立宪)
+- [`handoff-2026-08-20/`](handoff-2026-08-20/) —— 08-20 杂志刊设计稿:`DESIGN.md` + `Home-B-Galerie.dc.html` + `Interieur v2.dc.html`
+- [`mathclass-line-restart-2026-08-13.md`](mathclass-line-restart-2026-08-13.md) —— 线重启底稿:五维盘点、风险清单、roadmap
 
-> 本库已 MIT 开源:`github.com/jsfjsf20070513-a11y/MathClassWebsite-public`。
+## 归档(只作历史,不是契约)
+- [`archive/design-2026-06-21/`](archive/design-2026-06-21/) —— 06-21 十页设计稿(Carnet de classe 初版)
+- [`archive/design-handoff-carnet-2026-08-13.md`](archive/design-handoff-carnet-2026-08-13.md) —— 08-13 设计交接,其"居中硬约束"已被宪法推翻
+
+## 线级(仓外)
+- `line_math/CLAUDE.md` —— 两仓分工、部署互斥、共享 Supabase / Worker 边界
+- `line_math/math线摸底_2026-08-21.md` —— 全线现状正本(含 08-25 拆仓附记)

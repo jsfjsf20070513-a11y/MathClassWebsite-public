@@ -1,7 +1,7 @@
 # math class 线重启 · 盘点与 roadmap 底稿(2026-08-13)
 
-> 背景:2026-08-06 math 线切分为 Raccord / 班级网站两线(记录见
-> `mcw-raccord-cutover/deployment/RACCORD_DEPLOY.md`)。本底稿记录班级网站线的重启
+> 背景:2026-08-06 math 线切分为 Raccord / 班级网站两线(记录原在 `mcw-raccord-cutover` worktree 的
+> `deployment/RACCORD_DEPLOY.md`,该 worktree 已随 08-25 拆仓消失;现行口径见 raccord-deploy skill)。本底稿记录班级网站线的重启
 > 立线动作、五维盘点结论与分阶段 roadmap。盘点由 5 个并行读察 agent 完成,高危断言
 > 经对抗复核或本席实证核实。
 
@@ -30,7 +30,7 @@
   进度存 `review_states`(per-user RLS)。发音走浏览器 TTS(`USE_WORKER_VOICE=false`)。
 - **AI 助手 /assistant**:登录后经 Worker `/api/chat` 调 Gemini,支持拍题问图,
   云端历史 `ai_messages`。端点硬编码绝对地址(3 处)。
-- **寄语墙 /witness**:本站唯一现存 Web3 界面,自写 Anchor 程序(Solana **devnet**),
+- **寄语墙 /witness**(盘点时点的状态;当日 `17e9fd9` 已整线拆除,Anchor 程序与 wallet 代码 09-02 删除):本站唯一现存 Web3 界面,自写 Anchor 程序(Solana **devnet**),
   写入需 Phantom,读取 permissionless。
 - 相册/黑客松/web3 个人页/审核中心均已下线为 redirect;**约 1500+ 行死码残留**
   (Comments.jsx、useOpsSubmissions、useClassMemoFeed、4 个孤儿数据模块等)。
@@ -95,7 +95,7 @@ album_photos 0 / resources 0),全部 RLS on。
   斜体作衬(与副题/kicker 同语法),中文承担功能重量;站面不用英语。
 - **阶段 2 · 诚实性刷新(9 月前)**
   - index.html 元信息重写(去黑客松/first-year);sitemap/robots 重写为现役路由;
-    witness 文案如实化(或拍板迁移方案);死码清理(~1500 行 + 4 孤儿数据模块)。
+    witness 文案如实化(或拍板迁移方案)——✅ 随寄语墙拆除消解;死码清理(~1500 行 + 4 孤儿数据模块)——✅ 09-02 删 walletProvider/classRegistry/programs。
   - 验收:站面与元数据无过期声明;build 绿;bundle 不含孤儿模块。
 - **阶段 3 · 新学年功能(等作者点方向)**
   - 资源审核闭环恢复 or 运营流程化;2026 秋课表录入 or 删除死数据;定理池扩充;

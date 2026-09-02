@@ -17,7 +17,6 @@
 | 资源书架 | `/resources` | 静态目录 + Supabase `resources` 增补;外链一律先消毒再渲染 |
 | 背词 | `/vocabulary` | 3652 条法语词汇,A1–C2 分级,艾宾浩斯 SRS 复习阶梯(纯核心 [`src/lib/srsScheduler.js`](src/lib/srsScheduler.js),已单测);进度存 `review_states`,per-user RLS |
 | AI 助手 | `/assistant` | 登录后使用;经 Cloudflare Worker `/api/chat` 调 Gemini(模型降级链每小时动态发现),云端历史存 `ai_messages` |
-| 寄语墙 | `/witness` | 仅存的 Web3 界面:Anchor 程序在 Solana **devnet**(见下方「诚实说明」) |
 
 ## 技术形态
 
@@ -70,11 +69,10 @@ npm run lint && npm test && npm run build
 
 ## 部署
 
-`deploy.sh` 只读环境变量,不含任何主机名或密钥;构建后 rsync `dist/` 到服务器。私有照片注入链路已退役,部署时显式 `MATHCLASS_PRIVATE_REPO=skip`。部署后以 `https://rucmathclass.com/health.json` 的 `buildTime` 为准做前后对照。
+`deploy.sh` 只读环境变量,不含任何主机名或密钥;构建后 rsync `dist/` 到服务器。私有照片注入链路已退役并从脚本中移除。部署后以 `https://rucmathclass.com/health.json` 的 `buildTime` 为准做前后对照。
 
 ## 诚实说明
 
-- 寄语墙的链上部分在 Solana **devnet**——devnet 会周期性 reset,"永久保存"并不成立,如实化(或镜像进 Supabase)在待办里。
 - 语音朗读当前使用 preview 模型,无稳定性承诺。
 - `/resources/curate` 的推荐提交会进入待审队列,站内审核界面暂时下线,处理会有延迟。
 
