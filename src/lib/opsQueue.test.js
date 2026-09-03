@@ -6,6 +6,7 @@ import {
   getSubmitterName,
   OPS_QUEUE_ALBUM_ID,
   OPS_QUEUE_KINDS,
+  OPS_QUEUE_SELECT_COLUMNS,
 } from './opsQueue'
 
 // Red line: the ops queue smuggles moderation/gallery/resource records through
@@ -79,6 +80,18 @@ describe('parseOpsSubmission — happy path', () => {
     expect(parseOpsSubmission(opsRow({ user_nickname: '', user_email: '' })).authorName).toBe('未署名')
   })
 
+  it('decodes a row fetched under column grants (no user_email present)', () => {
+    // Mirrors what PostgREST returns for OPS_QUEUE_SELECT_COLUMNS: the
+    // user_email key is absent entirely, not merely empty.
+    const row = opsRow()
+    delete row.user_email
+    const parsed = parseOpsSubmission(row)
+    expect(parsed).not.toBeNull()
+    expect(parsed.userEmail).toBeNull()
+    expect(parsed.authorName).toBe('Nick')
+    expect(parseOpsSubmission({ ...row, user_nickname: '' }).authorName).toBe('未署名')
+  })
+
   it('round-trips a moderation envelope', () => {
     const payload = { targetId: 't1', targetUserId: 'victim', state: 'published' }
     const row = opsRow({
@@ -126,5 +139,23 @@ describe('getSubmitterName', () => {
     expect(getSubmitterName({ user_metadata: { nickname: 'Nia' }, email: 'e@x.com' })).toBe('Nia')
     expect(getSubmitterName({ email: 'e@x.com' })).toBe('e@x.com')
     expect(getSubmitterName({})).toBe('同学')
+  })
+})
+
+describe('OPS_QUEUE_SELECT_COLUMNS — PII column grant contract', () => {
+  // harden_rls.sql (2026-09-03) grants SELECT on public.comments column by
+  // column to anon AND authenticated, excluding user_email.  Any client read
+  // that names user_email, or falls back to `*`, fails with 42501.  This
+  // list is the single place the client declares what it reads; keep it in
+  // lock-step with the GRANT SELECT (...) lines in harden_rls.sql.
+  const GRANTED = ['id', 'album_id', 'content', 'user_id', 'user_nickname', 'created_at']
+
+  it('is a comma-joined explicit column list, never *', () => {
+    expect(OPS_QUEUE_SELECT_COLUMNS).not.toContain('*')
+    expect(OPS_QUEUE_SELECT_COLUMNS.split(',')).toEqual(GRANTED)
+  })
+
+  it('never asks for user_email', () => {
+    expect(OPS_QUEUE_SELECT_COLUMNS.split(',')).not.toContain('user_email')
   })
 })

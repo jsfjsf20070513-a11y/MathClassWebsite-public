@@ -6,12 +6,34 @@ export const OPS_QUEUE_ALBUM_ID = 0
 
 const OPS_QUEUE_PREFIX = '__mathclass_ops__::'
 
+// Columns a client is allowed to READ from public.comments.  Since 2026-09-03
+// harden_rls.sql grants SELECT on comments column-by-column to BOTH anon and
+// authenticated, and `user_email` is deliberately absent: it is written on
+// insert (see submitOpsSubmission) as a server-side contact record for the
+// moderation trail, but never read back through PostgREST.  A bare
+// `.select('*')` -- or the implicit `.select()` after an insert -- would fail
+// with 42501 under column grants, so every comments read must use this list.
+export const OPS_QUEUE_SELECT_COLUMNS = [
+  'id',
+  'album_id',
+  'content',
+  'user_id',
+  'user_nickname',
+  'created_at',
+].join(',')
+
 export const OPS_QUEUE_KINDS = {
   gallery: 'gallery',
   resource: 'resource',
   moderation: 'moderation',
 }
 
+// Client-side narrowing filter only.  The envelope is always produced by
+// buildOpsEnvelope (JSON.stringify, no whitespace), so the exact form is
+// correct for rows this client wrote.  The server-side RLS guard in
+// harden_rls.sql deliberately uses the wider whitespace-tolerant regex
+// `"kind"[[:space:]]*:[[:space:]]*"moderation"` because it must also reject
+// hand-crafted envelopes; that asymmetry is intentional (guard >= filter).
 function buildKindLikePattern(kind) {
   return `${OPS_QUEUE_PREFIX}%"kind":"${kind}"%`
 }
@@ -181,7 +203,9 @@ export function parseOpsSubmission(row) {
       payload: envelope.payload,
       createdAt: row.created_at,
       userId: row.user_id,
-      userEmail: row.user_email,
+      // user_email is not in OPS_QUEUE_SELECT_COLUMNS, so on rows fetched
+      // through the client this is always null; kept for shape stability.
+      userEmail: row.user_email ?? null,
       authorName: row.user_nickname || row.user_email || '未署名',
       raw: row,
     }
@@ -198,7 +222,7 @@ export async function fetchOpsSubmissions({ userId = '', kind = '', targetUserId
 
   let query = supabase
     .from('comments')
-    .select('*')
+    .select(OPS_QUEUE_SELECT_COLUMNS)
     .eq('album_id', OPS_QUEUE_ALBUM_ID)
     .order('created_at', { ascending: false })
 
@@ -244,7 +268,7 @@ export async function submitOpsSubmission(kind, payload, user) {
       user_nickname: getSubmitterName(user),
       created_at: new Date().toISOString(),
     }])
-    .select()
+    .select(OPS_QUEUE_SELECT_COLUMNS)
     .single()
 
   if (error) {

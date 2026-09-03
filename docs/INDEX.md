@@ -10,6 +10,7 @@
 - [`design-constitution.md`](design-constitution.md) + [`aesthetic-profile.md`](aesthetic-profile.md) —— 视觉最高裁定(2026-08-20 立宪)
 - [`handoff-2026-08-20/`](handoff-2026-08-20/) —— 08-20 杂志刊设计稿:`DESIGN.md` + `Home-B-Galerie.dc.html` + `Interieur v2.dc.html`
 - [`mathclass-line-restart-2026-08-13.md`](mathclass-line-restart-2026-08-13.md) —— 线重启底稿:五维盘点、风险清单、roadmap
+- [`rls-live-check-2026-09-03.sql`](rls-live-check-2026-09-03.sql) —— 只读巡检 SQL:核 `comments` 线上列级/表级授权与策略是否堵住 `user_email`(配 `harden_rls.sql` 09-03 修订)
 
 ## 归档(只作历史,不是契约)
 - [`archive/design-2026-06-21/`](archive/design-2026-06-21/) —— 06-21 十页设计稿(Carnet de classe 初版)

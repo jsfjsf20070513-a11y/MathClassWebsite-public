@@ -188,6 +188,18 @@ with check (
 --        is "moderation".  They must NOT be forgeable by ordinary
 --        users, otherwise a peer can spoof a "deleted" / "published"
 --        notice into someone else's case file.
+--
+--    2026-09-03: every moderation-marker test below uses the
+--    whitespace-tolerant regex
+--        content ~ '"kind"[[:space:]]*:[[:space:]]*"moderation"'
+--    instead of the exact `like '%"kind":"moderation"%'` that earlier
+--    revisions of this file used.  The exact LIKE was bypassable: a client
+--    that hand-builds the envelope as `"kind" : "moderation"` (any
+--    whitespace around the colon) slipped past the insert guard while the
+--    frontend's JSON.parse still decoded it as a moderation receipt.  The
+--    regex is the same form the live DB has carried since 2026-06-11
+--    (enable_rls.sql section 8); this file now matches it so re-applying
+--    harden_rls.sql can no longer downgrade the guard.
 -- =========================================================================
 alter table public.comments enable row level security;
 
@@ -230,10 +242,10 @@ using (
 );
 
 -- SELECT: a contributor sees moderation receipts that explicitly target
--- their user id.  The LIKE matching is unavoidable without a schema
--- change (content is a text column), but combined with the
+-- their user id.  Pattern matching on `content` is unavoidable without a
+-- schema change (content is a text column), but combined with the
 -- moderation-insert policy below, only admins can write rows that
--- satisfy this filter, so the LIKE cannot be weaponised by peers.
+-- satisfy this filter, so the pattern cannot be weaponised by peers.
 create policy "comments_select_receipts_for_me"
 on public.comments
 for select
@@ -241,7 +253,7 @@ to authenticated
 using (
   album_id = 0
   and content like '\_\_mathclass\_ops\_\_::%' escape '\'
-  and content like '%"kind":"moderation"%'
+  and content ~ '"kind"[[:space:]]*:[[:space:]]*"moderation"'
   and content like ('%"targetUserId":"' || auth.uid()::text || '"%')
 );
 
@@ -273,13 +285,13 @@ with check (
     -- resource drafts so long as the moderation marker is absent.
     (
       album_id = 0
-      and content not like '%"kind":"moderation"%'
+      and content !~ '"kind"[[:space:]]*:[[:space:]]*"moderation"'
     )
     or
     -- Ops-queue, moderation envelope: admins only.
     (
       album_id = 0
-      and content like '%"kind":"moderation"%'
+      and content ~ '"kind"[[:space:]]*:[[:space:]]*"moderation"'
       and public.is_admin()
     )
   )
@@ -296,7 +308,7 @@ with check (
   auth.uid() = user_id
   and (
     album_id is distinct from 0
-    or content not like '%"kind":"moderation"%'
+    or content !~ '"kind"[[:space:]]*:[[:space:]]*"moderation"'
     or public.is_admin()
   )
 );
@@ -391,16 +403,52 @@ revoke all on public.resources     from anon;
 -- (album_id = 0) from anon, but public comment rows would otherwise expose
 -- every commenter's email via a direct PostgREST `select=user_email` call.
 -- NOTE: with column-level privileges a bare `select=*` fails for anon, so
--- the frontend requests these columns explicitly (see Comments.jsx).
+-- any frontend read of comments must request columns explicitly (the only
+-- live reader today is src/lib/opsQueue.js; the old Comments.jsx is gone).
 grant select (id, album_id, content, user_id, user_nickname, created_at)
   on public.comments to anon;
 grant select on public.albums       to anon;
 grant select on public.album_photos to anon;
 grant select on public.resources    to anon;
 
--- Authenticated retains full DML; RLS policies above are what actually
--- constrain behaviour.
-grant select, insert, update, delete on public.comments      to authenticated;
+-- -------------------------------------------------------------------------
+-- 2026-09-03: authenticated must NOT read comments.user_email either.
+--
+-- Gap: earlier revisions of this file gave `authenticated` a table-level
+-- SELECT on public.comments while only `anon` got the column-level grant
+-- above.  Combined with `comments_select_public` (to public, album_id <> 0)
+-- that let ANY self-registered account read every public commenter's
+-- user_email via `select=user_email` -- the PII fence only held for
+-- logged-out callers.  The live DB never had this exact state (it is a
+-- historical hybrid, see docs/mathclass-line-restart-2026-08-13.md and
+-- enable_rls.sql section 7), but every time harden_rls.sql was re-applied
+-- as the "canonical" state the gap would have re-opened.
+--
+-- Fix: SELECT for authenticated becomes column-level, identical to anon's
+-- list.  INSERT / UPDATE / DELETE stay table-level on purpose:
+--   * src/lib/opsQueue.js still writes `user_email: user.email` on insert
+--     (the moderation trail needs a contact address the admin can read in
+--     the Supabase dashboard).  Write-allowed / read-denied is exactly the
+--     shape we want: the column is a server-side record, not a client
+--     surface.  A column-level INSERT excluding user_email would break that
+--     write with 42501.
+--   * UPDATE / DELETE are row-gated by comments_update_own /
+--     comments_delete_own_or_admin; the column list is irrelevant there.
+--
+-- Client contract: with column-level SELECT a bare `select=*` (including
+-- the implicit RETURNING of `.insert(...).select()`) fails with 42501 for
+-- authenticated as well, so every client read of comments must list its
+-- columns explicitly -- see OPS_QUEUE_SELECT_COLUMNS in src/lib/opsQueue.js.
+-- The revoke first makes this block idempotent: re-running it never
+-- accumulates a table-level SELECT on top of the column grant.
+-- -------------------------------------------------------------------------
+revoke select on public.comments from authenticated;
+grant select (id, album_id, content, user_id, user_nickname, created_at)
+  on public.comments to authenticated;
+grant insert, update, delete on public.comments      to authenticated;
+
+-- Remaining tables: authenticated retains full DML; RLS policies above
+-- are what actually constrain behaviour.
 grant select, insert, update, delete on public.albums        to authenticated;
 grant select, insert, update, delete on public.album_photos  to authenticated;
 grant select, insert, update, delete on public.resources     to authenticated;
