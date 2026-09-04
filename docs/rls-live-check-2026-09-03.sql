@@ -34,7 +34,15 @@
 --   这 4 条策略名与 enable_rls.sql / harden_rls.sql 都对不上,是手工改过的第三套:
 --   harden_rls.sql 只 drop 自己命名的策略,整段重跑不会清掉它们,反而会新增 comments_select_public
 --   把匿名读打开。**不要再整段重跑 harden_rls.sql;要改就单条 create/drop policy。**
---   第①②条(列级/表级授权)结果待补。
+
+-- 2026-09-04 第①②条现场 + 修复:切换前 authenticated 有表级 ALL(含 SELECT/TRUNCATE/TRIGGER/REFERENCES),
+--   列级 SELECT 因而覆盖 user_email(判据 1、2 不成立,但被第③条"只读自己的行"策略兜住,无跨用户泄露)。
+--   先部署 main(打包文件里 comments 的 select("*") 归零),再在 SQL editor 跑了:
+--     revoke select on public.comments from authenticated;
+--     grant select (id, album_id, content, user_id, user_nickname, created_at) on public.comments to authenticated;
+--     revoke truncate, trigger, references on public.comments from authenticated;
+--     grant insert, update, delete on public.comments to authenticated;
+--   复核:authenticated 表级只剩 DELETE/INSERT/UPDATE;列级 SELECT 恰 6 列,无 user_email。五条判据全部成立。
 
 -- ① 列级授权(谁能读/写哪些列)
 select grantee, column_name, privilege_type
