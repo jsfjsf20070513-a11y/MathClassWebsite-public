@@ -215,6 +215,11 @@ drop policy if exists "Enable update for users based on user_id"                
 drop policy if exists "Enable delete for users based on user_id"                                     on public.comments;
 drop policy if exists "Users can delete their own comments"                                          on public.comments;
 drop policy if exists "Users can delete own comments OR admins can delete any"                       on public.comments;
+-- 2026-09-04 线上核查发现的手工第三套策略名(见 docs/rls-live-check-2026-09-03.sql),一并纳入 drop 清单,
+-- 否则重跑本文件会把它们留在原地、叠加出第二套。
+drop policy if exists "Users can insert their own comments"                                          on public.comments;
+drop policy if exists "Authenticated users can read own comments or admins can read al"              on public.comments;
+drop policy if exists "Users can update their own comments"                                          on public.comments;
 drop policy if exists "comments_select_public"                                                       on public.comments;
 drop policy if exists "comments_select_own_ops"                                                      on public.comments;
 drop policy if exists "comments_select_receipts_for_me"                                              on public.comments;
@@ -224,12 +229,10 @@ drop policy if exists "comments_insert_moderation_admin_only"                   
 drop policy if exists "comments_update_own"                                                          on public.comments;
 drop policy if exists "comments_delete_own_or_admin"                                                 on public.comments;
 
--- SELECT: public comments (album_id <> 0) readable by anyone.
-create policy "comments_select_public"
-on public.comments
-for select
-to public
-using ( album_id is distinct from 0 );
+-- 2026-09-04:不再创建面向 public/anon 的 SELECT 策略。前端没有公开留言墙
+-- (src 里读 comments 的只有 src/lib/opsQueue.js 的管理员事务队列),线上自 2026-09-03
+-- 核查起也没有匿名读策略;此前这里的 comments_select_public(album_id <> 0 对所有人可读)
+-- 会在重跑时把匿名读重新打开。anon 的列级 SELECT 授权保留在第 5 节,但没有策略放行任何行。
 
 -- SELECT: a contributor sees their own ops-queue rows.
 create policy "comments_select_own_ops"
@@ -445,6 +448,8 @@ grant select on public.resources    to anon;
 revoke select on public.comments from authenticated;
 grant select (id, album_id, content, user_id, user_nickname, created_at)
   on public.comments to authenticated;
+-- 早期给过 ALL,把用不到且绕过 RLS 的 TRUNCATE/TRIGGER/REFERENCES 一并收回(2026-09-04 线上已执行)。
+revoke truncate, trigger, references on public.comments from authenticated;
 grant insert, update, delete on public.comments      to authenticated;
 
 -- Remaining tables: authenticated retains full DML; RLS policies above
