@@ -25,6 +25,17 @@
 -- 注意:information_schema 视图只显示当前会话角色可见的授权;在 Supabase SQL editor
 -- 默认以 postgres 超级角色运行,能看全。若结果为空,先确认当前角色。
 
+-- 2026-09-04 现场结果(第③条,策略):线上 public.comments 只有 4 条 authenticated 策略
+--   ("Users can delete own comments OR admins can delete any" / "Users can insert their own comments" /
+--    "Authenticated users can read own comments or admins can read al" / "Users can update their own comments"),
+--   INSERT 已是正则拦截(判据 5 成立);**没有任何 public/anon SELECT 策略**——比本仓库 harden_rls.sql
+--   的 comments_select_public(album_id <> 0 对所有人可读)更紧,而代码里读 comments 的只有
+--   src/lib/opsQueue.js(管理员事务队列),不需要匿名读。
+--   这 4 条策略名与 enable_rls.sql / harden_rls.sql 都对不上,是手工改过的第三套:
+--   harden_rls.sql 只 drop 自己命名的策略,整段重跑不会清掉它们,反而会新增 comments_select_public
+--   把匿名读打开。**不要再整段重跑 harden_rls.sql;要改就单条 create/drop policy。**
+--   第①②条(列级/表级授权)结果待补。
+
 -- ① 列级授权(谁能读/写哪些列)
 select grantee, column_name, privilege_type
 from information_schema.column_privileges
